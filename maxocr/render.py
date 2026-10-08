@@ -17,11 +17,18 @@ import uharfbuzz as hb
 PAD = 4  # px of paper around the line
 
 
+def split_face(font: str) -> tuple[str, int]:
+    """'file.ttc#2' selects face 2 of a collection; plain paths are face 0."""
+    path, _, index = font.partition("#")
+    return path, int(index or 0)
+
+
 @lru_cache(maxsize=None)
-def _load(font_path: str):
-    data = open(font_path, "rb").read()
-    hb_font = hb.Font(hb.Face(data))
-    return freetype.Face(font_path), hb_font
+def _load(font: str):
+    path, index = split_face(font)
+    data = open(path, "rb").read()
+    hb_font = hb.Font(hb.Face(data, index))
+    return freetype.Face(path, index=index), hb_font
 
 
 def render(font_path: str, text: str, size_pt: float = 8.0, dpi: int = 200,

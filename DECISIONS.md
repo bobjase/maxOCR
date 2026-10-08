@@ -90,12 +90,33 @@ As written (per instance), the curve is degenerate: the R11a margin is read at t
 
 5,000 lines, seed 202, sha256 `7644d190a6067344892df8551acf757a6434d6c40207fa6d91d8c6a6c9398fcb`, evaluated at s=0.5 for all 6 fonts x 2 suites (60k images, 205 s).
 
+## Iosevka working copies (R33c) and build determinism (2026-10-08)
+
+- First attempt hard-linked the whole checkout into each worker copy. A build compiles the glyph code into `packages/*/lib`, so 16 parallel first builds wrote into the same hard-linked files and corrupted them (`latin.mjs`: "Cannot read properties of undefined"). Fixed: only `node_modules` is hard-linked; everything else is copied, and `lib` is compiled per copy.
+- The base checkout shared those files. It was cleaned and rebuilt; the rebuilt subset font is identical to the earlier baseline in every table and every glyph outline and advance. Only `head.created/modified` differ.
+- Font file hashes are therefore not reproducible across builds (embedded timestamp). R45 comparisons must use font content (tables minus `head` timestamps), or builds must pin the timestamp (`SOURCE_DATE_EPOCH`, to be checked).
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
 2. **Context check (proposed addition, measured only).** Evaluate fonts with context available (Tesseract dictionaries on, PaddleOCR with no alphabet restriction, real words and format-constrained codes such as VIN-style strings) to confirm gains don't reverse when an engine can use context. Not an optimization target. Extends the PRD's existing R13b word control. Note: VINs already exclude I/O/Q and UPCs are digits-only, and most measured confusions are digit-vs-letter, so the expected gain is largest for unconstrained alphanumeric codes (serials, licence keys, part numbers).
 
 3. **Best baseline is a near tie.** At the operating point Source Code Pro (8.45%) leads IBM Plex Mono (8.67%) by 0.21 points, and an earlier, mis-ordered version of the procedure ranked Iosevka first. Proposal: any font within noise of the best counts as co-best and MaxOCR must beat all of them; Source Code Pro is the R40/R40b reference.
+
+## R37b worker allocation (measured 2026-10-08)
+
+One synthetic generation: 32 candidate builds (weight 380..411, every glyph rebuilt) on an 8-core-split sweep, each candidate evaluated on a 500-line optimization bank, suite (a), PaddleOCR on all 16,000 images and the Tesseract gate on all 32 candidates (worst case). Builds and evaluation overlap. `scripts/timing.py`, `out/report/timing.json`.
+
+| Build workers x Tesseract workers | Generation wall | Mean build | PaddleOCR time |
+|---|---|---|---|
+| 4 x 16 | 69.7 s | 8.0 s | 50.8 s |
+| **8 x 12** | **62.8 s** | 9.3 s | 53.7 s |
+| 12 x 8 | 65.0 s | 11.8 s | 54.0 s |
+| 16 x 4 | 65.7 s | 14.2 s | 53.3 s |
+
+- R37b allocation: **8 build workers, 12 Tesseract workers**. The split barely matters; PaddleOCR running serially in the parent (~3.3 ms/image) bounds the generation.
+- R38: a generation takes ~1 minute against the 10-minute cap (and inside the PRD's "under 2 minutes" estimate). Population or bank size can grow ~5-10x before the cap binds. If needed, a second PaddleOCR process on the GPU is the next lever, not more cores.
+- One-time compile: 16 working copies doing their first build in parallel took 197 s each (vs 16.7 s alone). One-time per copy; does not affect generations.
 
 ## Early timings (reference machine, single build, Iosevka v34.9.0 @ 2487637)
 
