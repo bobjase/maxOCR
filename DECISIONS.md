@@ -133,6 +133,22 @@ What separates the best faces from the worst (Spearman of generic shape features
 - **I/J, O/Q**: height (-0.49, -0.47): a J or Q tail that descends below the baseline.
 - General rule: confusable pairs are kept apart when their silhouettes differ in width, in vertical extent (above/below baseline), or by a distinctive appendage. Dots, slashes and other interior marks do not register. Screening only; per-pair results other than 0/O are not yet confirmed on a fresh bank.
 
+Confirmation of 5/S, 1/I, 8/B (fresh 1,000-line bank, seed 808, top 10 readable faces per pair from screening plus the 6 baselines, equal capital height; `out/report/survey_confirm_pairs.csv`). Pair confusion %, pooled both directions, Wilson 95% CI:
+
+| Pair | Engine, condition | Best upright faces | Iosevka (rung-0 parent) | Best baseline |
+|---|---|---|---|---|
+| 5/S | Tesseract clean | Georgia Bold 0.6 [0.2-2.0], Optima ExtraBlack 0.6 | 21.6 [17.7-26.1] | Source Code Pro 8.6 |
+| 5/S | Tesseract s=0.5 | Georgia 8.0 [5.7-11.3] | 22.7 [18.7-27.3] | OCR-B 19.4 |
+| 8/B | PaddleOCR s=0.5 | Bell MT, Bookman Old Style Bold 0.0 [0.0-1.2] | 8.6 [6.0-12.1] | Source Code Pro 1.8 |
+| 8/B | Tesseract s=0.5 | MF Rinat 0.6 [0.2-2.2], Bookman Old Style Bold 1.5 | 13.8 [10.4-17.9] | OCR-A 9.5 |
+| 1/I | Tesseract clean | Bookman Old Style Bold 1.2 [0.5-3.0], Cascadia 2.9 | 9.7 [7.0-13.4] | Source Code Pro 2.9 |
+| 1/I | Tesseract s=0.5 | Courier New Bold 5.6 [3.6-8.6] | 12.7 [9.6-16.7] | Source Code Pro 6.2 |
+
+- 5/S and 8/B: confirmed; the best faces beat every baseline, by the widest margin on Tesseract.
+- 1/I: the best faces only match the best programming-font baselines (flagged 1, serifed I), which already handle this pair; Iosevka, OCR-A and OCR-B do not. The lesson for MaxOCR is to adopt that shape, not to look beyond it.
+- On clean input PaddleOCR is near 0% for these pairs on almost every face; the differences appear under degradation and on Tesseract.
+- Italic faces appear among the winners (Bell MT Italic, Georgia Bold Italic); MaxOCR is upright, so only upright faces are cited as design references.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
