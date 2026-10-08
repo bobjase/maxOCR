@@ -12,12 +12,12 @@ The PRD (v0.3.1) is frozen until M1a exit. Deviations and clarifications made du
 | 2026-10-08 | R11a | A CTC "run" is a maximal span of frames with the same non-blank argmax (standard greedy collapse), not any non-blank span between blanks | Adjacent distinct characters (e.g. `AB`) often have no blank between them; the PRD wording would merge them |
 | 2026-10-08 | R12b | Rank computed after sorting ChoiceIterator alternatives by confidence | Measured: raw list order is non-monotonic in ~2% of symbols; chosen symbol is first in 100% |
 | 2026-10-08 | R14 | Apple Vision omitted | No Mac available |
-| 2026-10-08 | Sec. 7 | Severity is one dial s in [0, 1+] scaling all operators together; s = 1 is the Section 7 placeholder chain | Section 7 needs a single severity axis to sweep |
+| 2026-10-08 | Sec. 7 | Severity is one dial s in [0, 1+] scaling all R5 operators together (`maxocr/degrade.py`); at s = 1 the blur, JPEG and dilation centre on the Section 7 placeholder, but every other operator is also active, so s = 1 is much harsher than the placeholder chain alone | Section 7 needs a single severity axis to sweep |
 | 2026-10-08 | R29 | "No worse" means not statistically significantly worse (one-sided test), not a strict point-estimate comparison | With ~300 samples per character, a strict rule rejects good candidates on noise |
 | 2026-10-08 | R11 (sizing) | Each engine's own input preprocessing is treated as part of the engine | Simplest faithful use of off-the-shelf engines |
 | 2026-10-08 | Sec. 11 | OCR-B source: Matthew Skala's free OCR-B. Inter dropped from M1a | Free licence; Inter is proportional and complicates alignment for little go/no-go value |
 | 2026-10-08 | R33 | Iosevka fork base: v34.9.0 | Latest stable release |
-| 2026-10-08 | Sec. 7 | Operating point by relative rule (user decision). Best baseline = lowest within-cluster rate averaged over both engines and s in [0, 0.5] (suite a, uncropped, PaddleOCR clusters). Operating point = first swept s where its PaddleOCR within-cluster rate >= 1.5x its s=0 rate. Result: Source Code Pro, s = 0.5 (PaddleOCR 4.51% vs 2.81% clean; Tesseract 13.64%) | The 2% absolute target is unreachable: every font exceeds it at s=0 |
+| 2026-10-08 | Sec. 7 | Operating point by relative rule (user decision); 2% absolute target replaced. **Superseded in procedure** by "Operating point procedure, corrected" below (first version interleaved font and severity choice). Final: s = 0.5, best baseline Source Code Pro | The 2% absolute target is unreachable: every font exceeds it at s=0 |
 
 ## Observations to carry into v0.4
 
@@ -105,7 +105,7 @@ As written (per instance), the curve is degenerate: the R11a margin is read at t
 
 ## R37b worker allocation (measured 2026-10-08)
 
-One synthetic generation: 32 candidate builds (weight 380..411, every glyph rebuilt) on an 8-core-split sweep, each candidate evaluated on a 500-line optimization bank, suite (a), PaddleOCR on all 16,000 images and the Tesseract gate on all 32 candidates (worst case). Builds and evaluation overlap. `scripts/timing.py`, `out/report/timing.json`.
+One synthetic generation, repeated for each worker split: 32 candidate builds (weight 380..411, every glyph rebuilt), each candidate evaluated on a 500-line optimization bank, suite (a), PaddleOCR on all 16,000 images and the Tesseract gate on all 32 candidates (worst case). Builds and evaluation overlap. `scripts/timing.py`, `out/report/timing.json`.
 
 | Build workers x Tesseract workers | Generation wall | Mean build | PaddleOCR time |
 |---|---|---|---|
