@@ -149,11 +149,29 @@ Confirmation of 5/S, 1/I, 8/B (fresh 1,000-line bank, seed 808, top 10 readable 
 - On clean input PaddleOCR is near 0% for these pairs on almost every face; the differences appear under degradation and on Tesseract.
 - Italic faces appear among the winners (Bell MT Italic, Georgia Bold Italic); MaxOCR is upright, so only upright faces are cited as design references.
 
+## Iosevka levers for the survey lessons (2026-10-08, `scripts/iosevka_variants.py`)
+
+Built-in variants of v34.9.0 for the confusable characters were built (one build per variant index, all characters at once) and inspected (`out/report/iosevka_variants.png`, `.csv`).
+
+**Rung-0 shortlist (built-in variants that implement a survey lesson):**
+- 1/I: `one = base-flat-top-serif` or `base-long-top-serif` (flag and foot) with `capital-i = serifed`: the Cascadia/Consolas/Courier shape that wins 1/I.
+- 0/O: `zero = diamond-*`: the only zero body that changes the outline (standard and oval bodies are the O's shape; dots and slashes are interior marks, which the survey shows the engines ignore).
+- 8/B: `capital-b = standard-bilateral-serifed` (straight stem with serifs, Bookman-like) or `more-asymmetric-interrupted-*`; `eight = crossing-asymmetric`.
+- 5/S: `capital-s = bilateral-serifed` (serifed terminals the 5 lacks); `five` variants differ little.
+- I/J: `capital-j = descending-*` (tail below the baseline). O/Q: `capital-q` tail styles (`detached-tailed`, `crossing`).
+
+**Not reachable with variants or spacing (needs rung 2, i.e. forked shape parameters):**
+- **O wider than 0**, the strongest 0/O lever. Iosevka draws both 0 and O between the same sidebearing lines (`SB`..`RightSB`; `number/0.ptl`, `letter/latin/o.ptl`), so their ink widths are identical (388 units) for every zero variant. Quasi-proportional spacing does not change them (it narrows I and widens M/W only). The fork is small: `ZeroShapeBase` already takes a horizontal inset (`offsetX`) for the zero, and the O needs a matching outset; Q reuses the O shape and must follow.
+- A 5 that descends below the baseline; a short (old-style) zero; a smaller 8.
+
+**Spec conflict to resolve in v0.4:** R2a sets the ink-box tolerance from the 95th percentile of the rung-0 variant set. No variant widens the O, so R2a as written forbids the single most effective change found by the survey. A monospaced cell still has room: at advance 500 the O's ink can grow from 388 toward ~460 and the 0 can narrow toward ~300 (ratio ~1.5; Courier New achieves 1.33 inside a fixed cell). Proposal: set R2a per glyph from the advance minus a minimum sidebearing, not from the rung-0 distribution.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
 2. **Context check (proposed addition, measured only).** Evaluate fonts with context available (Tesseract dictionaries on, PaddleOCR with no alphabet restriction, real words and format-constrained codes such as VIN-style strings) to confirm gains don't reverse when an engine can use context. Not an optimization target. Extends the PRD's existing R13b word control. Note: VINs already exclude I/O/Q and UPCs are digits-only, and most measured confusions are digit-vs-letter, so the expected gain is largest for unconstrained alphanumeric codes (serials, licence keys, part numbers).
 
+4. **R2a ink-box tolerance vs the O-width lever** (see "Iosevka levers"): proposal to set the tolerance per glyph from the advance minus a minimum sidebearing.
 3. **Best baseline is a near tie.** At the operating point Source Code Pro (8.45%) leads IBM Plex Mono (8.67%) by 0.21 points, and an earlier, mis-ordered version of the procedure ranked Iosevka first. Proposal: any font within noise of the best counts as co-best and MaxOCR must beat all of them; Source Code Pro is the R40/R40b reference.
 
 ## R37b worker allocation (measured 2026-10-08)
