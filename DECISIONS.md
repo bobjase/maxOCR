@@ -121,6 +121,18 @@ Confirmation on a fresh 1,000-line bank (seed 707), same setup, top 20 readable 
 - The two engines respond to different features. A wide O vs narrow 0 is enough for PaddleOCR (Book Antiqua, Garamond, Palatino: full-height zeros, 2.7-4.3% clean) but leaves Tesseract at ~26%. The faces that also do well on Tesseract (High Tower Text, Constantia, Corbel, MF Rinat: 10-20%) combine the wide O with a **short, old-style zero** (0 at 62-80% of cap height).
 - Caveat for the basic-Latin expansion: a short zero approaches lowercase o. A short-zero design trades 0/O confusion for 0/o confusion once lowercase is in scope.
 
+### All pairs (screening, 285 readable faces, `scripts/survey_pairs.py`)
+
+Median pair confusion across readable faces (mean over engines and conditions): 0/O 25.3%, 5/S 12.4%, 1/I 8.8%, 8/B 4.0%, 9/I 2.8%, 6/G 1.9%, 4/A 1.9%, I/J 1.8%, 2/Z 1.4%; every other cluster pair is under 1% for the median face. Most of the objective-cluster pairs are problems of our baseline (programming/OCR) fonts rather than of fonts in general.
+
+What separates the best faces from the worst (Spearman of generic shape features with pair confusion, plus the contact sheets in `out/report/survey_sheets/`, local only):
+- **0/O**: width difference (-0.82) and overlap (+0.70): wide round O, narrow 0.
+- **8/B**: width (-0.65) and ink (-0.60): a small or narrow 8 beside a wide B with a straight stem; worst are geometric sans faces where 8 and B have the same size and roundness.
+- **5/S**: height (-0.47) and ink (-0.55): best are old-style 5s that drop below the baseline (Georgia, Constantia); worst are humanist sans and italics where 5 and S share curves.
+- **1/I**: no generic feature predicts it; the sheet shows why: best faces give the 1 a flag and foot and the I full slab serifs (Cascadia, Consolas, Courier New, Verdana); worst are bare vertical bars (Gill Sans) where 1 and I are the same stroke. Monospaced faces do best on this pair: the fixed cell pushes the I to carry serifs.
+- **I/J, O/Q**: height (-0.49, -0.47): a J or Q tail that descends below the baseline.
+- General rule: confusable pairs are kept apart when their silhouettes differ in width, in vertical extent (above/below baseline), or by a distinctive appendage. Dots, slashes and other interior marks do not register. Screening only; per-pair results other than 0/O are not yet confirmed on a fresh bank.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.

@@ -29,6 +29,7 @@ SURVEY = ROOT / "out" / "survey"
 OUT = ROOT / "out" / "report"
 SHEETS = OUT / "survey_sheets"
 MIN_N = 15
+MAX_CHAR_ERROR = 0.15  # readable faces only: unreadable faces look "good" on every pair
 SHEET_DPI = 1200   # ~80 px cap height at the survey's matched sizes
 
 
@@ -107,7 +108,11 @@ def main():
             if rates and min(ns) >= MIN_N:
                 rows.append({"pair": f"{a}/{b}", "font": font, "pair_confusion": float(np.mean(rates)),
                              "min_n": int(min(ns))})
+    err = pd.read_csv(OUT / "survey_faces.csv").groupby("font").char_error.mean()
+    readable = set(err[err < MAX_CHAR_ERROR].index)
+    print(f"readable faces: {len(readable)} of {len(faces)}")
     per = pd.DataFrame(rows).merge(faces, on="font")
+    per = per[per.font.isin(readable)]
     per.to_csv(OUT / "survey_pairs.csv", index=False)
 
     SHEETS.mkdir(parents=True, exist_ok=True)
