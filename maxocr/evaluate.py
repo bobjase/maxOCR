@@ -19,7 +19,9 @@ _tess = None
 # One thread per worker: parallelism comes from the pool. These must be in the environment
 # before a worker starts, because OpenMP (loaded by numpy at import, before any initializer
 # runs) reads its limit once at load. Setting them inside the worker left 24 threads each.
-SINGLE_THREAD_ENV = {"OMP_NUM_THREADS": "1", "OMP_THREAD_LIMIT": "1",
+# Tesseract's LSTM asks for exactly 4 OpenMP threads; Intel's OpenMP (pulled in with PyTorch)
+# warns on every call when the limit caps that at 1, so its warnings are silenced.
+SINGLE_THREAD_ENV = {"OMP_NUM_THREADS": "1", "OMP_THREAD_LIMIT": "1", "KMP_WARNINGS": "0",
                      "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
 
 

@@ -8,6 +8,14 @@ from scipy.stats import binom
 from .corpus import PRIMARY_ALPHABET
 
 ALPHA = 0.01
+# Effect-size floor (v0.4 deviation from R22b): an edge c->d must also carry at least this share
+# of c's errors. Without it, large samples make weak-but-consistent edges significant and they
+# chain most of the alphabet into one component (seen for Tesseract at s=0, both engines at s=0.5).
+MIN_SHARE = 0.25
+# Absolute floor: the edge must occur in at least this fraction of the source's occurrences.
+# The share floor alone admits rare characters' dominant error (e.g. 3->E at 0.2%), which still
+# chains clusters through edges that carry almost no substitution mass.
+MIN_RATE = 0.01
 
 
 def substitution_counts(chars: pd.DataFrame) -> pd.DataFrame:
@@ -21,13 +29,16 @@ def substitution_counts(chars: pd.DataFrame) -> pd.DataFrame:
     return k
 
 
-def significant_edges(counts: pd.DataFrame, alphabet: str = PRIMARY_ALPHABET, alpha: float = ALPHA) -> pd.DataFrame:
+def significant_edges(counts: pd.DataFrame, alphabet: str = PRIMARY_ALPHABET, alpha: float = ALPHA,
+                      min_share: float = 0.0, min_rate: float = 0.0) -> pd.DataFrame:
     """R22b null: source c's substitutions spread uniformly over the other len(alphabet)-1 classes.
-    One-sided binomial test per directed pair, Bonferroni over all directed pairs."""
+    One-sided binomial test per directed pair, Bonferroni over all directed pairs; then keep edges
+    carrying at least min_share of the source's errors and occurring at rate >= min_rate."""
     m = len(alphabet) * (len(alphabet) - 1)
     p0 = counts.errors / counts.n / (len(alphabet) - 1)
-    counts = counts.assign(p_value=binom.sf(counts.k - 1, counts.n, p0))
-    return counts[counts.p_value < alpha / m].sort_values("rate", ascending=False)
+    counts = counts.assign(p_value=binom.sf(counts.k - 1, counts.n, p0), share=counts.k / counts.errors)
+    sig = counts[counts.p_value < alpha / m]
+    return sig[(sig.share >= min_share) & (sig.rate >= min_rate)].sort_values("rate", ascending=False)
 
 
 def components(edges: pd.DataFrame) -> list[list[str]]:
@@ -49,13 +60,14 @@ def components(edges: pd.DataFrame) -> list[list[str]]:
     return sorted((sorted(g) for g in groups.values() if len(g) > 1), key=lambda g: (-len(g), g))
 
 
-def stability(edges: pd.DataFrame) -> dict:
-    """R22b: components when the inclusion floor is moved 2x either way around the weakest edge."""
-    if edges.empty:
-        return {}
-    floor = edges.rate.min()
-    return {f"{f}x": components(edges[edges.rate >= floor * f]) for f in (0.5, 2.0)} | {
-        "baseline": components(edges)}
+def stability(significant: pd.DataFrame, min_share: float = MIN_SHARE, min_rate: float = MIN_RATE) -> dict:
+    """R22b stability: components with both floors halved and doubled.
+    `significant` is the output of significant_edges with no floors."""
+    out = {}
+    for f in (0.5, 1.0, 2.0):
+        keep = significant[(significant.share >= f * min_share) & (significant.rate >= f * min_rate)]
+        out[f"{f:g}x floors"] = components(keep)
+    return out
 
 
 def within_cluster_rate(chars: pd.DataFrame, clusters: list[list[str]]) -> float:
@@ -90,11 +102,13 @@ def reliability_curve(margin: pd.Series, err: pd.Series, bins: int = 20) -> pd.D
 
 
 def cluster_report(chars: pd.DataFrame, engine: str, suite: str = "a") -> dict:
-    sub = chars[(chars.engine == engine) & (chars.suite == suite)]
-    edges = significant_edges(substitution_counts(sub))
-    return {"engine": engine, "suite": suite,
-            "edges": edges[["truth", "pred", "k", "n", "rate", "p_value"]].to_dict("records"),
-            "clusters": components(edges), "stability": stability(edges)}
+    """R22 on uncropped rows of one engine and suite."""
+    sub = chars[(chars.engine == engine) & (chars.suite == suite) & ~chars.cropped]
+    sig = significant_edges(substitution_counts(sub))
+    edges = sig[(sig.share >= MIN_SHARE) & (sig.rate >= MIN_RATE)]
+    return {"engine": engine, "suite": suite, "min_share": MIN_SHARE, "min_rate": MIN_RATE,
+            "edges": edges[["truth", "pred", "k", "n", "rate", "share", "p_value"]].to_dict("records"),
+            "clusters": components(edges), "stability": stability(sig)}
 
 
 def union_table(paddle_edges: pd.DataFrame, tess_edges: pd.DataFrame) -> pd.DataFrame:

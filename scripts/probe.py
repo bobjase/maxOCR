@@ -14,8 +14,10 @@ from maxocr.corpus import PRIMARY_ALPHABET
 from maxocr.fonts import BASELINES
 from maxocr.probe import best_of_seeds, make_dataset
 
-CLUSTERS = [["1", "6", "G", "I", "L"], ["0", "D", "O"], ["2", "Z"], ["5", "S"], ["8", "B"]]
-OUT = Path(__file__).resolve().parents[1] / "out" / "probe"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "out" / "probe"
+# Final objective clusters (validation bank at the operating point); run scripts/m1a_validation.py first.
+CLUSTERS = json.loads((ROOT / "out" / "report" / "clusters.json").read_text())["objective"]
 
 
 def main():
@@ -55,7 +57,7 @@ def main():
     tag = f"{a.font.replace(' ', '')}_{'clean' if a.clean else f'sev_{a.severity:.2f}'}"
     result = {"font": a.font, "condition": "clean" if a.clean else a.severity, "test_error_pct": round(100 * err, 3),
               "within_cluster_pct": round(float(agg), 3), "per_cluster_within_pct": per_cluster,
-              "zero_O_counts": zo, "seed_runs": seed_runs, "n_train": a.n_train, "n_test": a.n_test,
+              "zero_O_counts": zo, "seed_runs": seed_runs, "clusters": CLUSTERS, "n_train": a.n_train, "n_test": a.n_test,
               "seconds": {"data": round(t_data, 1), "total": round(t_all, 1)}}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{tag}.json").write_text(json.dumps(result, indent=1))

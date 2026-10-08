@@ -1,6 +1,7 @@
 """M1a plot 1: within-cluster substitution vs severity, per baseline font, per engine (suite a).
 
-Clusters are PaddleOCR's objective clusters (R22a) derived at the lowest swept severity.
+Clusters are the final objective clusters from out/report/clusters.json (validation bank at the
+operating point; run scripts/m1a_validation.py first).
 Writes out/report/plot1_severity.png and plot1_severity.csv.
 """
 from pathlib import Path
@@ -11,7 +12,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from maxocr.analysis import components, significant_edges, substitution_counts, within_cluster_rate  # noqa: E402
+import json  # noqa: E402
+
+from maxocr.analysis import within_cluster_rate  # noqa: E402
 from maxocr.fonts import BASELINES  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,8 +37,7 @@ def load(sev: str) -> pd.DataFrame:
 
 def main():
     sevs = sorted(p.name[4:8] for p in SWEEP.glob("sev_*_chars.parquet"))
-    base = load(sevs[0])
-    clusters = components(significant_edges(substitution_counts(base[base.engine == "paddle"])))
+    clusters = json.loads((OUT / "clusters.json").read_text())["objective"]
 
     rows = []
     for s in sevs:

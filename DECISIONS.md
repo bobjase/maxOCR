@@ -41,7 +41,7 @@ Undegraded renders (integer origin, no jitter, plain Otsu for suite a), same 2,0
 
 ## R40b probe classifier (2026-10-08)
 
-Small CNN (3 conv layers), 54k train / 10.8k test, middle glyph of 3-character strings, cropped stratum excluded, 3 seeds with the lowest-training-error seed kept (selection never uses test data). Clusters are the PaddleOCR objective clusters.
+Small CNN (3 conv layers), 54k train / 10.8k test, middle glyph of 3-character strings, cropped stratum excluded, 3 seeds with the lowest-training-error seed kept (selection never uses test data). The table below used the provisional clusters (sweep, s=0, before the floors were added); `scripts/probe.py` now reads the final objective clusters, and the reference fonts are re-run with them.
 
 | Font | Condition | Probe within-cluster % | PaddleOCR within-cluster % | Tesseract within-cluster % |
 |---|---|---|---|---|
@@ -59,10 +59,43 @@ Small CNN (3 conv layers), 54k train / 10.8k test, middle glyph of 3-character s
 - The estimate is optimistic by construction (trains on the exact degradation distribution, single glyph cells).
 - Seed check: one OCR-A seed diverged (11.8% train error) and was correctly discarded. "Diverged" means training error more than 1 pp above the best seed's.
 
+## Cluster rule with floors (decided 2026-10-08)
+
+R22b is kept (one-sided binomial vs uniform-error null, Bonferroni, alpha 0.01) and an edge c->d must also pass two floors (`maxocr/analysis.py`):
+- **Share floor, 25%** (approved by James): d receives at least a quarter of c's errors. Without it, weak-but-consistent edges become significant at these sample sizes and chain most of the alphabet into one component (Tesseract at s=0; both engines at s=0.5).
+- **Rate floor, 1%** (my call, same spirit, easy to reverse): the edge occurs in at least 1% of c's occurrences. The share floor alone admitted rare characters' dominant error (J->3 0.40%, 3->E 0.20%, 4->U/Y 0.24%), which still chained {0,O} and {8,B} with 3, E and J. Tesseract's gate edges are all >= 4.9%, so this only affects PaddleOCR.
+
+Stability (R22b "2x either way") is reported with both floors halved and doubled. Applied identically to both engines.
+
+**Final clusters, validation bank, s=0.5, suite (a), uncropped:**
+- Objective (PaddleOCR): {0,8,B,D,E,O,Q} {6,G,L} {H,M,N} {1,I} {2,Z} {5,S} {9,A} {U,W}. At 2x floors the first splits into {0,D,O} and {8,B}; at 0.5x floors {U,W} gains V and {K,X} appears. The {0,O}-{8,B} link is real: PaddleOCR reads 0 as 8 in 10.2% of cases (dotted/slashed zeros).
+- Gate (Tesseract): {1,3,9,I,J} {0,D,O} {2,Z} {4,A} {5,S} {6,G} {7,T} {8,B} {M,N} {V,Y}.
+
+## Operating point procedure, corrected (2026-10-08)
+
+My first implementation chose the best font first (averaged over severities) and then derived the severity from it, which interleaves the two steps PRD Section 7 keeps separate. Corrected order (`scripts/operating_point.py`, then `scripts/m1a_validation.py`):
+1. Anchor font = lowest two-engine within-cluster rate at s=0 (provisional clusters from the sweep): **Iosevka**.
+2. Lock severity = first swept s where the anchor's PaddleOCR within-cluster rate reaches 1.5x its s=0 rate: **s = 0.5** (unchanged).
+3. Best baseline = lowest two-engine within-cluster rate AT s=0.5 on the validation bank with final clusters (PaddleOCR on objective, Tesseract on gate): **Source Code Pro 8.45%**, IBM Plex Mono 8.67%, OCR-B 9.38%, JetBrains Mono 9.46%, **Iosevka 11.04%**, OCR-A 12.52%.
+
+The PRD's median-font anchor does not work with a relative rule: Tesseract's within-cluster rate barely grows below s=0.5 and then falls, so a two-engine median never reaches 1.5x, and a PaddleOCR-only median only gets there near s=1.0, where the metric no longer measures confusability.
+
+**Iosevka, the font MaxOCR is built from, is 5th of 6 at the operating point.** Rung 0 must close ~2.6 points just to match the best baseline.
+
+## R27b reliability curve (2026-10-08)
+
+As written (per instance), the curve is degenerate: the R11a margin is read at the frame of the decoded run, so margin < 0 exactly when the instance is an error. Replaced with a per-glyph curve: median margin of each (font, character) over the validation bank vs that glyph's realized within-cluster error, with a weighted isotonic fit. All six fonts fall on one curve (the margin is font-independent as a predictor, which is what an optimization signal needs). Fitted error drops below 1% at a median margin of ~9.4 and to ~0 above ~11.3. Hinge (1.5x the first margin whose fitted error is under target): 14.2 for targets of 0.5% or 1%, 13.8 for 2% (`out/report/hinge.json`). Final hinge waits on the per-cluster targets (open question 1).
+
+## Validation bank (R7)
+
+5,000 lines, seed 202, sha256 `7644d190a6067344892df8551acf757a6434d6c40207fa6d91d8c6a6c9398fcb`, evaluated at s=0.5 for all 6 fonts x 2 suites (60k images, 205 s).
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
 2. **Context check (proposed addition, measured only).** Evaluate fonts with context available (Tesseract dictionaries on, PaddleOCR with no alphabet restriction, real words and format-constrained codes such as VIN-style strings) to confirm gains don't reverse when an engine can use context. Not an optimization target. Extends the PRD's existing R13b word control. Note: VINs already exclude I/O/Q and UPCs are digits-only, and most measured confusions are digit-vs-letter, so the expected gain is largest for unconstrained alphanumeric codes (serials, licence keys, part numbers).
+
+3. **Best baseline is a near tie.** At the operating point Source Code Pro (8.45%) leads IBM Plex Mono (8.67%) by 0.21 points, and an earlier, mis-ordered version of the procedure ranked Iosevka first. Proposal: any font within noise of the best counts as co-best and MaxOCR must beat all of them; Source Code Pro is the R40/R40b reference.
 
 ## Early timings (reference machine, single build, Iosevka v34.9.0 @ 2487637)
 
