@@ -117,6 +117,10 @@ def best_of_seeds(xtr, ytr, xte, yte, seeds=(0, 1, 2)) -> tuple[np.ndarray, list
         pred, tr = train_and_eval(xtr, ytr, xte, yte, seed=sd)
         runs.append({"seed": sd, "train_err_pct": round(100 * tr, 3),
                      "test_err_pct": round(100 * float((pred != yte).mean()), 3),
-                     "diverged": tr > 0.01, "_pred": pred})
+                     "_pred": pred})
     best = min(runs, key=lambda r: r["train_err_pct"])
+    # Diverged = clearly worse than the best seed. A fixed threshold mislabels hard severities,
+    # where every seed's training error is legitimately above zero.
+    for r in runs:
+        r["diverged"] = r["train_err_pct"] > best["train_err_pct"] + 1.0
     return best["_pred"], [{k: v for k, v in r.items() if k != "_pred"} for r in runs]

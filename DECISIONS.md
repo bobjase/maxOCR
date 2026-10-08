@@ -35,6 +35,35 @@ The PRD (v0.3.1) is frozen until M1a exit. Deviations and clarifications made du
 - Above ~s=1.0 errors leave the clusters (unrelated misreads, deletions), so within-cluster rate falls; useful range is s <= ~0.6.
 - Measured throughput: ~300 img/s end to end (24k images per level in 77-81 s), bottleneck PaddleOCR in the main process.
 
+## Clean-condition check (R7a, 2026-10-08)
+
+Undegraded renders (integer origin, no jitter, plain Otsu for suite a), same 2,000-line bank. Character error: PaddleOCR 1.1-5.0%, Tesseract 5.4-18%. The 0/O coin flip persists on clean input (e.g. PaddleOCR reads Iosevka's plain O as 0 in 49% of cases while reading its slashed zero correctly 95% of the time). The confusion is engine behaviour, not a harness artifact.
+
+## R40b probe classifier (2026-10-08)
+
+Small CNN (3 conv layers), 54k train / 10.8k test, middle glyph of 3-character strings, cropped stratum excluded, 3 seeds with the lowest-training-error seed kept (selection never uses test data). Clusters are the PaddleOCR objective clusters.
+
+| Font | Condition | Probe within-cluster % | PaddleOCR within-cluster % | Tesseract within-cluster % |
+|---|---|---|---|---|
+| Source Code Pro | clean | 0.000 | ~1 | ~5-7 |
+| Source Code Pro | s=0.5 | 0.048 | 4.5 | 13.6 |
+| IBM Plex Mono | s=0.5 | 0.072 | 5.5 | 14.7 |
+| JetBrains Mono | s=0.5 | 0.121 | 7.2 | 16.4 |
+| Iosevka | s=0.5 | 0.217 | 7.2 | 12.7 |
+| OCR-A | s=0.5 | 0.000 | 17.4 | 22.0 |
+| OCR-B | s=0.5 | 0.000 | 10.7 | 16.6 |
+| Source Code Pro | s=1.0 | 3.329 | 11.1 | 9.7 |
+
+- At the operating point every baseline font is separable almost perfectly by the probe, while the engines are 20-90x worse. Abort criterion 1 (best baseline within noise of the R40b estimate) does not fire: **go**.
+- OCR-A and OCR-B, the worst fonts for the engines, are perfectly separable by the probe. Their engine errors are a mismatch between font and engine training, not visual ambiguity.
+- The estimate is optimistic by construction (trains on the exact degradation distribution, single glyph cells).
+- Seed check: one OCR-A seed diverged (11.8% train error) and was correctly discarded. "Diverged" means training error more than 1 pp above the best seed's.
+
+## Open questions for James
+
+1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
+2. **Context check (proposed addition, measured only).** Evaluate fonts with context available (Tesseract dictionaries on, PaddleOCR with no alphabet restriction, real words and format-constrained codes such as VIN-style strings) to confirm gains don't reverse when an engine can use context. Not an optimization target. Extends the PRD's existing R13b word control. Note: VINs already exclude I/O/Q and UPCs are digits-only, and most measured confusions are digit-vs-letter, so the expected gain is largest for unconstrained alphanumeric codes (serials, licence keys, part numbers).
+
 ## Early timings (reference machine, single build, Iosevka v34.9.0 @ 2487637)
 
 | Step | Measured | PRD assumption |
