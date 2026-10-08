@@ -1,0 +1,6 @@
+vendor/
+.pixi/
+__pycache__/
+*.pyc
+out/
+scratch/
