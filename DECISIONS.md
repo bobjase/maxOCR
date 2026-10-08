@@ -96,6 +96,31 @@ As written (per instance), the curve is degenerate: the R11a margin is read at t
 - The base checkout shared those files. It was cleaned and rebuilt; the rebuilt subset font is identical to the earlier baseline in every table and every glyph outline and advance. Only `head.created/modified` differ.
 - Font file hashes are therefore not reproducible across builds (embedded timestamp). R45 comparisons must use font content (tables minus `head` timestamps), or builds must pin the timestamp (`SOURCE_DATE_EPOCH`, to be checked).
 
+## Windows font survey (2026-10-08, approved by James)
+
+Measurement only, PaddleOCR and Tesseract (PARSeq held out). 413 installed faces (25 monospaced) with all 36 primary characters, symbol fonts excluded, rendered at equal capital height (Source Code Pro at 8 pt), suite (a), clean (R7a) and s=0.5. Screening: 300 lines per face, cluster characters oversampled 3x (`scripts/font_survey.py`, `scripts/survey_analysis.py`). Fonts are read in place; only names and numbers are kept.
+
+Screening (285 readable faces, mean character error < 15%):
+- The O-to-0 width ratio is the strongest predictor of 0/O confusion (Spearman -0.82 among readable faces; -0.80 PaddleOCR clean, -0.47 Tesseract clean). Baselines sit at ~1.0-1.1; the best readable faces at 1.45-1.8.
+- A dot or slash in the zero does not help (+0.13; none of the top 20 has one).
+- Monospaced faces confuse 0/O about twice as often (PaddleOCR clean median 30% vs 15%, Mann-Whitney p ~1e-6).
+- Short (old-style) zeros help somewhat (median 19% vs 26%).
+
+Confirmation on a fresh 1,000-line bank (seed 707), same setup, top 20 readable + 3 Courier New + the 6 baselines (`scripts/survey_confirm_report.py`, `out/report/survey_confirm.csv`). 0/O pair confusion, pooled over both directions, Wilson 95% CI:
+
+| Face | PaddleOCR clean | PaddleOCR s=0.5 | Tesseract clean | Tesseract s=0.5 |
+|---|---|---|---|---|
+| High Tower Text | 1.2 [0.5-3.1] | 4.6 [2.8-7.4] | 10.1 [7.3-13.8] | 9.5 [6.7-13.1] |
+| Constantia | 4.3 [2.6-7.0] | 7.3 [5.0-10.7] | 12.2 [9.1-16.2] | 15.2 [11.8-19.5] |
+| Book Antiqua | 2.7 [1.5-5.1] | 10.4 [7.5-14.1] | 26.5 [22.0-31.6] | 26.2 [21.8-31.2] |
+| Courier New (best monospaced) | 16.8 [13.1-21.2] | 20.4 [16.4-25.1] | 35.1 [30.1-40.4] | 32.3 [27.5-37.6] |
+| Source Code Pro (best baseline) | 22.6 [18.4-27.4] | 24.4 [20.1-29.3] | 49.7 [44.3-55.1] | 29.3 [24.6-34.4] |
+| OCR-B | 44.8 [39.5-50.2] | 44.5 [39.2-49.9] | 44.8 [39.5-50.2] | 35.7 [30.7-41.0] |
+
+- Confirmed: the best faces beat every baseline on 0/O with non-overlapping intervals on PaddleOCR (High Tower Text ~19x better than Source Code Pro clean).
+- The two engines respond to different features. A wide O vs narrow 0 is enough for PaddleOCR (Book Antiqua, Garamond, Palatino: full-height zeros, 2.7-4.3% clean) but leaves Tesseract at ~26%. The faces that also do well on Tesseract (High Tower Text, Constantia, Corbel, MF Rinat: 10-20%) combine the wide O with a **short, old-style zero** (0 at 62-80% of cap height).
+- Caveat for the basic-Latin expansion: a short zero approaches lowercase o. A short-zero design trades 0/O confusion for 0/o confusion once lowercase is in scope.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.

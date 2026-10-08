@@ -206,6 +206,10 @@ Proposed addition (measurement only): a survey of the fonts installed with Windo
 
 Unchanged from v0.3.1. M1a exit criteria met except the v0.4 freeze, which waits on the [OPEN] items.
 
+### 12.1 Planned scope expansion (owner direction, 2026-10-08)
+
+After the primary-alphabet process works end to end (M3), expand to full Latin including punctuation such as parentheses (proposed M5). Expected work: case pairs that differ mainly in size (o/O, s/S, c/C, v/V, w/W, x/X, z/Z, k/K); merge/split confusions (rn/m, vv/w, cl/d, li/h) needing digraph-aware metrics; punctuation families (( ) [ ] { } | l 1 I !, . , : ;, ' ` ", - _ dashes); a blast-radius map across cases, since Iosevka shares stroke parameters between them. Full-charset candidate builds measured at ~22 s, inside the R38 budget. Scope decided by the owner: **basic Latin** (A-Z, a-z, 0-9 and ASCII punctuation, ~95 characters); accented letters are not included. Further scripts (Greek, Cyrillic, Hebrew) are a possible later direction, one step at a time; Section 4's "Non-Latin scripts" non-goal stands until then.
+
 ## 13. Open questions
 
 1. Human study N. After the M4 pilot.

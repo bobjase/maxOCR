@@ -59,7 +59,9 @@ def render(font_path: str, text: str, size_pt: float = 8.0, dpi: int = 200,
 
     pen_x = 0.0
     baseline = PAD + ascender + oy_int
-    flags = freetype.FT_LOAD_NO_HINTING | freetype.FT_LOAD_RENDER
+    # Always rasterize outlines: some fonts (e.g. MS Gothic) carry embedded 1-bit bitmaps for small
+    # sizes, which FreeType would otherwise use instead of the outline.
+    flags = freetype.FT_LOAD_NO_HINTING | freetype.FT_LOAD_NO_BITMAP | freetype.FT_LOAD_RENDER
     for info, pos in zip(buf.glyph_infos, buf.glyph_positions):
         ft_face.load_glyph(info.codepoint, flags)
         slot = ft_face.glyph
