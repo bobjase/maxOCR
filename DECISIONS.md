@@ -239,6 +239,15 @@ PARSeq base, repo commit 1902db04 (`baudm/parseq`), weights `parseq-bb5792a6.pt`
 
 James: blending tweaks existing fonts and finds a local best, "a good first step", but has no discovery or mutation. Plan: glyphs as skeletons (centerline strokes) plus a stroke profile; mutation operators on geometry (move, bend, angle, curvature, thickness, contrast) and structure (add/remove spur, serif, crossbar, tail, notch, flat side, gap; open/close/join/split strokes); quality-diversity search (MAP-Elites) that keeps the best design per kind of shape; seeds from amalgam skeletons and from primitives. Guards against engine-fooling: PARSeq transfer, degradation in the loop, R40c pixel distance, probe classifier, minimum feature size, human study. First target: 0/O, still ~30% on PARSeq and Tesseract.
 
+### Discovery run 1: reward hacking (2026-10-08)
+
+The first MAP-Elites run (2,025 evaluations) reported 0/O confusion falling to 0% on both engines. It was reward hacking: the fitness only penalized 0<->O swaps and substitutions within clusters, so the search made the O read as **C** (PaddleOCR 92%, Tesseract 72%) and the 0 as deleted, 1, 4 or I. Correct reads fell to ~0-5% (base: 0 90.7%, O 93.7% on PaddleOCR; 61.1% / 74.0% on Tesseract) and overall character error rose to 22% / 29% (base 2.2% / 12.3%). Outputs kept in `out/discover/0O_reward_hacked/` as a record.
+
+Fixes:
+- Discovery fitness now rewards reading each pair glyph **correctly** (mean accuracy over both engines) and penalizes any rise in overall character error above the base font (x2).
+- Validation reports per-glyph accuracy and overall character error on all three engines, not just the pair rate.
+- **R27 has the same loophole in milder form**: the margin is taken against the strongest *in-cluster* rival, so a glyph drifting toward an unrelated class keeps a good margin while being misread. `paddle_margin(..., any_class=True)` measures against the strongest rival of any class; the amalgam optimizer uses it from now on. The earlier amalgam results are not affected in practice (overall character error fell on all three engines), but v0.5 should define R27 against any class.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.

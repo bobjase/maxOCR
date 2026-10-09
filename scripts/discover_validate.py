@@ -94,6 +94,10 @@ def main():
             c = clean[clean.font == n]
             row = {"font": n, "pixel_dist_R40c": round(pixel_distance(p, a, b), 4)}
             for e, dd in (("paddle", g[g.engine == "paddle"]), ("tesseract", g[g.engine == "tesseract"]), ("parseq", pq)):
+                # Correct reads of each pair glyph: a pair rate alone misses glyphs read as a third character.
+                row[f"{e}_acc_{a}_pct"] = round(100 * float((dd[dd.truth == a].pred == a).mean()), 2)
+                row[f"{e}_acc_{b}_pct"] = round(100 * float((dd[dd.truth == b].pred == b).mean()), 2)
+                row[f"{e}_char_err_pct"] = round(100 * float((dd.pred != dd.truth).mean()), 2)
                 row[f"{e}_pair_pct"] = round(100 * pair_rate(dd, a, b), 2)
                 row[f"{e}_within_pct"] = round(100 * within_cluster_rate(dd, rung0.OBJECTIVE), 2)
             for e in ("paddle", "tesseract"):

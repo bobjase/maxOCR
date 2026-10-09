@@ -7,8 +7,9 @@ Both glyphs of the pair (default 0 and O) evolve together; the rest of the font 
 so the search returns qualitatively different solutions, not one optimum.
 
 Fitness (exploratory; uses Tesseract as well as PaddleOCR, see DECISIONS open question 5): on a
-pair-weighted bank at s=0.5, suite (a), 1 - mean over the two engines of the pair's confusion rate,
-minus a penalty for substitutions into other objective-cluster members. PARSeq is held out.
+pair-weighted bank at s=0.5, suite (a), the mean over the two engines of the accuracy of reading
+each pair glyph correctly, minus a penalty for any rise in overall character error above the base
+font. PARSeq is held out.
 
     python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32]
 Writes out/discover/<pair>/archive.json, log.jsonl, gallery.png; fonts in ~/maxocr-work/discover/.
@@ -67,19 +68,23 @@ def cell(ratio, iou):
     return i, j
 
 
-def fitness(chars, a, b) -> dict:
+ERR_PENALTY = 2.0   # per unit of overall character error above the base font's
+
+
+def fitness(chars, a, b, base_err: dict | None) -> dict:
+    """Reward reading each glyph CORRECTLY (not merely "not as its twin": an earlier version only
+    penalized a<->b swaps, and the search made O read as C and 0 as nothing). Penalize any rise in
+    overall character error above the base font, so no glyph can win by turning into a third one."""
     out = {}
-    members = {c: k for k, g in enumerate(rung0.OBJECTIVE) for c in g}
     for e in ("paddle", "tesseract"):
         g = chars[(chars.engine == e) & ~chars.cropped]
         x, y = g[g.truth == a], g[g.truth == b]
+        acc = (float((x.pred == a).mean()) + float((y.pred == b).mean())) / 2
         pair = ((x.pred == b).sum() + (y.pred == a).sum()) / max(len(x) + len(y), 1)
-        m = g[g.truth.isin(members)]
-        other = ((m.pred != m.truth) & (m.pred.map(members) == m.truth.map(members))
-                 & ~(m.truth.isin([a, b]) & m.pred.isin([a, b]))).mean()
-        out[e] = {"pair": float(pair), "other": float(other), "err": float((g.pred != g.truth).mean())}
-    out["fitness"] = 1 - np.mean([out[e]["pair"] for e in ("paddle", "tesseract")]) \
-        - np.mean([out[e]["other"] for e in ("paddle", "tesseract")])
+        err = float((g.pred != g.truth).mean())
+        out[e] = {"acc": acc, "pair": float(pair), "err": err}
+    penalty = 0.0 if base_err is None else np.mean([max(0.0, out[e]["err"] - base_err[e]) for e in ("paddle", "tesseract")])
+    out["fitness"] = float(np.mean([out[e]["acc"] for e in ("paddle", "tesseract")]) - ERR_PENALTY * penalty)
     return out
 
 
@@ -112,6 +117,7 @@ def main():
     paddle = rung0.PaddleRec()
     archive: dict[tuple[int, int], dict] = {}
     n_eval, k_font, t0 = 0, 0, time.time()
+    base_err = None
 
     def evaluate(cands):
         nonlocal n_eval, k_font
@@ -126,7 +132,7 @@ def main():
         chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False)
         for p, g in chars.groupby("font"):
             c = fonts[p]
-            c["score"] = fitness(g, a, b)
+            c["score"] = fitness(g, a, b, base_err)
             ratio, iou, ink_ratio = descriptors(c["ga"], c["gb"])
             c["ratio"], c["iou"] = ratio, iou
             key = cell(ratio, iou)
@@ -136,12 +142,19 @@ def main():
                 archive[key] = c
             n_eval += 1
             logf.write(json.dumps({"n": n_eval, "cell": key, "fitness": round(c["score"]["fitness"], 4),
-                                   "paddle_pair": round(c["score"]["paddle"]["pair"], 4),
-                                   "tess_pair": round(c["score"]["tesseract"]["pair"], 4),
+                                   "paddle_acc": round(c["score"]["paddle"]["acc"], 4),
+                                   "tess_acc": round(c["score"]["tesseract"]["acc"], 4),
+                                   "paddle_err": round(c["score"]["paddle"]["err"], 4),
+                                   "tess_err": round(c["score"]["tesseract"]["err"], 4),
                                    "ratio": round(ratio, 3), "iou": round(iou, 3), "ops": c.get("ops", []),
                                    "origin": c.get("origin"), "new_elite": bool(improved)}) + "\n")
         logf.flush()
 
+    # The base alone first: its overall error is the reference for the error penalty.
+    evaluate([{"ga": seeds[0][1], "gb": seeds[0][2], "origin": "base", "ops": []}])
+    b0 = next(iter(archive.values()))["score"]
+    base_err = {e: b0[e]["err"] for e in ("paddle", "tesseract")}
+    archive.clear()
     evaluate([{"ga": ga, "gb": gb, "origin": name, "ops": []} for name, ga, gb in seeds])
     best0 = max(archive.values(), key=lambda c: c["score"]["fitness"])
     print(json.dumps({"event": "seeded", "cells": len(archive), "best": round(best0["score"]["fitness"], 4),
@@ -164,8 +177,10 @@ def main():
         best = max(archive.values(), key=lambda c: c["score"]["fitness"])
         print(json.dumps({"event": "batch", "evals": n_eval, "cells": len(archive),
                           "best_fitness": round(best["score"]["fitness"], 4),
-                          "best_paddle_pair": round(best["score"]["paddle"]["pair"], 4),
-                          "best_tess_pair": round(best["score"]["tesseract"]["pair"], 4),
+                          "best_paddle_acc": round(best["score"]["paddle"]["acc"], 4),
+                          "best_tess_acc": round(best["score"]["tesseract"]["acc"], 4),
+                          "best_paddle_err": round(best["score"]["paddle"]["err"], 4),
+                          "best_tess_err": round(best["score"]["tesseract"]["err"], 4),
                           "minutes": round((time.time() - t0) / 60, 1)}), flush=True)
         with open(out / "archive.pkl", "wb") as f:
             pickle.dump(archive, f)
@@ -186,7 +201,7 @@ def gallery(rows, a, b, path, base):
         img = render(r["font"], f"{a}{b} {b}{a}8{a}D{b}Q", 9.0, 360)
         img = cv2.copyMakeBorder(img, 4, 34, 8, 8, cv2.BORDER_CONSTANT, value=255)
         label = r["origin"][:22] if r["fitness"] is None else \
-            f"F={r['fitness']:.3f} P={r['paddle']['pair']:.2f} T={r['tesseract']['pair']:.2f}"
+            f"F={r['fitness']:.3f} accP={r['paddle']['acc']:.2f} accT={r['tesseract']['acc']:.2f}"
         cv2.putText(img, label, (6, img.shape[0] - 18), cv2.FONT_HERSHEY_SIMPLEX, 0.42, 50, 1, cv2.LINE_AA)
         if r["fitness"] is not None:
             cv2.putText(img, f"w-ratio {r['ratio']:.2f} IoU {r['iou']:.2f} {r['origin'][:14]}", (6, img.shape[0] - 5),

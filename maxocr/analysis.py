@@ -80,8 +80,14 @@ def within_cluster_rate(chars: pd.DataFrame, clusters: list[list[str]]) -> float
     return float(hit.mean())
 
 
-def paddle_margin(chars: pd.DataFrame, classes: list[str], clusters: list[list[str]]) -> pd.Series:
-    """R27: log-odds of gt vs strongest in-cluster competitor, from the R11a posterior."""
+def paddle_margin(chars: pd.DataFrame, classes: list[str], clusters: list[list[str]],
+                  any_class: bool = False) -> pd.Series:
+    """R27: log-odds of gt vs its strongest competitor, from the R11a posterior.
+
+    any_class=False is R27 as written: competitor = strongest other member of gt's cluster. That
+    leaves a loophole: a glyph drifting toward an unrelated class keeps a good margin over its
+    cluster-mates while being misread (seen in discovery: O optimized into C). any_class=True uses
+    the strongest competitor of any class except blank."""
     idx = {c: i for i, c in enumerate(classes)}
     rivals = {c: [idx[o] for o in g if o != c] for g in clusters for c in g}
     out = np.full(len(chars), np.nan)
@@ -90,7 +96,14 @@ def paddle_margin(chars: pd.DataFrame, classes: list[str], clusters: list[list[s
             continue
         p = np.frombuffer(raw, dtype=np.float16).astype(np.float64)
         eps = 1e-9
-        out[r] = np.log(p[idx[gt]] + eps) - np.log(p[rivals[gt]].max() + eps)
+        if any_class:
+            q = p.copy()
+            q[0] = 0.0              # blank
+            q[idx[gt]] = 0.0
+            rival = q.max()
+        else:
+            rival = p[rivals[gt]].max()
+        out[r] = np.log(p[idx[gt]] + eps) - np.log(rival + eps)
     return pd.Series(out, index=chars.index)
 
 

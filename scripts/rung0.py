@@ -139,11 +139,11 @@ def ensure_built(con, pool: BuildPool, specs: list[tuple[dict, int]], parent: st
 
 
 # ---------------------------------------------------------------- scoring
-def metrics(chars: pd.DataFrame, classes: list[str]) -> dict:
+def metrics(chars: pd.DataFrame, classes: list[str], any_class: bool = False) -> dict:
     chars = chars[~chars.cropped]
     members = {c: i for i, g in enumerate(OBJECTIVE) for c in g}
     p = chars[(chars.engine == "paddle") & chars.truth.isin(members)].copy()
-    p["margin"] = paddle_margin(p, classes, OBJECTIVE)
+    p["margin"] = paddle_margin(p, classes, OBJECTIVE, any_class=any_class)
     p.loc[p.pred == "", "margin"] = -HINGE          # deletion: counted as an error, worst score
     p["hinged"] = np.minimum(p.margin, HINGE)
     per_line = p.groupby("inst").hinged.mean()

@@ -93,7 +93,8 @@ def score(fonts: dict[str, str], bank, suite, paddle) -> dict[str, dict]:
     chars, _, classes = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False)
     out = {}
     for n, g in chars.groupby("font"):
-        m = rung0.metrics(g, classes)
+        # Margin against the strongest rival of ANY class (closes R27's cluster-only loophole).
+        m = rung0.metrics(g, classes, any_class=True)
         m["per_line"] = json.loads(m["per_line"])
         out[n] = m
     return out
