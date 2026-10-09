@@ -14,7 +14,7 @@ base font. PARSeq is held out.
 
     python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32] [--run NAME]
                                     [--resume out/discover/<run>/archive.pkl] [--short-zero 0.78] [--casefold]
-                                    [--base FONT.ttf]
+                                    [--base FONT.ttf] [--regress 1.0]
 Writes out/discover/<run>/archive.json, log.jsonl, gallery.png (run defaults to the pair); fonts in
 ~/maxocr-work/discover/<run>/. --resume adds a previous run's elites to the seeds (re-evaluated);
 --short-zero adds a copy of each seed with the digit scaled to that height (old-style figure).
@@ -115,11 +115,13 @@ ERR_PENALTY = 2.0   # per unit of overall character error above the base font's
 ENGINES = ("paddle", "tesseract", "easyocr")   # optimizing engines; PARSeq stays held out
 
 
-def fitness(chars, a, b, base_err: dict | None, info: dict) -> dict:
+def fitness(chars, a, b, base_err: dict | None, info: dict, base_per: dict | None = None, regress: float = 0.0) -> dict:
     """Reward reading each target glyph CORRECTLY on its own (isolation bank): mean accuracy over the
     single, mixed and adversarial contexts (the context that favours the glyph is reported but not
     rewarded). An earlier version rewarded "not read as its twin" and the search turned O into C.
-    Penalize any rise in overall character error (neighbours included) above the base font."""
+    Penalize any rise in overall character error (neighbours included) above the base font.
+    regress > 0: also penalize every rewarded cell (engine x glyph x context) that falls below the base
+    font's accuracy, so the search can't buy gains on one glyph with losses on the other (1/I run 1)."""
     out = {}
     ctx_of = {i: v[1] for i, v in info.items()}
     pos_of = {i: v[2] for i, v in info.items()}
@@ -134,7 +136,12 @@ def fitness(chars, a, b, base_err: dict | None, info: dict) -> dict:
         out[e] = {"acc": float(np.mean(rewarded)), "per": per, "err": float((g.pred != g.truth).mean()),
                   "pair": float(np.mean([1 - per[t]["mixed"] for t in (a, b)]))}
     penalty = 0.0 if base_err is None else np.mean([max(0.0, out[e]["err"] - base_err[e]) for e in ENGINES])
-    out["fitness"] = float(np.mean([out[e]["acc"] for e in ENGINES]) - ERR_PENALTY * penalty)
+    drop = 0.0
+    if regress and base_per is not None:
+        drop = float(np.mean([max(0.0, base_per[e][t][c] - out[e]["per"][t][c])
+                              for e in ENGINES for t in (a, b) for c in ("single", "mixed", adversarial(t))]))
+    out["regress"] = drop
+    out["fitness"] = float(np.mean([out[e]["acc"] for e in ENGINES]) - ERR_PENALTY * penalty - regress * drop)
     return out
 
 
@@ -147,6 +154,8 @@ def main():
     ap.add_argument("--run", help="output name under out/discover and ~/maxocr-work/discover (default: the pair)")
     ap.add_argument("--resume", help="archive.pkl of a previous run: its elites join the seeds")
     ap.add_argument("--short-zero", type=float, help="also seed each pair with the digit at this height")
+    ap.add_argument("--regress", type=float, default=0.0,
+                    help="weight of the penalty for cells that fall below the base font's accuracy (0 = off)")
     ap.add_argument("--base", help="font the pair is evolved in (default: the optimized amalgam); use the current "
                                    "best font so gains on earlier pairs carry forward")
     ap.add_argument("--casefold", action="store_true",
@@ -194,7 +203,7 @@ def main():
     easy = EasyOCRRec(**eng) if "easyocr" in ENGINES else None
     archive: dict[tuple[int, int], dict] = {}
     n_eval, k_font, t0 = 0, 0, time.time()
-    base_err = None
+    base_err, base_per = None, None
 
     def evaluate(cands):
         nonlocal n_eval, k_font
@@ -209,7 +218,7 @@ def main():
         chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=easy)
         for p, g in chars.groupby("font"):
             c = fonts[p]
-            c["score"] = fitness(g, a, b, base_err, info)
+            c["score"] = fitness(g, a, b, base_err, info, base_per, args.regress)
             ratio, iou, ink_ratio = descriptors(c["ga"], c["gb"])
             c["ratio"], c["iou"] = ratio, iou
             key = cell(ratio, iou)
@@ -224,6 +233,7 @@ def main():
                                    "paddle_err": round(c["score"]["paddle"]["err"], 4),
                                    "tess_err": round(c["score"]["tesseract"]["err"], 4),
                                    "easy_acc": round(c["score"].get("easyocr", {}).get("acc", float("nan")), 4),
+                                   "regress": round(c["score"].get("regress", 0.0), 4),
                                    "ratio": round(ratio, 3), "iou": round(iou, 3), "ops": c.get("ops", []),
                                    "origin": c.get("origin"), "new_elite": bool(improved)}) + "\n")
         logf.flush()
@@ -232,6 +242,7 @@ def main():
     evaluate([{"ga": seeds[0][1], "gb": seeds[0][2], "origin": "base", "ops": []}])
     b0 = next(iter(archive.values()))["score"]
     base_err = {e: b0[e]["err"] for e in ENGINES}
+    base_per = {e: b0[e]["per"] for e in ENGINES}
     archive.clear()
     evaluate([{"ga": ga, "gb": gb, "origin": name, "ops": []} for name, ga, gb in seeds])
     best0 = max(archive.values(), key=lambda c: c["score"]["fitness"])
