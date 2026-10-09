@@ -394,6 +394,23 @@ Decision: discovery next on 5/S, then 1/I, each evolved in the current best font
 
 1/I run 1: `out/discover/1I_run1`, base = the current best font.
 
+### 1/I run 1: a trade, not adopted (2026-10-09)
+
+2,027 evaluations, 48 cells, best fitness 0.741 (Atkinson Hyperlegible and Source Serif seeds). The search makes the I much wider and heavier with slab serifs and the 1 shorter and lighter with a strong flag. Checks (`out/report/isolation_1I_run1.csv`, `out/report/validation_1I_run1.csv`):
+
+| | control | 1/I #1 | 1/I #2 |
+|---|---|---|---|
+| isolation, average of six cells, four engines | 58 | 68 | 68 |
+| ordinary lines, I read correctly (mean of four) | 81 | 93 | 92 |
+| ordinary lines, 1 read correctly (mean of four) | **76** | **58** | 68 |
+| ordinary lines, Tesseract 1 read correctly | 83 | 39 | 59 |
+| ordinary lines, 1/I pair, mean of four | 15.5 | 11.4 | 12.6 |
+| overall character error, mean of four | 8.0 | 8.4 | 7.9 |
+
+- The fitness averages over both glyphs, so the search bought gains on the I with losses on the 1. #1 also reads its heavy I as x (8/30) on unrestricted PARSeq.
+- Not adopted. Fix: `--regress W` in `discover_pair.py`; every rewarded engine x glyph x context cell that falls below the base font's accuracy costs W x the drop.
+- 1/I run 2: resumed from run 1, `--regress 1.0` (`out/discover/1I_run2`); checks include run 1 #2 as a reference.
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
