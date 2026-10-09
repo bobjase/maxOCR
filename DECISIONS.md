@@ -357,6 +357,23 @@ Discovery run 5 result (2,001 evaluations, 37 cells, best fitness 0.659 under th
 - Run 5 #4 is run 4 #4 carried over: its marks are attached to the 0 (or inside its box), so the debris rule keeps them, and PARSeq still reads them as extra characters. The optimizing engines don't penalize this (PaddleOCR and EasyOCR ignore the marks, Tesseract's whitelist has no punctuation). Possible guard for later runs: Tesseract without a whitelist as an extra fitness engine, so a mark read as punctuation costs a length error.
 - EasyOCR: still 0% for a 0 among letters and 0-7% for an O among digits, for every design.
 
+### Next pairs (2026-10-09)
+
+Confusion ranking of the current font (run 4 #5; differs from run 5 #1 only in 0/O), validation bank, s=0.5, suite (a), uncropped, case-folded reading (`scripts/confusions.py`, `out/report/confusions_run4_5.csv`). Unordered pair rate, % of the pair's occurrences read as the other:
+
+| Pair | EasyOCR | PaddleOCR | PARSeq | Tesseract | Mean |
+|---|---|---|---|---|---|
+| 0O | 42.2 | 1.5 | 20.8 | 29.9 | 23.6 |
+| **5S** | 36.4 | 0.1 | 13.6 | 14.0 | 16.0 |
+| **1I** | 28.5 | 5.5 | 14.5 | 13.2 | 15.4 |
+| 2Z | 20.6 | 0.6 | 2.5 | 1.8 | 6.4 |
+| 8B | 16.4 | 0.1 | 2.3 | 5.3 | 6.0 |
+| 4A | 20.6 | 0.0 | 1.3 | 1.0 | 5.7 |
+| 8S | 3.5 | 0.0 | 2.6 | 10.4 | 4.1 |
+| 7T | 9.7 | 0.2 | 0.7 | 2.6 | 3.3 |
+
+Decision: discovery next on 5/S, then 1/I, each evolved in the current best font (`--base`), so gains accumulate. Same rules as 0/O run 5 (case-folded reading, debris rule), checks with `scratch/check_run.sh`. 5/S run 1: `out/discover/5S_run1`, base = run 5 #1.
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
