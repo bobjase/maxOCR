@@ -512,7 +512,13 @@ Tesseract without a whitelist does read them (`scratch/tess_open_check.py`, uncr
 
 Decision: `discover_pair.py --guard` adds Tesseract without a whitelist (`tesseract_open`, general alphabet, case-folded; `evaluate.run(tess_open=True)`) as a fourth optimizing engine and counts insertions in every engine's overall error. Costs about 40% more time per evaluation. PARSeq stays held out. All runs from here: `--casefold --regress 1.0 --guard`.
 
-0/O run 6: guard on, resumed from run 5's archive, base = current font (`out/discover/0O_run6`).
+0/O run 6: guard on, resumed from run 5's archive, base = current font (`out/discover/0O_run6`). Progress is slow (0.627 to 0.631 after 1,170 evaluations): 0/O looks close to its limit for shape changes; what remains is mostly the context prior.
+
+### Adoption rule and pipeline (2026-10-09)
+
+The adoption judgement is now codified (`scripts/adopt.py`) and reproduces the four manual decisions (2/Z #4, 8/B #5, 4/A #1, 1/I run 2 #4). A design replaces the current font only if, against the control: the pair's line confusion falls; overall character error rises by at most 0.05 points; PARSeq's character error rises by at most 0.2; neither glyph's accuracy falls by more than 2 points; and unrestricted PARSeq shows at most +3/30 wrong-length reads and at most -5/30 correct reads in any glyph x context cell. Lowest character error wins; if none passes, the font stays. PARSeq acts only as a veto on finished candidates.
+
+Pipeline (`scratch/run_pipeline.sh`, `scratch/pair_pipeline.sh`, `scratch/adopt_step.sh`): applies the rule to 0/O run 6, then for 8S, 7T, 6G, IJ, 9I, 1A in turn runs guarded discovery (`--casefold --regress 1.0 --guard`, run name `<pair>_g1`), the checks and the rule, carrying the current font forward (path in `~/maxocr-work/keep/CURRENT`; log `~/maxocr-work/logs/pipeline.out`). Every adoption is reviewed afterwards.
 
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
