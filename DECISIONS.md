@@ -429,6 +429,26 @@ Decision: discovery next on 5/S, then 1/I, each evolved in the current best font
 - Remaining weakness: a lone slanted 1 is sometimes read as 7, 2 or 4.
 - Adopted run 2 #4: as good as #1 in lines, with a better lone 1. **Current best font: `~/maxocr-work/keep/current_0O_5S_1I.ttf`** (copy `out/fonts/MaxOCR-current-0O-5S-1I.ttf`).
 
+### Progress check after three pairs (2026-10-09)
+
+Confusion ranking, original amalgam vs current font (`out/report/confusions_amalgam.csv`, `out/report/confusions_current_0O_5S_1I.csv`; mean of four engines, case-folded reading, validation bank):
+
+| Pair | original | current |
+|---|---|---|
+| 0O | 27.2 | 22.9 |
+| 5S | 16.1 | 11.4 |
+| 1I | 15.1 | 3.7 |
+| 2Z | 6.4 | 6.6 |
+| 8B | 5.7 | 6.0 |
+| 4A | 5.8 | 5.9 |
+| 8S | 4.0 | 3.8 |
+| 7T | 3.5 | 3.4 |
+| **1A** | **0.1** | **2.9** |
+
+- Sum of all pair rates: 122.6 to 109.1. What remains of 0O (41%) and 5S (36%) is mostly EasyOCR.
+- New regression: 1A (EasyOCR 8.0%), from the slanted 1. The 1/I regression penalty only covers the pair's own cells. Directed counts (`confusions_<name>_directed.csv`) will show which way it goes.
+- Next pair: 2/Z (`out/discover/2Z_run1`, `--regress 1.0`, base = current font).
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
