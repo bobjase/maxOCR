@@ -35,11 +35,11 @@ def main():
     fonts = json.loads((ROOT / "out" / "discover" / run / "fonts.json").read_text())
     ctrl = "control (base font)"
     m = pd.DataFrame({
-        "pair": val[[f"{e}_pair_pct" for e in ENG]].mean(1),
-        "char_err": val[[f"{e}_char_err_pct" for e in ENG]].mean(1),
+        "pair": val[[f"{e}_pair_pct" for e in ENG]].mean(axis=1),
+        "char_err": val[[f"{e}_char_err_pct" for e in ENG]].mean(axis=1),
         "parseq_err": val["parseq_char_err_pct"],
-        f"acc_{a}": val[[f"{e}_acc_{a}_pct" for e in ENG]].mean(1),
-        f"acc_{b}": val[[f"{e}_acc_{b}_pct" for e in ENG]].mean(1),
+        f"acc_{a}": val[[f"{e}_acc_{a}_pct" for e in ENG]].mean(axis=1),
+        f"acc_{b}": val[[f"{e}_acc_{b}_pct" for e in ENG]].mean(axis=1),
     })
     wl = low.pivot_table(index="font", columns=["glyph", "kind"], values="wrong_len")
     excess = (wl.sub(wl.loc[ctrl], axis=1)).max(axis=1)
