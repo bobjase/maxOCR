@@ -322,9 +322,9 @@ def main():
         paths = [con.execute("SELECT font FROM cand WHERE id=?", (i,)).fetchone()[0] for i in built]
         tol = tolerance(paths + [parent_path])
         tol_file.write_text(json.dumps({c: list(map(float, v)) for c, v in tol.items()}))
-        # Re-check the pre-built set now that the tolerance exists.
-        for i in built:
-            path = con.execute("SELECT font FROM cand WHERE id=?", (i,)).fetchone()[0]
+        # Re-check every candidate on record against the (new) tolerance, not only the pre-built set:
+        # a restart after a tolerance change must not keep stale verdicts.
+        for i, path in con.execute("SELECT id, font FROM cand WHERE build_error IS NULL").fetchall():
             con.execute("UPDATE cand SET r2c=? WHERE id=?", (json.dumps(check(path, parent_path, tol)), i))
         con.commit()
         n_bad = con.execute("SELECT COUNT(*) FROM cand WHERE r2c != '[]'").fetchone()[0]

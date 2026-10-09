@@ -8,6 +8,7 @@ character:
   - every contour non-self-intersecting (R2c).
 Any failure rejects the candidate with a logged reason. No prose rule substitutes for this check.
 """
+import ctypes
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -66,21 +67,27 @@ class _ContourPen(BasePen):
     _endPath = _closePath
 
 
-def _ink_area(path: str, ch: str, upem: int) -> float:
-    face = freetype.Face(path)
-    face.set_pixel_sizes(upem, upem)    # 1 px per font unit
+INK_SCALE = 4   # rasterize at upem/4 px per em; area is scaled back by INK_SCALE^2
+
+
+def _ink_area(face: freetype.Face, ch: str) -> float:
+    """Ink area in square font units, from an anti-aliased rasterization at 1/INK_SCALE px per unit
+    (robust to overlapping contours; resolution is far finer than the 85% threshold needs)."""
     face.load_char(ch, freetype.FT_LOAD_NO_HINTING | freetype.FT_LOAD_NO_BITMAP | freetype.FT_LOAD_RENDER)
     bmp = face.glyph.bitmap
     if not (bmp.width and bmp.rows):
         return 0.0
-    a = np.array(bmp.buffer, dtype=np.uint8).reshape(bmp.rows, bmp.pitch)[:, :bmp.width]
-    return float(a.sum()) / 255.0
+    a = np.frombuffer(ctypes.string_at(bmp._FT_Bitmap.buffer, bmp.rows * bmp.pitch), dtype=np.uint8)
+    a = a.reshape(bmp.rows, bmp.pitch)[:, :bmp.width]
+    return float(a.sum()) / 255.0 * INK_SCALE ** 2
 
 
-@lru_cache(maxsize=256)
+@lru_cache(maxsize=None)
 def measure(path: str, chars: str = PRIMARY_ALPHABET) -> dict[str, Glyph]:
     f = TTFont(path)
     cmap, gs, upem = f.getBestCmap(), f.getGlyphSet(), f["head"].unitsPerEm
+    face = freetype.Face(path)
+    face.set_pixel_sizes(upem // INK_SCALE, upem // INK_SCALE)
     out = {}
     for c in chars:
         name = cmap[ord(c)]
@@ -89,7 +96,7 @@ def measure(path: str, chars: str = PRIMARY_ALPHABET) -> dict[str, Glyph]:
         cp = _ContourPen(gs)
         gs[name].draw(cp)
         simple = all(LinearRing(pts).is_simple for pts in cp.contours if len(set(pts)) >= 3)
-        out[c] = Glyph(f["hmtx"][name][0], bp.bounds, _ink_area(path, c, upem), simple)
+        out[c] = Glyph(f["hmtx"][name][0], bp.bounds, _ink_area(face, c), simple)
     return out
 
 
@@ -97,7 +104,10 @@ def tolerance(fonts: list[str], chars: str = PRIMARY_ALPHABET, q: float = 95) ->
     """R2a: per glyph, the q-th percentile ink box over a variant set (nearest rank, so a glyph with
     few variants keeps its extremes): lower bounds from the (100-q)-th percentile of xMin/yMin,
     upper bounds from the q-th of xMax/yMax."""
-    boxes = {c: np.array([measure(p)[c].bbox for p in fonts]) for c in chars}
+    measured = [measure(p) for p in fonts]          # once per font, not once per font per glyph
+    # Distinct shapes per glyph: in a variant set most fonts carry the default glyph for any given
+    # character, so a percentile over fonts would collapse to the default box and reject every variant.
+    boxes = {c: np.array(sorted({tuple(round(v, 1) for v in m[c].bbox) for m in measured})) for c in chars}
     return {c: (np.percentile(b[:, 0], 100 - q, method="lower"), np.percentile(b[:, 1], 100 - q, method="lower"),
                 np.percentile(b[:, 2], q, method="higher"), np.percentile(b[:, 3], q, method="higher"))
             for c, b in boxes.items()}
