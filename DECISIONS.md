@@ -411,6 +411,24 @@ Decision: discovery next on 5/S, then 1/I, each evolved in the current best font
 - Not adopted. Fix: `--regress W` in `discover_pair.py`; every rewarded engine x glyph x context cell that falls below the base font's accuracy costs W x the drop.
 - 1/I run 2: resumed from run 1, `--regress 1.0` (`out/discover/1I_run2`); checks include run 1 #2 as a reference.
 
+### 1/I run 2: adopted (2026-10-09)
+
+2,011 evaluations, 50 cells, best fitness 0.804 (with the regression penalty). The top designs slant both glyphs: a tapered 1 with a curved flag, a heavy slanted slab-serif I. Checks (`out/report/isolation_1I_run2.csv`, `out/report/validation_1I_run2.csv`):
+
+| | control | run 1 #2 | run 2 #1 | **run 2 #4** | run 2 #5 |
+|---|---|---|---|---|---|
+| ordinary lines, 1/I pair: Tesseract / EasyOCR / PARSeq | 12.8 / 29.3 / 14.6 | 14.0 / 25.6 / 9.5 | 3.0 / 8.0 / 3.0 | **2.7 / 7.9 / 3.3** | 4.4 / 11.0 / 3.4 |
+| ordinary lines, 1 read correctly (mean of four) | 76.4 | 68.4 | 83.9 | 81.5 | 79.5 |
+| ordinary lines, I read correctly (mean of four) | 81.1 | 92.3 | 93.7 | 93.8 | 94.1 |
+| overall character error, mean of four | 8.0 | 7.9 | 7.4 | **7.4** | 7.6 |
+| isolation, average of six cells | 58 | 68 | 73 | 74 | 75 |
+| isolation, lone 1 (mean of four) | 88 | 91 | 78 | 83 | 88 |
+| unrestricted PARSeq, lone 1 read as 1 | 25/30 | 24/30 | 13/30 | 20/30 | 22/30 |
+
+- The regression penalty worked: both glyphs improve in ordinary lines and overall character error falls on every engine (EasyOCR 17.4 to 16.4%).
+- Remaining weakness: a lone slanted 1 is sometimes read as 7, 2 or 4.
+- Adopted run 2 #4: as good as #1 in lines, with a better lone 1. **Current best font: `~/maxocr-work/keep/current_0O_5S_1I.ttf`** (copy `out/fonts/MaxOCR-current-0O-5S-1I.ttf`).
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
