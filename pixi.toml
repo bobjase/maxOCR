@@ -25,6 +25,7 @@ cma = "*"
 timm = "*"
 pytorch-lightning = "*"
 nltk = "*"
+scikit-image = "*"
 onnxruntime = { version = "*", build = "*cuda*" }
 pytorch = { version = "*", build = "*cuda*" }
 
