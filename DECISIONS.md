@@ -374,6 +374,26 @@ Confusion ranking of the current font (run 4 #5; differs from run 5 #1 only in 0
 
 Decision: discovery next on 5/S, then 1/I, each evolved in the current best font (`--base`), so gains accumulate. Same rules as 0/O run 5 (case-folded reading, debris rule), checks with `scratch/check_run.sh`. 5/S run 1: `out/discover/5S_run1`, base = run 5 #1.
 
+### 5/S run 1 (2026-10-09)
+
+2,027 evaluations, 35 cells, best fitness 0.796; all top designs descend from the Gelasio and Tinos seeds. The search makes the 5 an old-style figure (descending below the baseline, matching the amalgam's existing 3, 4, 7 and 9) and the S larger and heavier. Checks with case-folded reading, control = the base font (`out/report/isolation_5S_run1.csv`, `out/report/validation_5S_run1.csv`):
+
+| | control | **5/S #1** |
+|---|---|---|
+| isolation, average of six cells, four engines | 70 | **80** |
+| isolation, PARSeq (held out): 5 among letters / S among digits | 30 / 77 | **77 / 93** |
+| isolation, EasyOCR: S alone / S among digits | 30 / 7 | **80 / 40** |
+| unrestricted PARSeq, 5 among letters read as 5 | 9/30 | **23/30** |
+| ordinary lines, 5/S pair: PaddleOCR / Tesseract / EasyOCR / PARSeq | 0.2 / 14.2 / 36.7 / 13.5 | 0.0 / **3.0** / 35.9 / **6.1** |
+| R40c pixel distance | 0.086 | 0.196 |
+| overall character error, mean of four | 8.1 | 8.0 |
+
+- Unlike 0/O, the 5/S design overcomes the context prior on the held-out engine (PARSeq 5 among letters 30 to 77%).
+- EasyOCR in ordinary lines is unchanged (5 read correctly 27 to 22%, pair 36.7 to 35.9%).
+- Adopted. **Current best font: `~/maxocr-work/keep/current_0O_5S.ttf`** (0/O run 5 #1 + 5/S #1; copy `out/fonts/MaxOCR-current-0O-5S.ttf`; specimen `out/report/current_specimen.png`).
+
+1/I run 1: `out/discover/1I_run1`, base = the current best font.
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
