@@ -582,3 +582,21 @@ Adoption rule (`scripts/adopt.py`, with the within-cluster guard added after Jam
 | 1A_g1 | none passed (unrestricted PARSeq loses 7-14 of 30 correct reads in a cell, mostly the lone 1) | 2.18 | 6.46 |
 
 **Current font: `~/maxocr-work/keep/current_after_IJ_g1.ttf`** (export `out/fonts/MaxOCR-current-after-IJ_g1.ttf`): 0/O, 5/S, 1/I, 2/Z, 8/B, 4/A, 8/S, 7/T, 6/G, I/J. Character error across the four engines 8.2% (original amalgam, case-folded) to 6.46%. The 1 is left for the golden-mean step.
+
+### Held-out VLM check: Qwen2.5-VL-3B (2026-10-09)
+
+Vision-language model reader, never used in the search (`maxocr/engines/qwenvl.py`, `scripts/vlm_eval.py`; open vocabulary, case folded; prompt says the text is random letters and digits). Speed 24 lines/s on the RTX 4060 Ti (batch 32). Validation bank (all ~4,000 uncropped lines) and the isolation test for 12 pairs, s=0.5, suite (a) (`out/report/vlm_lines.csv`, `out/report/vlm_isolation.csv`):
+
+| | Source Code Pro | original amalgam | current |
+|---|---|---|---|
+| character error | 4.98 | 1.97 | **1.67** |
+| lines read exactly | 70.8 | 85.0 | **87.0** |
+| 0O pair | 31.7 | 11.6 | **7.8** |
+| 5S pair | 6.3 | 0.9 | 0.6 |
+| 1I pair | **2.1** | 11.1 | 3.9 |
+| IJ pair | **0.1** | 0.5 | 1.3 |
+| isolation, adversarial context: 0O / 5S / 8B | 21 / 62 / 62 | 43 / 77 / 81 | **53 / 94 / 83** |
+| isolation, adversarial context: 1I / 9I / IJ | **64 / 64** / 34 | 45 / 49 / 38 | 51 / 53 / 28 |
+
+- The gains transfer to a VLM reader: character error 5.0% (Source Code Pro) to 1.7%, and the 0/O confusion falls from 32% to 8%.
+- Weak spot: the 1/I/J/9 group, where Source Code Pro (serifed I, flagged 1 with a base) is still read better. The current slanted 1 is both the least readable glyph for people and a weak point for the VLM; it is the first target of the golden-mean step.
