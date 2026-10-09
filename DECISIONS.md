@@ -248,6 +248,22 @@ Fixes:
 - Validation reports per-glyph accuracy and overall character error on all three engines, not just the pair rate.
 - **R27 has the same loophole in milder form**: the margin is taken against the strongest *in-cluster* rival, so a glyph drifting toward an unrelated class keeps a good margin while being misread. `paddle_margin(..., any_class=True)` measures against the strongest rival of any class; the amalgam optimizer uses it from now on. The earlier amalgam results are not affected in practice (overall character error fell on all three engines), but v0.5 should define R27 against any class.
 
+### Discovery run 2 (correctness fitness): real Tesseract gains, mixed transfer (2026-10-08)
+
+MAP-Elites, 2,026 evaluations, 26 cells; fitness = mean correct-read accuracy of 0 and O on PaddleOCR and Tesseract minus 2x any rise in overall error. The search rediscovered the survey's lesson (small, short, slightly slanted 0 next to a heavier round O) and added new features (spurs/nicks on the 0, an inner hook on the O). Validation bank, 5,000 lines, s=0.5 (`out/discover/0O/validation.csv`):
+
+| | R40c pixel distance | PaddleOCR 0/O correct % | Tesseract 0/O correct % | PARSeq (held out) 0/O correct % | Tesseract clean pair acc % |
+|---|---|---|---|---|---|
+| Base (optimized amalgam) | 0.180 | 94.0 / 94.9 | 55.4 / 73.7 | 52.6 / 80.8 | 64.1 |
+| #1 | 0.191 | 96.2 / 95.6 | 71.5 / 78.4 | 48.4 / 83.7 | 83.1 |
+| #4 | 0.191 | 94.5 / 97.1 | 69.6 / 80.2 | 46.8 / 84.8 | 86.0 |
+| #6 | 0.190 | 97.3 / 98.1 | 51.7 / 83.0 | 54.3 / 82.7 | 70.6 |
+| #8 | 0.174 | 96.2 / 96.2 | 52.3 / 74.3 | 55.6 / 84.4 | 67.3 |
+
+- Real: Tesseract 0 accuracy +16 points, clean pair accuracy +19 points, overall Tesseract error 10.1% -> 9.6%; pixel distance up, so the glyphs are genuinely more different.
+- Mixed transfer: the family that helps Tesseract most lowers PARSeq's 0 accuracy by 4-6 points; another family helps PARSeq but not Tesseract's 0. No design improves 0 on all three engines yet. Part of the gain is engine-specific; the likeliest carriers are the tiny spurs/nicks on the 0.
+- Next: a third optimizing engine (EasyOCR, R15) so designs must satisfy three architectures, PARSeq still held out; a minimum feature size so sub-legible marks cannot score.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
