@@ -14,6 +14,7 @@ A global `boldness` shifts the SDF threshold (positive = heavier), in units of t
 Ingredients for a released font must be OFL; blending installed proprietary fonts is for local
 measurement only.
 """
+import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 
@@ -192,7 +193,11 @@ def build_font(recipe: Recipe, path: str) -> str:
     fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics)
     fb.setupHorizontalHeader(ascent=900, descent=-250)
+    ps = re.sub(r"[^A-Za-z0-9-]", "", recipe.name.replace(" ", "-"))[:29] + "-Regular"
+    # Full name (4) and PostScript name (6) are required by Windows Font Viewer and installers.
     fb.setupNameTable({"familyName": recipe.name, "styleName": "Regular",
+                       "uniqueFontIdentifier": f"0.1;MAXOCR;{ps}", "fullName": f"{recipe.name} Regular",
+                       "version": "Version 0.1", "psName": ps,
                        "copyright": "Blend of SIL Open Font License fonts; see recipe",
                        "licenseDescription": "SIL Open Font License 1.1"})
     fb.setupOS2(sTypoAscender=900, sTypoDescender=-250, usWinAscent=950, usWinDescent=300, sCapHeight=CAP)
