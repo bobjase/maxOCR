@@ -21,6 +21,7 @@ pyarrow = "*"
 matplotlib = "*"
 scipy = "*"
 shapely = "*"
+cma = "*"
 onnxruntime = { version = "*", build = "*cuda*" }
 pytorch = { version = "*", build = "*cuda*" }
 
