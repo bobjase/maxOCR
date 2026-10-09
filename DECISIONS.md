@@ -565,4 +565,4 @@ The discovered glyphs work for OCR but some look messy (the 1 especially). At th
 - **MaxOCR Machine**: the maximum-OCR glyphs, for machine-primary use.
 - **MaxOCR Text**: readable, "pretty" glyphs that keep most of the gain, for human documents.
 
-Method: for each changed glyph, a slider from the stock glyph to the discovered one (SDF blend, 0-100% in steps), each step cleaned (smoothed outlines, straight stems, stroke weight matched to the font), and the full checks run on every step. James picks from a sheet of the candidates that keep at least the agreed share of the gain (proposed: 75%).
+Method: for each changed glyph, a slider from the stock glyph to the discovered one (SDF blend, 0-100% in steps), each step cleaned (smoothed outlines, straight stems, stroke weight matched to the font), and the full checks run on every step. Rule (James, 2026-10-09): human acceptability is a hard constraint, judged by James; within it, keep as much of the gain as possible (no fixed share). The current 1 (slanted, tapered, curved flag) is not acceptable and is the first glyph to fix.
