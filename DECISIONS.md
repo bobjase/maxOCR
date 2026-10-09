@@ -339,7 +339,23 @@ Run 4 follow-up checks:
 - Unrestricted PARSeq (`scratch/lowercase_risk.py`) reads run 4 #1, #3 and #4 at the wrong length (27-30 of 30): the specks become extra characters. Run 4 #2 (short-0 lineage) is read as o. Run 4 #5 (clean): 0 alone 27/30, in a mixed line 26/30, among letters 4/30 (control 25, 22, 0).
 - Case-folded isolation test (`out/report/isolation_casefold.csv`; PaddleOCR, EasyOCR and PARSeq read printable ASCII and fold case, Tesseract keeps its whitelist): the short 0 drops below the control (average of six cells 39 at 0.70 height and 44 at 0.78, vs control 52; PaddleOCR reads it as o, so 0 in a mixed line falls from 100 to 7%). Run 4 #5 stays at 61 (PaddleOCR 96, PARSeq 64).
 - Ordinary lines (`out/report/validation_run4.csv`): run 4 #5 cuts 0/O confusion on PaddleOCR (5.5 to 1.7%) and PARSeq (30.9 to 21.0%), leaves EasyOCR unchanged (42.5%) and Tesseract's flat (29.9%), with its 0 read correctly less often on Tesseract (55 to 42%). R40c pixel distance 0.197 vs 0.180, so the gain comes from more distinct shapes. Overall character error 8.0 vs 8.1%.
-- Current best 0/O design: run 4 #5 (`~/maxocr-work/discover/0O_run4/c02007.ttf`, archive rank 5).
+- Best 0/O design after run 4: run 4 #5 (`~/maxocr-work/keep/0O_run4_5.ttf`).
+
+Discovery run 5 result (2,001 evaluations, 37 cells, best fitness 0.659 under the stricter rules). Checks with case-folded reading (`out/report/isolation_0O_run5.csv`, `out/report/validation_0O_run5.csv`, lowercase check in `~/maxocr-work/logs/0O_run5_lower.out`):
+
+| | control | run 4 #5 | **run 5 #1** |
+|---|---|---|---|
+| isolation, average of six cells, four engines | 52 | 61 | **63** |
+| isolation, PARSeq (held out) | 54 | 64 | **67** |
+| ordinary lines, 0/O pair: PaddleOCR / Tesseract / EasyOCR / PARSeq | 5.2 / 29.6 / 43.0 / 30.9 | 1.5 / 29.9 / 42.2 / 20.8 | 2.3 / 24.6 / 41.1 / 21.6 |
+| ordinary lines, Tesseract 0 read correctly | 55 | 42 | 54 |
+| R40c pixel distance | 0.180 | 0.197 | 0.217 |
+| overall character error, mean of four | 8.2 | 8.1 | 8.1 |
+| unrestricted PARSeq, 0 in a mixed line | 22/30 | 26/30 | 30/30 |
+
+- **Current best 0/O design: run 5 #1** (`~/maxocr-work/keep/0O_run5_1.ttf`, copy in `out/fonts/MaxOCR-0O-run5-1.ttf`): a tall narrow 0 with a heavy left side and a small flare at top left; a wide O. Specimen `out/discover/0O_run5/best_specimen.png`.
+- Run 5 #4 is run 4 #4 carried over: its marks are attached to the 0 (or inside its box), so the debris rule keeps them, and PARSeq still reads them as extra characters. The optimizing engines don't penalize this (PaddleOCR and EasyOCR ignore the marks, Tesseract's whitelist has no punctuation). Possible guard for later runs: Tesseract without a whitelist as an extra fitness engine, so a mark read as punctuation costs a length error.
+- EasyOCR: still 0% for a 0 among letters and 0-7% for an O among digits, for every design.
 
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
