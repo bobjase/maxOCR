@@ -218,6 +218,27 @@ Lessons for the optimizer:
 - Stroke weights drifted apart (capitals heavier than digits): a stroke-consistency constraint is needed.
 - PaddleOCR is near its ceiling on this cluster (1.0%); Tesseract (6.5%) is the larger remaining error but is only a gate (R28). Whether Tesseract should enter the objective is a spec question for James.
 
+## Held-out engine: PARSeq (2026-10-08, `maxocr/engines/parseq.py`, `scripts/parseq_eval.py`)
+
+PARSeq base, repo commit 1902db04 (`baudm/parseq`), weights `parseq-bb5792a6.pt` sha256 bb5792a68e367476abca029cbf8699abc805f3d3dc7e57aae45c8ec4f7b7cd00; non-autoregressive decode, no refinement; output restricted to the corpus alphabet; each image resized to 32x128 independently. Never used for any selection. Validation bank, s=0.5, suite (a), uncropped, every font at Source Code Pro's cap height:
+
+| Font | within objective % (all / len 1 / len 8+) | char error % (all) | 0/O pair % |
+|---|---|---|---|
+| Amalgam optimized (0/O cluster) | 6.12 / 0.40 / 6.88 | 5.31 | 30.1 |
+| Amalgam P0 (serif top-3) | 6.54 / 0.80 / 7.31 | 5.46 | 33.8 |
+| Amalgam sans top-3 | 6.19 / 0.60 / 7.04 | 4.57 | 30.6 |
+| Spectral (best single OFL serif) | 7.78 / 5.43 / 8.54 | 7.14 | 34.1 |
+| Source Code Pro (best baseline) | 8.61 / 7.44 / 9.60 | 7.25 | 34.0 |
+| Iosevka (baseline) | 13.35 / 12.68 / 14.29 | 13.32 | 28.0 |
+
+- The amalgam's gains transfer to the held-out engine (-29% within-cluster vs the best baseline), and the PaddleOCR-driven optimization step transferred too (6.54 -> 6.12).
+- Length 1 (R13b's cleanest test): 0.40% vs 7.44%. Transfer criterion (Section 7.5, headroom closed on PARSeq >= 50% of that closed on PaddleOCR, PARSeq floor approximated by the probe estimate): length 1 passes (~95% closed); length 8+ ~28% closed vs ~72% on PaddleOCR, ratio ~0.4, **does not pass**. PARSeq's internal language model on long strings is the likely reason (R13b caveat).
+- 0/O stays ~30% on PARSeq for every font, as on Tesseract: only PaddleOCR's 0/O is fixed by the amalgam.
+
+## Discovery direction (owner feedback, 2026-10-08)
+
+James: blending tweaks existing fonts and finds a local best, "a good first step", but has no discovery or mutation. Plan: glyphs as skeletons (centerline strokes) plus a stroke profile; mutation operators on geometry (move, bend, angle, curvature, thickness, contrast) and structure (add/remove spur, serif, crossbar, tail, notch, flat side, gap; open/close/join/split strokes); quality-diversity search (MAP-Elites) that keeps the best design per kind of shape; seeds from amalgam skeletons and from primitives. Guards against engine-fooling: PARSeq transfer, degradation in the loop, R40c pixel distance, probe classifier, minimum feature size, human study. First target: 0/O, still ~30% on PARSeq and Tesseract.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.

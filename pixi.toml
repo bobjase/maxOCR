@@ -22,6 +22,9 @@ matplotlib = "*"
 scipy = "*"
 shapely = "*"
 cma = "*"
+timm = "*"
+pytorch-lightning = "*"
+nltk = "*"
 onnxruntime = { version = "*", build = "*cuda*" }
 pytorch = { version = "*", build = "*cuda*" }
 
