@@ -12,8 +12,11 @@ neighbours outside its clusters), the mean over the three engines of correct rea
 mixed and adversarial contexts, minus a penalty for any rise in overall character error above the
 base font. PARSeq is held out.
 
-    python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32]
-Writes out/discover/<pair>/archive.json, log.jsonl, gallery.png; fonts in ~/maxocr-work/discover/.
+    python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32] [--run NAME]
+                                    [--resume out/discover/<run>/archive.pkl] [--short-zero 0.78]
+Writes out/discover/<run>/archive.json, log.jsonl, gallery.png (run defaults to the pair); fonts in
+~/maxocr-work/discover/<run>/. --resume adds a previous run's elites to the seeds (re-evaluated);
+--short-zero adds a copy of each seed with the digit scaled to that height (old-style figure).
 """
 import argparse
 import json
@@ -140,11 +143,14 @@ def main():
     ap.add_argument("--evals", type=int, default=2000)
     ap.add_argument("--batch", type=int, default=32)
     ap.add_argument("--seed", type=int, default=11)
+    ap.add_argument("--run", help="output name under out/discover and ~/maxocr-work/discover (default: the pair)")
+    ap.add_argument("--resume", help="archive.pkl of a previous run: its elites join the seeds")
+    ap.add_argument("--short-zero", type=float, help="also seed each pair with the digit at this height")
     args = ap.parse_args()
     a, b = args.pair[0], args.pair[1]
-    out = ROOT / "out" / "discover" / args.pair
+    out = ROOT / "out" / "discover" / (args.run or args.pair)
     out.mkdir(parents=True, exist_ok=True)
-    fdir = WORK / "discover" / args.pair
+    fdir = WORK / "discover" / (args.run or args.pair)
     fdir.mkdir(parents=True, exist_ok=True)
     logf = open(out / "log.jsonl", "a")
     rng = np.random.default_rng(args.seed)
@@ -160,6 +166,20 @@ def main():
     if (a, b) == ("0", "O"):
         seeds.append(("primitives capsule/ellipse", primitive("capsule"), primitive("ellipse")))
         seeds.append(("primitives diamond/ellipse", primitive("diamond"), primitive("ellipse")))
+    if args.resume:
+        with open(args.resume, "rb") as f:
+            prev = pickle.load(f)
+        seeds += [(f"{c['origin']} (resumed)", c["ga"], c["gb"]) for c in prev.values()]
+    if args.short_zero:
+        from feature_transplant import oldstyle
+        h = args.short_zero
+        digit = 0 if a.isdigit() else 1
+        short = []
+        for name, ga, gb in seeds:
+            g = [ga, gb]
+            g[digit] = oldstyle(g[digit], h, 1 - 0.27 * (1 - h))
+            short.append((f"{name} short{h:.2f}", *g))
+        seeds += short
 
     bank, info = isolation_bank(a + b)
     paddle = rung0.PaddleRec()

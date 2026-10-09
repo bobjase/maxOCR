@@ -302,6 +302,26 @@ Isolation test, s=0.5, suite (a), 30 trials per cell (`out/report/isolation_tran
 - Discovery run 3 #4 shows why PARSeq is held out: its lone 0 drops to 0% on PARSeq while the three optimizing engines are fine.
 - EasyOCR: 0% in both adversarial cells for every font so far. No shape tested overrides its context prior.
 
+Ordinary lines (validation bank, 5,000 random lines, s=0.5, suite (a), uncropped; `out/report/validation_transplant.csv`). 0/O pair confusion, % of 0 and O occurrences read as the other:
+
+| Font | PaddleOCR | Tesseract | EasyOCR | PARSeq (held out) | 0 read correctly, mean of 4 | O read correctly, mean of 4 |
+|---|---|---|---|---|---|---|
+| amalgam (control) | 5.5 | 29.6 | 42.5 | 30.9 | 54.8 | 85.0 |
+| short old-style 0 (0.70) | **3.3** | **12.7** | **31.2** | 30.0 | 51.4 | 84.6 |
+| discovery run 3 #1 / #2 / #3 | 6.6 / 3.9 / 4.0 | 28.0 / 31.1 / 32.2 | 43.2 / 42.5 / 43.2 | 29.4 / 24.0 / 27.1 | 48.8 / 51.8 / 52.9 | **92.0** / 88.9 / 88.8 |
+| discovery run 3 #4 | 4.3 | 17.9 | 36.0 | 19.4 | 62.5 | 87.7 |
+| faceted short 0 | 4.1 | 11.7 | 24.3 | 27.9 | 37.7 | 84.6 |
+| white 0 on black disk | 30.1 | 30.5 | 40.6 | 39.7 | 25.5 | 84.7 |
+
+- The short 0 halves Tesseract's 0/O confusion in ordinary lines and cuts EasyOCR's by a quarter; Tesseract's clean accuracy on the pair rises 64 to 81%. PARSeq's confusion is unchanged, but it reads the short 0 correctly less often (53 to 38%; the misreads go to characters other than O).
+- A low pair rate alone can mislead: the faceted short 0 has the lowest pair confusion but the 0 is read correctly only 38% of the time.
+- Discovery run 3 #4: the best ordinary-line numbers on PARSeq, but 0% for a lone 0 on PARSeq and the lowest R40c pixel distance (0.152 vs 0.180), so its 0 and O are more alike in pixels. Treat it as suspect (engine-specific cues).
+- Overall character error (mean of the four engines; control 8.1%) is within 0.2 points for every font except the inverted 0 (9.0), the faceted short 0 (8.6) and the squared 0 (8.5).
+
+Short-0 height dial (isolation test, `out/report/isolation_dial.csv`): on the control, height 0.78 keeps most of Tesseract's gain for a 0 among letters (47% vs 50% at 0.70 and 7% at full height) and halves the cost for a lone 0 (PARSeq 53% vs 30% at 0.70, 83% at full height); at 0.86 the gain is gone (17%). On run 3 #2 the short 0 gives no gain (0-7% among letters on Tesseract at every height): the two ideas don't stack in that combination. Risk to keep in view: an engine allowed to output lowercase will likely read a short 0 as o (context check, open question 2).
+
+Discovery run 4: resumes from run 3's 34 elites plus the original seeds, each also with the 0 at 0.78 height (`--resume`, `--short-zero 0.78`, output `out/discover/0O_run4`).
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
