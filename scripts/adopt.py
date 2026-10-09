@@ -4,6 +4,8 @@ current font, from the checks written by scratch/check_run.sh (case-folded readi
 A candidate passes if, against the control (the base font the run evolved in):
   - the pair's confusion in ordinary lines (mean of four engines) is lower;
   - overall character error (mean of four engines) is not higher by more than 0.05 points;
+  - confusion within all objective clusters (mean of four engines) is not higher by more than 0.05 points,
+    so a pair run can't undo an earlier pair that shares a glyph (I/J moving the I back toward the 1);
   - the held-out PARSeq's character error is not higher by more than 0.2 points;
   - neither glyph is read correctly less often (mean of four engines) by more than 2 points;
   - unrestricted PARSeq shows no extra-character pattern: in every glyph x context cell, wrong-length
@@ -38,6 +40,7 @@ def main():
         "pair": val[[f"{e}_pair_pct" for e in ENG]].mean(axis=1),
         "char_err": val[[f"{e}_char_err_pct" for e in ENG]].mean(axis=1),
         "parseq_err": val["parseq_char_err_pct"],
+        "within": val[[f"{e}_within_pct" for e in ENG]].mean(axis=1),
         f"acc_{a}": val[[f"{e}_acc_{a}_pct" for e in ENG]].mean(axis=1),
         f"acc_{b}": val[[f"{e}_acc_{b}_pct" for e in ENG]].mean(axis=1),
     })
@@ -48,6 +51,7 @@ def main():
     m["lost_correct"] = (-(ok_reads.sub(ok_reads.loc[ctrl], axis=1))).max(axis=1).reindex(m.index)
     c = m.loc[ctrl]
     m["pass"] = ((m["pair"] < c["pair"]) & (m["char_err"] <= c["char_err"] + 0.05)
+                 & (m["within"] <= c["within"] + 0.05)
                  & (m["parseq_err"] <= c["parseq_err"] + 0.2)
                  & (m[f"acc_{a}"] >= c[f"acc_{a}"] - 2) & (m[f"acc_{b}"] >= c[f"acc_{b}"] - 2)
                  & (m["extra_chars"] <= 3) & (m["lost_correct"] <= 5))
