@@ -14,10 +14,11 @@ REPO = "baudm/parseq:1902db043c029a7e03a3818c616c06600af574be"
 
 
 class Parseq:
-    def __init__(self, alphabet: str = PRIMARY_ALPHABET, device: str = "cuda"):
+    def __init__(self, alphabet: str = PRIMARY_ALPHABET, device: str = "cuda", casefold: bool = False):
         self.model = torch.hub.load(REPO, "parseq", pretrained=True, decode_ar=False, refine_iters=0,
                                     trust_repo=True).eval().to(device)
         self.device = device
+        self.casefold = casefold
         tok = self.model.tokenizer
         self.itos = tok._itos
         self.eos = tok.eos_id
@@ -47,5 +48,5 @@ class Parseq:
                     if t == self.eos:
                         break
                     s.append(self.itos[t])
-                out.append("".join(s))
+                out.append("".join(s).upper() if self.casefold else "".join(s))
         return out

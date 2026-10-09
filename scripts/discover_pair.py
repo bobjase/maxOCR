@@ -13,7 +13,7 @@ mixed and adversarial contexts, minus a penalty for any rise in overall characte
 base font. PARSeq is held out.
 
     python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32] [--run NAME]
-                                    [--resume out/discover/<run>/archive.pkl] [--short-zero 0.78]
+                                    [--resume out/discover/<run>/archive.pkl] [--short-zero 0.78] [--casefold]
 Writes out/discover/<run>/archive.json, log.jsonl, gallery.png (run defaults to the pair); fonts in
 ~/maxocr-work/discover/<run>/. --resume adds a previous run's elites to the seeds (re-evaluated);
 --short-zero adds a copy of each seed with the digit scaled to that height (old-style figure).
@@ -146,7 +146,11 @@ def main():
     ap.add_argument("--run", help="output name under out/discover and ~/maxocr-work/discover (default: the pair)")
     ap.add_argument("--resume", help="archive.pkl of a previous run: its elites join the seeds")
     ap.add_argument("--short-zero", type=float, help="also seed each pair with the digit at this height")
+    ap.add_argument("--casefold", action="store_true",
+                    help="engines read the general alphabet (lowercase, punctuation) and fold case; Tesseract keeps its whitelist")
     args = ap.parse_args()
+    from maxocr.corpus import GENERAL_ALPHABET
+    eng = dict(alphabet=GENERAL_ALPHABET, casefold=True) if args.casefold else {}
     a, b = args.pair[0], args.pair[1]
     out = ROOT / "out" / "discover" / (args.run or args.pair)
     out.mkdir(parents=True, exist_ok=True)
@@ -182,9 +186,9 @@ def main():
         seeds += short
 
     bank, info = isolation_bank(a + b)
-    paddle = rung0.PaddleRec()
+    paddle = rung0.PaddleRec(**eng)
     from maxocr.engines.easyocr_rec import EasyOCRRec
-    easy = EasyOCRRec() if "easyocr" in ENGINES else None
+    easy = EasyOCRRec(**eng) if "easyocr" in ENGINES else None
     archive: dict[tuple[int, int], dict] = {}
     n_eval, k_font, t0 = 0, 0, time.time()
     base_err = None

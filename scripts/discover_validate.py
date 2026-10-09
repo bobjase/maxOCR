@@ -6,7 +6,7 @@ R40c: RMS pixel distance between the two glyphs under the same degradation (high
 different shapes, i.e. real separation rather than engine-specific cues); clean accuracy of the pair
 characters on both engines vs the base.
 
-    python scripts/discover_validate.py [--pair 0O] [--top 8] [--fonts-json f.json --out name.csv]
+    python scripts/discover_validate.py [--pair 0O] [--top 8] [--fonts-json f.json --out name.csv] [--casefold]
 Writes out/discover/<pair>/validation.csv (or out/report/<name> with --fonts-json).
 """
 import argparse
@@ -64,7 +64,11 @@ def main():
     ap.add_argument("--top", type=int, default=8)
     ap.add_argument("--fonts-json", help="validate these fonts instead: JSON {name: path}")
     ap.add_argument("--out", default="validation_fonts.csv", help="output CSV name under out/report (with --fonts-json)")
+    ap.add_argument("--casefold", action="store_true",
+                    help="engines read the general alphabet (lowercase, punctuation) and fold case; Tesseract keeps its whitelist")
     args = ap.parse_args()
+    from maxocr.corpus import GENERAL_ALPHABET
+    eng = dict(alphabet=GENERAL_ALPHABET, casefold=True) if args.casefold else {}
     a, b = args.pair[0], args.pair[1]
     d = ROOT / "out" / "discover" / args.pair
     if args.fonts_json:
@@ -79,14 +83,14 @@ def main():
         out_csv = d / "validation.csv"
 
     val = rung0.bank("val")
-    paddle = rung0.PaddleRec()
+    paddle = rung0.PaddleRec(**eng)
     jobs = [Job(n, p, rung0.SEVERITY, "a", c) for n, p in fonts.items() for c in chunk(val, 50)]
     from maxocr.engines.easyocr_rec import EasyOCRRec
-    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=EasyOCRRec())
+    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=EasyOCRRec(**eng))
     clean_jobs = [Job(n, p, -1.0, "a", c, clean=True) for n, p in fonts.items() for c in chunk(rung0.bank("clean"), 50)]
     clean, _, _ = run(clean_jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False)
 
-    model = Parseq()
+    model = Parseq(**eng)
     rows = []
     with get_context("spawn").Pool(16) as pool:
         for n, p in fonts.items():

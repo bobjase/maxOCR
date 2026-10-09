@@ -322,6 +322,19 @@ Short-0 height dial (isolation test, `out/report/isolation_dial.csv`): on the co
 
 Discovery run 4: resumes from run 3's 34 elites plus the original seeds, each also with the 0 at 0.78 height (`--resume`, `--short-zero 0.78`, output `out/discover/0O_run4`).
 
+**The short 0's gain is mostly an artifact of the restricted alphabet** (`scratch/lowercase_risk.py`). PARSeq allowed to output any of its 94 characters, isolation-bank 0s (30 each):
+
+| 0 design | alone: read as 0 / o | among letters: read as O / o |
+|---|---|---|
+| full height (control) | 25 / 0 | 29 / 0 |
+| 0.70 height | 5 / 13 | 3 / 27 |
+| 0.78 height | 13 / 9 | 8 / 22 |
+| 0.86 height | 18 / 7 | 27 / 3 |
+
+Among letters the engine still reads a letter, now lowercase o. With the output limited to 0-9A-Z, the o reading is masked and the choice falls between O and 0, which is where the measured gain came from. If downstream software upper-cases (common for codes), o becomes O and the error is back.
+
+Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.

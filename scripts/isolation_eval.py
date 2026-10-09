@@ -2,7 +2,7 @@
 and all-digit neighbours outside its clusters (see discover_pair.isolation_bank), on PaddleOCR,
 Tesseract, EasyOCR and the held-out PARSeq, s=0.5, suite (a).
 
-    python scripts/isolation_eval.py [--pair 0O] [--top 6]
+    python scripts/isolation_eval.py [--pair 0O] [--top 6] [--fonts-json f.json --out name.csv] [--casefold]
 Writes out/discover/<pair>/isolation.csv.
 """
 import argparse
@@ -39,7 +39,11 @@ def main():
     ap.add_argument("--archive", default="0O_run2", help="discovery run directory under out/discover")
     ap.add_argument("--fonts-json", help="evaluate these fonts instead: JSON {name: path}")
     ap.add_argument("--out", default=None, help="output CSV name under out/report (with --fonts-json)")
+    ap.add_argument("--casefold", action="store_true",
+                    help="engines read the general alphabet (lowercase, punctuation) and fold case; Tesseract keeps its whitelist")
     a = ap.parse_args()
+    from maxocr.corpus import GENERAL_ALPHABET
+    eng = dict(alphabet=GENERAL_ALPHABET, casefold=True) if a.casefold else {}
     t1, t2 = a.pair[0], a.pair[1]
     base = json.loads((ROOT / "out" / "amalgam_opt" / "08BDEOQ" / "elite.json").read_text())["font"]
     fonts = {"baseline: Source Code Pro": str(BASELINES["Source Code Pro"]), "amalgam (optimized)": base}
@@ -53,9 +57,10 @@ def main():
     kind = {i: v[1] for i, v in info.items()}
     target_pos = {i: v[2] for i, v in info.items()}
     jobs = [Job(n, p, rung0.SEVERITY, "a", c) for n, p in fonts.items() for c in chunk(bank, 60)]
-    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=rung0.PaddleRec(), progress=False, easy=EasyOCRRec())
+    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=rung0.PaddleRec(**eng), progress=False,
+                        easy=EasyOCRRec(**eng))
     rows = []
-    model = Parseq()
+    model = Parseq(**eng)
     with get_context("spawn").Pool(16) as pool:
         for n, p in fonts.items():
             imgs = [im for part in pool.map(_imgs, [(p, bank[i:i + 100]) for i in range(0, len(bank), 100)]) for im in part]

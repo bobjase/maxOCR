@@ -24,7 +24,8 @@ class Char:
 
 class PaddleRec:
     def __init__(self, model_dir: Path = MODEL_DIR, alphabet: str | None = PRIMARY_ALPHABET,
-                 providers=("CUDAExecutionProvider", "CPUExecutionProvider")):
+                 providers=("CUDAExecutionProvider", "CPUExecutionProvider"), casefold: bool = False):
+        """casefold: report lowercase output as uppercase (use with GENERAL_ALPHABET)."""
         cfg = yaml.safe_load(open(model_dir / "inference.yml"))
         # PaddleOCR CTC convention: index 0 is blank, space appended last.
         self.vocab = ["<blank>"] + [str(c) for c in cfg["PostProcess"]["character_dict"]] + [" "]
@@ -42,8 +43,9 @@ class PaddleRec:
             self.keep = np.arange(len(self.vocab))
         else:
             index = {c: i for i, c in enumerate(self.vocab)}
-            self.keep = np.array([0] + [index[c] for c in alphabet])
+            self.keep = np.array([0] + [index[c] for c in alphabet if c in index])
         self.classes = [self.vocab[i] for i in self.keep]
+        self.casefold = casefold
 
     @staticmethod
     def preprocess(img: np.ndarray) -> np.ndarray:
@@ -75,7 +77,8 @@ class PaddleRec:
             while end + 1 < len(best) and best[end + 1] == best[t]:
                 end += 1
             f = t + int(p[t:end + 1, best[t]].argmax())
-            out.append(Char(self.classes[best[t]], f, p[f]))
+            c = self.classes[best[t]]
+            out.append(Char(c.upper() if self.casefold else c, f, p[f]))
             t = end + 1
         return out
 

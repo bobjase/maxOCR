@@ -6,16 +6,17 @@ from ..corpus import PRIMARY_ALPHABET
 
 
 class EasyOCRRec:
-    def __init__(self, alphabet: str = PRIMARY_ALPHABET, gpu: bool = True):
+    def __init__(self, alphabet: str = PRIMARY_ALPHABET, gpu: bool = True, casefold: bool = False):
         import easyocr
         self.reader = easyocr.Reader(["en"], gpu=gpu, detector=False, recognizer=True, verbose=False)
         self.allow = alphabet
+        self.fold = str.upper if casefold else (lambda s: s)
 
     def text(self, img: np.ndarray) -> str:
         h, w = img.shape[:2]
         out = self.reader.recognize(img, horizontal_list=[[0, w, 0, h]], free_list=[], detail=0,
                                     allowlist=self.allow, decoder="greedy", paragraph=False)
-        return "".join(out).replace(" ", "")
+        return self.fold("".join(out).replace(" ", ""))
 
     BOX_W = 384   # every line is padded with paper to this width: EasyOCR pads a batch to its widest
                   # item, so equal widths make each line's result independent of its batch-mates
@@ -37,4 +38,4 @@ class EasyOCRRec:
                                     batch_size=len(imgs))
         # detail=1 returns (box, text, conf); map back by the box's top edge.
         by_top = {int(r[0][0][1]): r[1] for r in out}
-        return [by_top.get(b[2], "").replace(" ", "") for b in boxes]
+        return [self.fold(by_top.get(b[2], "").replace(" ", "")) for b in boxes]

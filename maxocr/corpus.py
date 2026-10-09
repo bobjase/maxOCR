@@ -2,6 +2,9 @@
 import numpy as np
 
 PRIMARY_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# General-use reading (no whitelist): what an English OCR setup may output. Engines read with this and
+# fold case (o counts as O), so a glyph can't "win" by being read as a character outside 0-9A-Z.
+GENERAL_ALPHABET = PRIMARY_ALPHABET + "abcdefghijklmnopqrstuvwxyz" + "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
 
 P_LENGTH_1 = 0.20   # length-1 stratum gets enough samples per character (R20)
 P_DOUBLE = 0.15     # strings of length >= 2 that contain a forced double such as "00" (R19)
