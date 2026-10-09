@@ -448,6 +448,24 @@ Confusion ranking, original amalgam vs current font (`out/report/confusions_amal
 - Sum of all pair rates: 122.6 to 109.1. What remains of 0O (41%) and 5S (36%) is mostly EasyOCR.
 - New regression: 1A (EasyOCR 8.0%), from the slanted 1. The 1/I regression penalty only covers the pair's own cells. Directed counts (`confusions_<name>_directed.csv`) will show which way it goes.
 - Next pair: 2/Z (`out/discover/2Z_run1`, `--regress 1.0`, base = current font).
+- Directed counts: the 1A confusion is the new 1 read as A (EasyOCR 97, Tesseract 37, PARSeq 8 of the 1s; A read as 1 only 5 times). Not a net loss: EasyOCR reads the 1 correctly 59% of the time vs 40% before; its remaining 1 errors now land on A instead of I. Watch it; if it grows, a later 1/I run can score 1 against A as well.
+
+### 2/Z run 1: adopted #4 (2026-10-09)
+
+2,027 evaluations, 35 cells, best fitness 0.842. The search makes the 2 small (old-style, about x-height) and the Z large and heavy. Checks (`out/report/isolation_2Z_run1.csv`, `out/report/validation_2Z_run1.csv`):
+
+| | control | #1 | **#4** |
+|---|---|---|---|
+| ordinary lines, 2/Z pair, mean of four | 6.6 | 1.4 | **3.1** |
+| ordinary lines, 2/Z pair, EasyOCR | 21.2 | 4.5 | 11.6 |
+| ordinary lines, 2 read correctly, EasyOCR | 50.4 | 76.6 | 60.8 |
+| overall character error, mean of four | 7.4 | 7.3 | 7.5 |
+| unrestricted PARSeq, Z among digits read as Z | 17/30 | 18/30 (12 wrong length) | **25/30** |
+| isolation, average of six cells | 73 | 81 | 82 |
+
+- #1 has the best line numbers but PARSeq reads extra characters into its Z (12/30 wrong length among digits), and PARSeq's line error rises 3.4 to 3.7%: the same pattern as the speckled zeros. #4 is clean on the held-out engine.
+- Adopted #4. **Current best font: `~/maxocr-work/keep/current_0O_5S_1I_2Z.ttf`** (copy `out/fonts/MaxOCR-current-0O-5S-1I-2Z.ttf`).
+- Next pair: 8/B (`out/discover/8B_run1`, `--regress 1.0`).
 
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
