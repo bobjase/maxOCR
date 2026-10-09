@@ -483,6 +483,23 @@ Confusion ranking, original amalgam vs current font (`out/report/confusions_amal
 - Adopted #5. Cost to watch: clean-image Tesseract accuracy on the pair drops 88.9 to 84.4% (all clean candidates show it); every degraded measure improves. **Current best font: `~/maxocr-work/keep/current_0O_5S_1I_2Z_8B.ttf`** (copy `out/fonts/MaxOCR-current-0O-5S-1I-2Z-8B.ttf`).
 - Next pair: 4/A (`out/discover/4A_run1`, `--regress 1.0`).
 
+### 4/A run 1: adopted #1 (2026-10-09)
+
+2,027 evaluations, 21 cells, best fitness 0.953 (base 0.817). The top designs add dark blobs at the feet of the 4 and the A. Checks (`out/report/isolation_4A_run1.csv`, `out/report/validation_4A_run1.csv`):
+
+| | control | **#1** | #2 | #5 |
+|---|---|---|---|---|
+| ordinary lines, 4/A pair, mean of four | 5.9 | **1.9** | 1.3 | 1.5 |
+| ordinary lines, 4/A pair, EasyOCR | 21.5 | 7.4 | 4.9 | 5.0 |
+| ordinary lines, 4 read correctly, mean of four | 84.5 | 91.6 | 90.0 | 88.4 |
+| overall character error, mean of four (PARSeq) | 7.3 (3.6) | **7.1 (3.6)** | 7.3 (4.5) | 7.6 (5.0) |
+| isolation, average of six cells | 84 | **94** | 90 | 87 |
+| unrestricted PARSeq, A among digits read as A | 30/30 | 30/30 | 21/30 (9 wrong length) | 10/30 |
+
+- #2, #3 and #5 have the extra-character pattern on PARSeq; #1 and #4 are clean.
+- Adopted #1. **Current best font: `~/maxocr-work/keep/current_5pairs_4A.ttf`** (0/O, 5/S, 1/I, 2/Z, 8/B, 4/A; copy `out/fonts/MaxOCR-current-0O-5S-1I-2Z-8B-4A.ttf`).
+- Observation: the adopted 8 (8/B #5) carries a small mark at its lower left; PARSeq read it at the wrong length 4/30 in mixed lines. Minor, but it is the same pattern. A guard that would catch it during search rather than after: Tesseract without a whitelist as an extra optimizing engine (proposed under 0/O run 5).
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
