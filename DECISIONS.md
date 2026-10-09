@@ -500,6 +500,20 @@ Confusion ranking, original amalgam vs current font (`out/report/confusions_amal
 - Adopted #1. **Current best font: `~/maxocr-work/keep/current_5pairs_4A.ttf`** (0/O, 5/S, 1/I, 2/Z, 8/B, 4/A; copy `out/fonts/MaxOCR-current-0O-5S-1I-2Z-8B-4A.ttf`).
 - Observation: the adopted 8 (8/B #5) carries a small mark at its lower left; PARSeq read it at the wrong length 4/30 in mixed lines. Minor, but it is the same pattern. A guard that would catch it during search rather than after: Tesseract without a whitelist as an extra optimizing engine (proposed under 0/O run 5).
 
+### Progress after six pairs, and the discovery guard (2026-10-09)
+
+Confusion ranking of the current font (`out/report/confusions_current_6pairs.csv`), mean of four engines: 0O 22.8 (original 27.2), 5S 11.7 (16.1), 1I 3.8 (15.1), 8S 3.7 (4.0), 7T 3.6 (3.5), 8B 3.3 (5.7), 2Z 3.2 (6.4), 6G 3.0 (3.0), IJ 2.8 (2.4), 1A 2.6 (0.1), 9I 2.5 (2.5), 4A 1.9 (5.8). Sum of all pair rates 122.6 to 103.2. What remains of 0O and 5S is mostly EasyOCR (41 and 37%).
+
+Extra-character marks kept reaching the top of the archive (0/O run 4, 2/Z #1, 8/B #3-4, 4/A #2-3-5) and were caught only afterwards with PARSeq, which erodes its held-out status. Why the search missed them:
+- the fitness scored aligned characters only, so an inserted character never counted as an error;
+- PaddleOCR and EasyOCR ignore such marks (`scratch/len_check.py`: 4/A #5 wrong length 3.8 / 27.5% vs control 2.1 / 23.3%; EasyOCR's high baseline is stray ~ and , with the general alphabet, plus cropped instances).
+
+Tesseract without a whitelist does read them (`scratch/tess_open_check.py`, uncropped 4/A isolation bank, wrong length: control 6.8%, #2 21.4% with the blob read as ".", others 10-13%).
+
+Decision: `discover_pair.py --guard` adds Tesseract without a whitelist (`tesseract_open`, general alphabet, case-folded; `evaluate.run(tess_open=True)`) as a fourth optimizing engine and counts insertions in every engine's overall error. Costs about 40% more time per evaluation. PARSeq stays held out. All runs from here: `--casefold --regress 1.0 --guard`.
+
+0/O run 6: guard on, resumed from run 5's archive, base = current font (`out/discover/0O_run6`).
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
