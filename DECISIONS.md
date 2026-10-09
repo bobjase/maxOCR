@@ -600,3 +600,9 @@ Vision-language model reader, never used in the search (`maxocr/engines/qwenvl.p
 
 - The gains transfer to a VLM reader: character error 5.0% (Source Code Pro) to 1.7%, and the 0/O confusion falls from 32% to 8%.
 - Weak spot: the 1/I/J/9 group, where Source Code Pro (serifed I, flagged 1 with a base) is still read better. The current slanted 1 is both the least readable glyph for people and a weak point for the VLM; it is the first target of the golden-mean step.
+
+### Readable font (MaxOCR Text), step 1 (2026-10-09)
+
+James: A, I, J, 1 and Z are too sloppy even in the 25% mix; J and F look bad even in the original. Text base Mix E (`golden_mean.py --mix "02BOST:1,45678G:0.25,1IJAZF:0"`). Clean search (`discover_pair.py --clean`: whole-glyph typographic mutations only, 16 OFL serif seeds) with guard and regression penalty, on the text base.
+
+Clean 1/I (`out/discover/1I_clean`): all designs clean (short old-style 1, heavier I; James: OK). 1/I confusion 15.9 to 8.8% (#1) and 9.8% (#3), character error 7.45 to 7.16 / 7.23 (messy version: 3.9%). The adoption rule picks #3 (#1 loses 9/30 lone-1 reads on unrestricted PARSeq); James: they look identical, take the one with fewer errors. **Chosen: #1** (`~/maxocr-work/discover/1I_clean/c01956.ttf` glyphs 1 and I). J/F replacement: waiting for James's pick from `out/golden/jf_options.png`.
