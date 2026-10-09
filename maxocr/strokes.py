@@ -24,7 +24,11 @@ from fontTools.ttLib import TTFont
 
 PX = 300            # pixels per cap unit
 CONTOUR_POINTS = 24
-MIN_W, MAX_W = 0.04, 0.30
+# Minimum feature size: at 8 pt / 200 dpi the cap height is ~15.6 px, so 0.10 cap ~ 1.6 px. Added
+# strokes, cuts and dots below this were the likely carriers of engine-specific gains (discovery run 2).
+MIN_W, MAX_W = 0.10, 0.30
+MIN_LEN = 0.15
+MIN_DOT = 0.14
 MAX_PARTS = 10
 
 
@@ -228,14 +232,14 @@ def mutate(g: Genome, rng: np.random.Generator, n_ops: int | None = None) -> tup
         elif op in ("stroke_add", "cut_add") and len(g.parts) < MAX_PARTS:
             a = _point_on(g, rng)
             ang = rng.uniform(0, 2 * np.pi)
-            L = rng.uniform(0.06, 0.30 if op == "stroke_add" else 0.18)
+            L = rng.uniform(MIN_LEN, 0.35 if op == "stroke_add" else 0.25)
             b = a + L * np.array([np.cos(ang), np.sin(ang)])
             mid = (a + b) / 2 + rng.normal(0, 0.02, 2)
-            w = rng.uniform(0.05, 0.13) if op == "stroke_add" else rng.uniform(0.03, 0.08)
+            w = rng.uniform(MIN_W, 0.16)
             g.parts.append(Part("stroke", 1 if op == "stroke_add" else -1, np.vstack([a, mid, b]), w, w * rng.uniform(0.6, 1.1)))
         elif op == "dot" and len(g.parts) < MAX_PARTS:
             a = _point_on(g, rng) * 0.5 + np.array([0.3, 0.5]) * 0.5
-            r = rng.uniform(0.04, 0.09)
+            r = rng.uniform(MIN_DOT / 2, 0.11)
             g.parts.append(Part("stroke", 1, np.vstack([a, a + [1e-3, 0], a + [2e-3, 0]]), 2 * r, 2 * r))
         elif op == "remove":
             extra = [i for i, q in enumerate(g.parts) if q.kind == "stroke"]

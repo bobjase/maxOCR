@@ -74,7 +74,8 @@ def main():
     val = rung0.bank("val")
     paddle = rung0.PaddleRec()
     jobs = [Job(n, p, rung0.SEVERITY, "a", c) for n, p in fonts.items() for c in chunk(val, 50)]
-    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False)
+    from maxocr.engines.easyocr_rec import EasyOCRRec
+    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=EasyOCRRec())
     clean_jobs = [Job(n, p, -1.0, "a", c, clean=True) for n, p in fonts.items() for c in chunk(rung0.bank("clean"), 50)]
     clean, _, _ = run(clean_jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False)
 
@@ -93,7 +94,8 @@ def main():
             g = chars[(chars.font == n) & ~chars.cropped]
             c = clean[clean.font == n]
             row = {"font": n, "pixel_dist_R40c": round(pixel_distance(p, a, b), 4)}
-            for e, dd in (("paddle", g[g.engine == "paddle"]), ("tesseract", g[g.engine == "tesseract"]), ("parseq", pq)):
+            for e, dd in (("paddle", g[g.engine == "paddle"]), ("tesseract", g[g.engine == "tesseract"]),
+                          ("easyocr", g[g.engine == "easyocr"]), ("parseq", pq)):
                 # Correct reads of each pair glyph: a pair rate alone misses glyphs read as a third character.
                 row[f"{e}_acc_{a}_pct"] = round(100 * float((dd[dd.truth == a].pred == a).mean()), 2)
                 row[f"{e}_acc_{b}_pct"] = round(100 * float((dd[dd.truth == b].pred == b).mean()), 2)

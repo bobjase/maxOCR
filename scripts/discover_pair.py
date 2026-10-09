@@ -6,10 +6,11 @@ Both glyphs of the pair (default 0 and O) evolve together; the rest of the font 
   d2 = overlap (IoU) of the two glyph masks, aligned at the left edge and baseline (low = more different)
 so the search returns qualitatively different solutions, not one optimum.
 
-Fitness (exploratory; uses Tesseract as well as PaddleOCR, see DECISIONS open question 5): on a
-pair-weighted bank at s=0.5, suite (a), the mean over the two engines of the accuracy of reading
-each pair glyph correctly, minus a penalty for any rise in overall character error above the base
-font. PARSeq is held out.
+Fitness (exploratory; uses Tesseract and EasyOCR as well as PaddleOCR, see DECISIONS open question 5):
+on the isolation bank at s=0.5, suite (a) (each glyph alone, and among mixed, all-letter and all-digit
+neighbours outside its clusters), the mean over the three engines of correct reads in the single,
+mixed and adversarial contexts, minus a penalty for any rise in overall character error above the
+base font. PARSeq is held out.
 
     python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32]
 Writes out/discover/<pair>/archive.json, log.jsonl, gallery.png; fonts in ~/maxocr-work/discover/.
@@ -36,6 +37,44 @@ ROOT = Path(__file__).resolve().parents[1]
 D1 = np.linspace(0.85, 2.05, 9)       # width-ratio bin edges (8 bins)
 D2 = np.linspace(0.10, 0.95, 9)       # IoU bin edges (8 bins)
 PAIR_BANK_SEED = 4242
+
+
+CONTEXTS = ("single", "mixed", "letters", "digits")
+
+
+def isolation_bank(targets: str, n_per: int = 30, seed: int = 7373):
+    """Absolute recognizability of each target glyph, without a comparison partner (James, 2026-10-08).
+
+    Engines decide 0 vs O largely from context: among letters a 0 is read as O, alone an O is read as
+    0. Each target is tested alone, and in the middle of 6 neighbours that are mixed (3 letters + 3
+    digits, shuffled: no letter/digit prior, e.g. 4K?TWX7), all letters, or all digits. Neighbours
+    never come from the target's own objective or gate clusters, so no comparison partner is present.
+    For a digit the adversarial context is letters, for a letter it is digits.
+    Returns instances and a dict index -> (target, context, target position)."""
+    own = {c for g in rung0.OBJECTIVE + rung0.GATE if set(g) & set(targets) for c in g}
+    letters = [c for c in PRIMARY_ALPHABET if c.isalpha() and c not in own]
+    digits = [c for c in PRIMARY_ALPHABET if c.isdigit() and c not in own]
+    rng = np.random.default_rng(seed)
+    texts, info = [], {}
+    for t in targets:
+        for ctx in CONTEXTS:
+            for _ in range(n_per):
+                if ctx == "single":
+                    s, pos = t, 0
+                else:
+                    if ctx == "mixed":
+                        nb = list(rng.choice(letters, 3)) + list(rng.choice(digits, 3))
+                        rng.shuffle(nb)
+                    else:
+                        nb = list(rng.choice(letters if ctx == "letters" else digits, 6))
+                    s, pos = "".join(nb[:3]) + t + "".join(nb[3:]), 3
+                info[len(texts)] = (t, ctx, pos)
+                texts.append(s)
+    return [make_instance(i, s, seed) for i, s in enumerate(texts)], info
+
+
+def adversarial(t: str) -> str:
+    return "letters" if t.isdigit() else "digits"
 
 
 def pair_bank(a: str, b: str, n: int = 240):
@@ -69,22 +108,29 @@ def cell(ratio, iou):
 
 
 ERR_PENALTY = 2.0   # per unit of overall character error above the base font's
+ENGINES = ("paddle", "tesseract", "easyocr")   # optimizing engines; PARSeq stays held out
 
 
-def fitness(chars, a, b, base_err: dict | None) -> dict:
-    """Reward reading each glyph CORRECTLY (not merely "not as its twin": an earlier version only
-    penalized a<->b swaps, and the search made O read as C and 0 as nothing). Penalize any rise in
-    overall character error above the base font, so no glyph can win by turning into a third one."""
+def fitness(chars, a, b, base_err: dict | None, info: dict) -> dict:
+    """Reward reading each target glyph CORRECTLY on its own (isolation bank): mean accuracy over the
+    single, mixed and adversarial contexts (the context that favours the glyph is reported but not
+    rewarded). An earlier version rewarded "not read as its twin" and the search turned O into C.
+    Penalize any rise in overall character error (neighbours included) above the base font."""
     out = {}
-    for e in ("paddle", "tesseract"):
+    ctx_of = {i: v[1] for i, v in info.items()}
+    pos_of = {i: v[2] for i, v in info.items()}
+    for e in ENGINES:
         g = chars[(chars.engine == e) & ~chars.cropped]
-        x, y = g[g.truth == a], g[g.truth == b]
-        acc = (float((x.pred == a).mean()) + float((y.pred == b).mean())) / 2
-        pair = ((x.pred == b).sum() + (y.pred == a).sum()) / max(len(x) + len(y), 1)
-        err = float((g.pred != g.truth).mean())
-        out[e] = {"acc": acc, "pair": float(pair), "err": err}
-    penalty = 0.0 if base_err is None else np.mean([max(0.0, out[e]["err"] - base_err[e]) for e in ("paddle", "tesseract")])
-    out["fitness"] = float(np.mean([out[e]["acc"] for e in ("paddle", "tesseract")]) - ERR_PENALTY * penalty)
+        tg = g[g.pos == g.inst.map(pos_of)].assign(ctx=lambda d: d.inst.map(ctx_of))
+        per = {}
+        for t in (a, b):
+            x = tg[tg.truth == t]
+            per[t] = {c: float((x[x.ctx == c].pred == t).mean()) for c in CONTEXTS}
+        rewarded = [per[t][c] for t in (a, b) for c in ("single", "mixed", adversarial(t))]
+        out[e] = {"acc": float(np.mean(rewarded)), "per": per, "err": float((g.pred != g.truth).mean()),
+                  "pair": float(np.mean([1 - per[t]["mixed"] for t in (a, b)]))}
+    penalty = 0.0 if base_err is None else np.mean([max(0.0, out[e]["err"] - base_err[e]) for e in ENGINES])
+    out["fitness"] = float(np.mean([out[e]["acc"] for e in ENGINES]) - ERR_PENALTY * penalty)
     return out
 
 
@@ -113,8 +159,10 @@ def main():
         seeds.append(("primitives capsule/ellipse", primitive("capsule"), primitive("ellipse")))
         seeds.append(("primitives diamond/ellipse", primitive("diamond"), primitive("ellipse")))
 
-    bank = pair_bank(a, b)
+    bank, info = isolation_bank(a + b)
     paddle = rung0.PaddleRec()
+    from maxocr.engines.easyocr_rec import EasyOCRRec
+    easy = EasyOCRRec() if "easyocr" in ENGINES else None
     archive: dict[tuple[int, int], dict] = {}
     n_eval, k_font, t0 = 0, 0, time.time()
     base_err = None
@@ -128,11 +176,11 @@ def main():
             with_glyphs(base, {a: c["ga"], b: c["gb"]}, p)
             c["font"] = p
             fonts[p] = c
-        jobs = [Job(p, p, rung0.SEVERITY, "a", ch) for p in fonts for ch in chunk(bank, 60)]
-        chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False)
+        jobs = [Job(p, p, rung0.SEVERITY, "a", ch) for p in fonts for ch in chunk(bank, 48)]
+        chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=easy)
         for p, g in chars.groupby("font"):
             c = fonts[p]
-            c["score"] = fitness(g, a, b, base_err)
+            c["score"] = fitness(g, a, b, base_err, info)
             ratio, iou, ink_ratio = descriptors(c["ga"], c["gb"])
             c["ratio"], c["iou"] = ratio, iou
             key = cell(ratio, iou)
@@ -146,6 +194,7 @@ def main():
                                    "tess_acc": round(c["score"]["tesseract"]["acc"], 4),
                                    "paddle_err": round(c["score"]["paddle"]["err"], 4),
                                    "tess_err": round(c["score"]["tesseract"]["err"], 4),
+                                   "easy_acc": round(c["score"].get("easyocr", {}).get("acc", float("nan")), 4),
                                    "ratio": round(ratio, 3), "iou": round(iou, 3), "ops": c.get("ops", []),
                                    "origin": c.get("origin"), "new_elite": bool(improved)}) + "\n")
         logf.flush()
@@ -153,7 +202,7 @@ def main():
     # The base alone first: its overall error is the reference for the error penalty.
     evaluate([{"ga": seeds[0][1], "gb": seeds[0][2], "origin": "base", "ops": []}])
     b0 = next(iter(archive.values()))["score"]
-    base_err = {e: b0[e]["err"] for e in ("paddle", "tesseract")}
+    base_err = {e: b0[e]["err"] for e in ENGINES}
     archive.clear()
     evaluate([{"ga": ga, "gb": gb, "origin": name, "ops": []} for name, ga, gb in seeds])
     best0 = max(archive.values(), key=lambda c: c["score"]["fitness"])
@@ -181,6 +230,7 @@ def main():
                           "best_tess_acc": round(best["score"]["tesseract"]["acc"], 4),
                           "best_paddle_err": round(best["score"]["paddle"]["err"], 4),
                           "best_tess_err": round(best["score"]["tesseract"]["err"], 4),
+                          "best_easy_acc": round(best["score"].get("easyocr", {}).get("acc", float("nan")), 4),
                           "minutes": round((time.time() - t0) / 60, 1)}), flush=True)
         with open(out / "archive.pkl", "wb") as f:
             pickle.dump(archive, f)

@@ -26,6 +26,7 @@ timm = "*"
 pytorch-lightning = "*"
 nltk = "*"
 scikit-image = "*"
+easyocr = "*"
 onnxruntime = { version = "*", build = "*cuda*" }
 pytorch = { version = "*", build = "*cuda*" }
 

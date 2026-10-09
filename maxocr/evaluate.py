@@ -68,15 +68,16 @@ def _tess_rank(gt: str, alts: list[tuple[str, float]]) -> tuple[int, int]:
     return (names.index(gt) + 1 if gt in names else len(names) + 1), len(names)
 
 
-def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict | None = None):
+def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict | None = None, easy=None):
     """stats, if given, is filled with seconds: worker degrade/tesseract (summed over workers),
-    main wait (blocked on workers), main paddle, main bookkeeping, and wall."""
+    main wait (blocked on workers), main paddle, main bookkeeping, and wall.
+    easy: optional EasyOCRRec; its rows are added as engine "easyocr" (one batch per job)."""
     if paddle is None:
         from .engines.paddle import PaddleRec
         paddle = PaddleRec()
     cls_index = {c: i for i, c in enumerate(paddle.classes)}
     char_rows, string_rows = [], []
-    st = {"degrade": 0.0, "tesseract": 0.0, "wait": 0.0, "paddle": 0.0, "main_other": 0.0}
+    st = {"degrade": 0.0, "tesseract": 0.0, "wait": 0.0, "paddle": 0.0, "easyocr": 0.0, "main_other": 0.0}
     t_start = time.perf_counter()
     os.environ.update(SINGLE_THREAD_ENV)  # inherited by the spawned workers
     ctx = get_context("spawn")
@@ -91,13 +92,20 @@ def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict
             st["tesseract"] += wt["tesseract"]
             t_paddle = 0.0
             key = dict(font=job.font, severity=job.severity, suite=job.suite)
-            for inst, img, tsyms in results:
+            easy_out = [None] * len(results)
+            if easy is not None:
+                te = time.perf_counter()
+                easy_out = easy.texts([img for _, img, _ in results])
+                st["easyocr"] += time.perf_counter() - te
+            for (inst, img, tsyms), epred in zip(results, easy_out):
                 gt = inst.text
                 tp = time.perf_counter()
                 pchars = paddle.read(img)
                 t_paddle += time.perf_counter() - tp
-                for engine, pred in (("paddle", "".join(c.text for c in pchars)),
-                                     ("tesseract", "".join(t for t, _ in tsyms))):
+                engines = [("paddle", "".join(c.text for c in pchars)), ("tesseract", "".join(t for t, _ in tsyms))]
+                if epred is not None:
+                    engines.append(("easyocr", epred))
+                for engine, pred in engines:
                     method, mapping, n_ins = align(gt, pred)
                     string_rows.append({**key, "engine": engine, "inst": inst.index, "truth": gt, "pred": pred,
                                         "length": len(gt), "cropped": inst.cropped,
@@ -110,7 +118,7 @@ def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict
                             probs = pchars[j].probs if j is not None else None
                             row["p_gt"] = float(probs[cls_index[gt[i]]]) if probs is not None else np.nan
                             row["probs"] = probs.astype(np.float16).tobytes() if probs is not None else b""
-                        else:
+                        elif engine == "tesseract":
                             rank, K = _tess_rank(gt[i], tsyms[j][1]) if j is not None else (-1, 0)
                             row["rank"], row["K"] = rank, K
                             row["alts"] = "".join(a for a, _ in tsyms[j][1]) if j is not None else ""
