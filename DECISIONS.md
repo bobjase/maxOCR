@@ -333,6 +333,10 @@ Discovery run 4: resumes from run 3's 34 elites plus the original seeds, each al
 
 Among letters the engine still reads a letter, now lowercase o. With the output limited to 0-9A-Z, the o reading is masked and the choice falls between O and 0, which is where the measured gain came from. If downstream software upper-cases (common for codes), o becomes O and the error is back.
 
+Discovery run 4 result (2,013 evaluations, 36 cells, best fitness 0.658 vs run 3's 0.626; every elite descends from the Libre Baskerville seed). Isolation test (`out/report/isolation_run4.csv`, mean of four engines, average of six cells): control 52, run 4 #1-#4 52-58, **run 4 #5 61** (best so far; PARSeq 64 vs control 54; PARSeq lone 0 / mixed 93 / 87%; PaddleOCR 0 among letters 97%). Run 4 #1, #3 and #4 collapse on the held-out PARSeq (lone 0 at 0-3%): their 0s carry detached specks (pieces of 0.05-0.19 of the main body's area, outside its box) that the 0-9A-Z whitelist makes free. Fix: debris rule in `maxocr/strokes.py` (`drop_debris`: pieces under 0.4x the largest must lie inside the body's box); stencil-style halves are kept.
+
+Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
+
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
 
 ## Open questions for James
