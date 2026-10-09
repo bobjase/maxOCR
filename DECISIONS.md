@@ -467,6 +467,22 @@ Confusion ranking, original amalgam vs current font (`out/report/confusions_amal
 - Adopted #4. **Current best font: `~/maxocr-work/keep/current_0O_5S_1I_2Z.ttf`** (copy `out/fonts/MaxOCR-current-0O-5S-1I-2Z.ttf`).
 - Next pair: 8/B (`out/discover/8B_run1`, `--regress 1.0`).
 
+### 8/B run 1: adopted #5 (2026-10-09)
+
+2,027 evaluations, 32 cells, best fitness 0.900 (base 0.852: the amalgam was already optimized on this cluster). Checks (`out/report/isolation_8B_run1.csv`, `out/report/validation_8B_run1.csv`):
+
+| | control | #1 | #3 | **#5** |
+|---|---|---|---|---|
+| ordinary lines, 8/B pair, mean of four | 6.2 | 4.3 | 5.0 | **3.6** |
+| ordinary lines, 8 read correctly, mean of four | 78.2 | 81.2 | 76.2 | **83.6** |
+| overall character error, mean of four | 7.5 | 7.4 | 7.9 | **7.3** |
+| unrestricted PARSeq, 8 in a mixed line: wrong length | 1/30 | 0/30 | 27/30 | 4/30 |
+| clean (undegraded) Tesseract, 8/B pair read correctly | 88.9 | 81.7 | 95.3 | 84.4 |
+
+- #3 and #4 carry marks on the 8 that PARSeq reads as extra characters (wrong length 18-27/30; PARSeq line error 3.5 to 5.4%). Rejected.
+- Adopted #5. Cost to watch: clean-image Tesseract accuracy on the pair drops 88.9 to 84.4% (all clean candidates show it); every degraded measure improves. **Current best font: `~/maxocr-work/keep/current_0O_5S_1I_2Z_8B.ttf`** (copy `out/fonts/MaxOCR-current-0O-5S-1I-2Z-8B.ttf`).
+- Next pair: 4/A (`out/discover/4A_run1`, `--regress 1.0`).
+
 Discovery run 5: debris rule, PaddleOCR and EasyOCR on case-folded general-alphabet reads (`--casefold`), resumed from run 4's elites (`out/discover/0O_run5`).
 
 Decision: every validation from now on also reads with an unrestricted alphabet and case-folds the output (o counts as O). This is the realistic general-use check; the restricted reading stays as the "code reader with a whitelist" scenario (a legitimate deployment mode, e.g. Tesseract's char whitelist). Next discovery run: score PaddleOCR and EasyOCR on case-folded unrestricted reads, so the search can't win by pushing a glyph outside the allowed set.
