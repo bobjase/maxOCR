@@ -182,6 +182,31 @@ Built-in variants of v34.9.0 for the confusable characters were built (one build
 
 - **Incidents during the first rung-0 launch (fixed):** (1) the invariant cache was smaller than the variant set, so computing the tolerance re-measured every font once per glyph (~2.8 h instead of seconds); measurement is now cached without bound, done once per font, and rasterized at 1/4 px per unit (ink areas agree within 0.02%, 445 fonts in 12 s). (2) The R2a percentile was taken over all fonts rather than over each glyph's distinct shapes; since ~430 of 443 fonts carry the default glyph for any given character, the tolerance collapsed to the default box and rejected 40% of candidates (mostly serifed letters). With distinct shapes the rejection rate is 9% (42 of 444), all R2b ink area, under R31's 20% review threshold. No candidate had been accepted under the faulty tolerance; search state was reset, builds and scores kept. (3) `kill_workers.sh` missed drivers started as plain `python scripts/...` (a stale run kept going alongside its restart until killed by PID); it now matches drivers by script location, anchored to the start of the command line.
 
+## Direction change: amalgam fonts instead of a single parent (2026-10-08, owner direction)
+
+James judged a single parent font (Iosevka) too limiting for an idealized font and proposed building each glyph as a weighted mix of several fonts. Implemented (`maxocr/blend.py`): each ingredient glyph is normalized to a common box and the shapes are blended as weighted signed distance fields; geometry (ink width and height, baseline offset, sidebearing, advance, in cap-height units) is blended separately; tiny debris is removed; the result is traced to TrueType outlines and assembled with fontTools FontBuilder (cap height 700/1000). Ingredients: 35 OFL families from google/fonts at commit 2eb0b48d5f (`scripts/fetch_ofl.py`), so blends can be released under the OFL.
+
+Findings:
+- A single-ingredient recipe reproduces its source font; serif+serif blends are clean; serif+sans blends leave partial-serif debris, so blends are made within one style.
+- OFL ingredient survey (35 faces, `out/survey_ofl/`, seed 1001): serif faces lead (Gelasio, Cormorant Garamond, Spectral, Source Serif 4).
+- **First amalgam experiment** (`scripts/amalgam.py`): per character, the 3 best ingredients of one style, weighted by 1/(error + 0.005). Validation bank, s=0.5, suite (a), rung-0 metrics:
+
+| Font | PaddleOCR within objective % | Tesseract within gate % | PaddleOCR 0/O % | Char error % |
+|---|---|---|---|---|
+| Serif amalgam top-3 blend | 1.23 | 6.97 | 7.51 | 5.56 |
+| Serif amalgam best glyph per char | 1.51 | 6.91 | 7.59 | 6.49 |
+| Sans amalgam top-3 blend | 1.59 | 9.23 | 13.12 | 6.56 |
+| Spectral (best single OFL serif) | 2.79 | 8.65 | 14.47 | 8.10 |
+| Source Code Pro (best baseline) | 3.59 | 13.32 | 25.30 | 10.16 |
+| Iosevka rung-0 elite (partial sweep 1) | 4.84 | 14.25 | 31.70 | 16.87 |
+
+- **Matched capital height** (`scripts/amalgam_fair.py`, all at Source Code Pro's cap height): serif amalgam 1.57 / 7.93 / 8.85 / 6.62 vs Source Code Pro 3.59 / 13.32 / 25.30 / 10.16. The advantage holds (-56% PaddleOCR, -40% Tesseract). Proportional glyphs are wider, so lines are longer at equal cap height.
+- Tesseract 0/O stays at ~34% in every font tried; the amalgam fixes PaddleOCR's 0/O, not Tesseract's.
+- Visually, the top-3 blend reads as one coherent serif; "best glyph per character" looks patched together (a hairline O from Cormorant Garamond beside heavier glyphs). Blending is what makes it a font.
+- **Iosevka rung 0 paused** after sweep 1 reached 1/I (resumable from `out/rung0/run.db`). Accepted so far: zero oval-dotted, capital-d more-rounded-bilateral-serifed, capital-b standard-bilateral-serifed, capital-g toothed-serifless-capped; objective 7.76 -> 8.16. It stays as the monospaced reference.
+
+Spec impact (to be drafted as v0.5): the parent becomes an ingredient pool; R2 (fixed advance per glyph) and R32-R33 (Iosevka variant and PatEL search) are replaced by per-glyph blend weights and geometry knobs; R2a/R2b/R2c need amalgam equivalents (consistency of stroke weight and cap height, outline validity); R47 release becomes an OFL blend with recipe.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
