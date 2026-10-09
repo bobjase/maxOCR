@@ -15,6 +15,7 @@ from .align import align
 from .degrade import Instance, clean, degrade
 
 _tess = None
+_tess_open = None   # optional second Tesseract without a whitelist (general alphabet), case-folded
 
 # One thread per worker: parallelism comes from the pool. These must be in the environment
 # before a worker starts, because OpenMP (loaded by numpy at import, before any initializer
@@ -37,12 +38,14 @@ class Job:
     clean: bool = False   # R7a: ignore severity and instance draws, render undegraded
 
 
-def _worker_init():
-    global _tess
+def _worker_init(tess_open: bool = False):
+    global _tess, _tess_open
     import cv2
     cv2.setNumThreads(1)
+    from .corpus import GENERAL_ALPHABET
     from .engines.tesseract import Tesseract
     _tess = Tesseract()
+    _tess_open = Tesseract(whitelist=GENERAL_ALPHABET) if tess_open else None
 
 
 def _run_job(job: Job):
@@ -56,9 +59,10 @@ def _run_job(job: Job):
             img = degrade(job.font_path, inst, job.severity, job.size_pt, job.dpi, binarize=job.suite == "a")
         t1 = time.perf_counter()
         syms = _tess.read(img)
+        open_text = _tess_open.text(img).upper() if _tess_open is not None else None
         t["degrade"] += t1 - t0
         t["tesseract"] += time.perf_counter() - t1
-        out.append((inst, img, [(s.text, s.alternatives) for s in syms]))
+        out.append((inst, img, [(s.text, s.alternatives) for s in syms], open_text))
     return job, out, t
 
 
@@ -68,10 +72,13 @@ def _tess_rank(gt: str, alts: list[tuple[str, float]]) -> tuple[int, int]:
     return (names.index(gt) + 1 if gt in names else len(names) + 1), len(names)
 
 
-def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict | None = None, easy=None):
+def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict | None = None, easy=None,
+        tess_open: bool = False):
     """stats, if given, is filled with seconds: worker degrade/tesseract (summed over workers),
     main wait (blocked on workers), main paddle, main bookkeeping, and wall.
-    easy: optional EasyOCRRec; its rows are added as engine "easyocr" (one batch per job)."""
+    easy: optional EasyOCRRec; its rows are added as engine "easyocr" (one batch per job).
+    tess_open: also run Tesseract without a whitelist (general alphabet, case-folded) as engine
+    "tesseract_open"; marks that read as punctuation then show up as insertions."""
     if paddle is None:
         from .engines.paddle import PaddleRec
         paddle = PaddleRec()
@@ -81,7 +88,7 @@ def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict
     t_start = time.perf_counter()
     os.environ.update(SINGLE_THREAD_ENV)  # inherited by the spawned workers
     ctx = get_context("spawn")
-    with ctx.Pool(n_workers, initializer=_worker_init) as pool:
+    with ctx.Pool(n_workers, initializer=_worker_init, initargs=(tess_open,)) as pool:
         it = pool.imap_unordered(_run_job, jobs)
         for k in range(len(jobs)):
             t0 = time.perf_counter()
@@ -95,9 +102,9 @@ def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict
             easy_out = [None] * len(results)
             if easy is not None:
                 te = time.perf_counter()
-                easy_out = easy.texts([img for _, img, _ in results])
+                easy_out = easy.texts([r[1] for r in results])
                 st["easyocr"] += time.perf_counter() - te
-            for (inst, img, tsyms), epred in zip(results, easy_out):
+            for (inst, img, tsyms, open_text), epred in zip(results, easy_out):
                 gt = inst.text
                 tp = time.perf_counter()
                 pchars = paddle.read(img)
@@ -105,6 +112,8 @@ def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict
                 engines = [("paddle", "".join(c.text for c in pchars)), ("tesseract", "".join(t for t, _ in tsyms))]
                 if epred is not None:
                     engines.append(("easyocr", epred))
+                if open_text is not None:
+                    engines.append(("tesseract_open", open_text))
                 for engine, pred in engines:
                     method, mapping, n_ins = align(gt, pred)
                     string_rows.append({**key, "engine": engine, "inst": inst.index, "truth": gt, "pred": pred,

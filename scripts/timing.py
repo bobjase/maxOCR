@@ -111,7 +111,7 @@ def generation(n_build: int, n_tess: int, pop: int, insts, paddle, copies, outdi
             for r in pending:
                 if r.ready():
                     _, results, _ = r.get()
-                    for _, img, _ in results:
+                    for _, img, *_ in results:
                         t = time.perf_counter()
                         paddle.read(img)
                         paddle_s += time.perf_counter() - t
