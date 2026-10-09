@@ -1,9 +1,9 @@
 # MaxOCR Font: Product Requirements Document
 
-Version: 0.4 (DRAFT)
+Version: 0.4 (FROZEN)
 Date: 2026-10-08
 Owner: James
-Status: DRAFT. Freezes Sections 6.5 and 7 from measured M1a data. Three items wait on the owner and are marked **[OPEN]**: per-cluster targets (7.4), co-best baseline handling (7.3), and the proposed context check (R13c). The document is frozen once those are decided.
+Status: FROZEN 2026-10-09. Freezes Sections 6.5 and 7 from measured M1a data. The three owner decisions (per-cluster targets 7.4, co-best rule 7.3, context check R13c) were accepted as proposed on 2026-10-09. This is the record of M1a; later changes go to v0.5.
 Supersedes: v0.3.1
 
 Changes from v0.3.1: environment via pixi on Ubuntu 26.04; PaddleOCR run as the official ONNX export with the output restricted to the corpus alphabet; CTC run definition corrected (R11a); Tesseract rank from confidence-sorted alternatives (R12b); Apple Vision omitted; R29 "no worse" made statistical; cluster rule gains share and rate floors (R22b); objective and gate clusters frozen (6.5); R27b reliability curve defined per glyph; Section 7 replaced by a relative operating-point rule after the 2% absolute target proved unreachable, and frozen at s = 0.5; severity defined as one dial over all R5 operators; R33c working copies share only node_modules; R37b allocation measured; R40b probe results; Inter dropped from baselines; font builds compared by content, not file hash; new risk that the engines' 0/O behaviour is a learned habit. Requirement numbering preserved; new requirements carry letter suffixes. Rationale and raw measurements: `DECISIONS.md`.
@@ -75,7 +75,7 @@ R1 to R4 unchanged. Clarifications:
 - R12b. Rank is the 1-based position of the correct class among the ChoiceIterator alternatives sorted by confidence (measured: raw order is non-monotonic in ~2% of symbols), K+1 if absent; empty alternatives are dropped. Lower bound, stated. The `lstm_choice_mode=2` functional test passes.
 - R12c. Tesseract workers run single-threaded. Thread limits are set in the environment before a worker starts (OpenMP reads them once at load); Intel OpenMP warnings are suppressed.
 - R13, R13b unchanged.
-- R13c. **[OPEN] Context check, measured only.** Once, on the sealed test bank: Tesseract with dictionaries on and PaddleOCR without the alphabet restriction, on real words and on format-constrained codes (VIN-style), to confirm gains do not reverse when the engine can use context. Not an optimization target.
+- R13c. **Context check, measured only** (accepted 2026-10-09). Once, on the sealed test bank: Tesseract with dictionaries on and PaddleOCR without the alphabet restriction, on real words and on format-constrained codes (VIN-style), to confirm gains do not reverse when the engine can use context. Not an optimization target.
 - R14. Apple Vision omitted: no Mac available.
 - R15. Unchanged.
 - R15b. Unchanged; the oem 0 load test passes against the vendored legacy traineddata.
@@ -161,12 +161,12 @@ A median-font anchor, as in v0.3.1, does not work with a relative rule: Tesserac
 | OCR-A | 12.73 (9.6) | 7.80 (6.5) | 12.32 (27.4) | 9.82 (18.4) |
 
 - Best baseline: **Source Code Pro** (two-engine aggregate 8.45%), with IBM Plex Mono 0.21 points behind.
-- **[OPEN] Co-best rule.** Proposal: every font not significantly worse than the best counts as co-best, and MaxOCR must beat all of them; Source Code Pro is the reference for R40/R40b.
+- **Co-best rule** (accepted 2026-10-09): every font not significantly worse than the best counts as co-best, and MaxOCR must beat all of them; Source Code Pro is the reference for R40/R40b.
 - Iosevka, the rung-0 parent, ranks 5th of 6 (aggregate 11.04%); on PaddleOCR its suite (a) rate is twice its suite (b) rate, so binarization hurts it most.
 
-### 7.4 Per-cluster targets [OPEN]
+### 7.4 Per-cluster targets
 
-The v0.3.1 rule (target = 2x the R40b estimate where that estimate exceeds 0.1%) gives the {0, 8, B, D, E, O, Q} cluster a target near 0.2% against a 3.6% baseline, i.e. closing ~95% of the gap by font changes alone, and leaves clusters with smaller estimates undefined. Proposal: targets as headroom closed (R41), **at least 50% of the gap between the best baseline and the R40b estimate, per objective cluster**, matching the 50% already used for transfer. Frozen once the owner decides.
+The v0.3.1 rule (target = 2x the R40b estimate where that estimate exceeds 0.1%) gives the {0, 8, B, D, E, O, Q} cluster a target near 0.2% against a 3.6% baseline, i.e. closing ~95% of the gap by font changes alone, and leaves clusters with smaller estimates undefined. Decision (accepted 2026-10-09): targets as headroom closed (R41), **at least 50% of the gap between the best baseline and the R40b estimate, per objective cluster**, matching the 50% already used for transfer.
 
 ### 7.5 Fixed regardless of outcome
 
@@ -192,7 +192,7 @@ v0.3.1 table carried forward, with changes:
 
 ## 10. Deliverables
 
-M1a delivered: environment; harness (render, degrade, align, evaluate, build orchestration); PaddleOCR and Tesseract wired, lstm_choice_mode and oem 0 tests passing; baseline sweep at 8 severities plus clean; validation bank; frozen clusters; reliability curve; R40 and R40b; timing sheet and R37b allocation; one-command reproduce script; this v0.4. Outstanding before freeze: the [OPEN] items. R2c invariants are implemented with candidate generation in M2.
+M1a delivered: environment; harness (render, degrade, align, evaluate, build orchestration); PaddleOCR and Tesseract wired, lstm_choice_mode and oem 0 tests passing; baseline sweep at 8 severities plus clean; validation bank; frozen clusters; reliability curve; R40 and R40b; timing sheet and R37b allocation; one-command reproduce script (each step run; not yet run end to end); this v0.4. R2c invariants are implemented with candidate generation in M2.
 
 M1b to M4 unchanged.
 
@@ -204,7 +204,7 @@ Proposed addition (measurement only): a survey of the fonts installed with Windo
 
 ## 12. Milestones
 
-Unchanged from v0.3.1. M1a exit criteria met except the v0.4 freeze, which waits on the [OPEN] items.
+Unchanged from v0.3.1. **M1a complete** (v0.4 frozen 2026-10-09).
 
 ### 12.1 Planned scope expansion (owner direction, 2026-10-08)
 
