@@ -558,3 +558,11 @@ One synthetic generation, repeated for each worker split: 32 candidate builds (w
 | PP-OCRv6 medium rec, one 8-char line, GPU, unbatched | ~3 ms | — |
 
 Verified that a variant change alters only the target glyph's outline and leaves advances at 500. The subset build's cmap holds 56 code points (36 requested plus Iosevka's required extras). The ~5 s candidate cost is mostly fixed tool startup, so parallel workers (R33c) should scale well. R38's 10-minute generation budget looks comfortable.
+
+### Planned final step: the golden mean (James, 2026-10-09)
+
+The discovered glyphs work for OCR but some look messy (the 1 especially). At the end, produce two fonts:
+- **MaxOCR Machine**: the maximum-OCR glyphs, for machine-primary use.
+- **MaxOCR Text**: readable, "pretty" glyphs that keep most of the gain, for human documents.
+
+Method: for each changed glyph, a slider from the stock glyph to the discovered one (SDF blend, 0-100% in steps), each step cleaned (smoothed outlines, straight stems, stroke weight matched to the font), and the full checks run on every step. James picks from a sheet of the candidates that keep at least the agreed share of the gain (proposed: 75%).
