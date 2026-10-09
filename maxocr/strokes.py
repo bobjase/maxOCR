@@ -222,11 +222,20 @@ def _point_on(g: Genome, rng) -> np.ndarray:
     return c[int(rng.integers(len(c)))]
 
 
-def mutate(g: Genome, rng: np.random.Generator, n_ops: int | None = None) -> tuple[Genome, list[str]]:
+CLEAN_OPS = ("scale", "offset", "contrast", "stress", "smooth")   # whole-glyph, typographic: no blobs or spurs
+
+
+def mutate(g: Genome, rng: np.random.Generator, n_ops: int | None = None,
+           ops: tuple[str, ...] | None = None) -> tuple[Genome, list[str]]:
+    """ops: restrict to these operators (e.g. CLEAN_OPS); their probabilities are renormalized."""
     g = g.copy()
     done = []
     for _ in range(n_ops or int(rng.integers(1, 4))):
-        op = str(rng.choice(OPS, p=OP_P / OP_P.sum()))
+        if ops:
+            pp = np.array([OP_P[OPS.index(o)] for o in ops])
+            op = str(rng.choice(list(ops), p=pp / pp.sum()))
+        else:
+            op = str(rng.choice(OPS, p=OP_P / OP_P.sum()))
         p = g.parts[int(rng.integers(len(g.parts)))]
         n = len(p.pts)
         if op == "jitter":

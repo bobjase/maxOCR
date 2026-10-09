@@ -14,7 +14,7 @@ base font. PARSeq is held out.
 
     python scripts/discover_pair.py [--pair 0O] [--evals 2000] [--batch 32] [--run NAME]
                                     [--resume out/discover/<run>/archive.pkl] [--short-zero 0.78] [--casefold]
-                                    [--base FONT.ttf] [--regress 1.0] [--guard]
+                                    [--base FONT.ttf] [--regress 1.0] [--guard] [--clean]
 Writes out/discover/<run>/archive.json, log.jsonl, gallery.png (run defaults to the pair); fonts in
 ~/maxocr-work/discover/<run>/. --resume adds a previous run's elites to the seeds (re-evaluated);
 --short-zero adds a copy of each seed with the digit scaled to that height (old-style figure).
@@ -35,12 +35,15 @@ from maxocr.build import WORK  # noqa: E402
 from maxocr.corpus import PRIMARY_ALPHABET, make_strings  # noqa: E402
 from maxocr.degrade import make_instance  # noqa: E402
 from maxocr.evaluate import Job, chunk, run  # noqa: E402
-from maxocr.strokes import from_glyph, mutate, primitive, rasterize, with_glyphs  # noqa: E402
+from maxocr.strokes import CLEAN_OPS, from_glyph, mutate, primitive, rasterize, with_glyphs  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 D1 = np.linspace(0.85, 2.05, 9)       # width-ratio bin edges (8 bins)
 D2 = np.linspace(0.10, 0.95, 9)       # IoU bin edges (8 bins)
 PAIR_BANK_SEED = 4242
+SERIF_SEEDS = ("gelasio", "librebaskerville", "sourceserif4", "spectral", "ptserif", "notoserif", "crimsonpro",
+               "lora", "literata", "caladea", "tinos", "ibmplexserif", "merriweather", "vollkorn", "ebgaramond",
+               "alegreya")
 
 
 CONTEXTS = ("single", "mixed", "letters", "digits")
@@ -161,6 +164,9 @@ def main():
     ap.add_argument("--run", help="output name under out/discover and ~/maxocr-work/discover (default: the pair)")
     ap.add_argument("--resume", help="archive.pkl of a previous run: its elites join the seeds")
     ap.add_argument("--short-zero", type=float, help="also seed each pair with the digit at this height")
+    ap.add_argument("--clean", action="store_true",
+                    help="readable-glyph search: only whole-glyph typographic mutations (strokes.CLEAN_OPS: "
+                         "scale, weight, contrast, stress, smoothing) and clean seeds from 16 OFL serif faces")
     ap.add_argument("--guard", action="store_true",
                     help="guard against marks read as extra characters: add Tesseract without a whitelist "
                          "(tesseract_open) as an optimizing engine and count insertions as error")
@@ -188,11 +194,13 @@ def main():
 
     # Seeds: the base font's own pair, pairs from several OFL serif faces, and primitive shapes.
     seeds = [("base", from_glyph(base, a), from_glyph(base, b))]
-    for fam in ("gelasio", "librebaskerville", "spectral", "sourceserif4", "atkinsonhyperlegible", "tinos",
-                "bodonimoda", "playfairdisplay", "librebodoni"):
+    fams = SERIF_SEEDS if args.clean else ("gelasio", "librebaskerville", "spectral", "sourceserif4",
+                                           "atkinsonhyperlegible", "tinos", "bodonimoda", "playfairdisplay",
+                                           "librebodoni")
+    for fam in fams:
         if fam in ofl:
             seeds.append((fam, from_glyph(ofl[fam], a), from_glyph(ofl[fam], b)))
-    if (a, b) == ("0", "O"):
+    if (a, b) == ("0", "O") and not args.clean:
         seeds.append(("primitives capsule/ellipse", primitive("capsule"), primitive("ellipse")))
         seeds.append(("primitives diamond/ellipse", primitive("diamond"), primitive("ellipse")))
     if args.resume:
@@ -272,10 +280,10 @@ def main():
             ga, gb, ops = parent["ga"], parent["gb"], []
             which = rng.choice(["a", "b", "both"], p=[0.4, 0.4, 0.2])
             if which in ("a", "both"):
-                ga, o = mutate(ga, rng)
+                ga, o = mutate(ga, rng, ops=CLEAN_OPS if args.clean else None)
                 ops += [f"{a}:{x}" for x in o]
             if which in ("b", "both"):
-                gb, o = mutate(gb, rng)
+                gb, o = mutate(gb, rng, ops=CLEAN_OPS if args.clean else None)
                 ops += [f"{b}:{x}" for x in o]
             cands.append({"ga": ga, "gb": gb, "origin": parent["origin"], "ops": parent.get("ops", [])[-12:] + ops})
         evaluate(cands)
