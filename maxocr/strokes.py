@@ -30,6 +30,11 @@ MIN_W, MAX_W = 0.10, 0.30
 MIN_LEN = 0.15
 MIN_DOT = 0.14
 MAX_PARTS = 10
+# Debris: small ink pieces outside the glyph's main body read as punctuation or touch neighbours, and
+# cost nothing under a 0-9A-Z whitelist (discovery run 4). Pieces with at least SUBSTANTIAL x the
+# largest piece's area form the body; smaller pieces survive only inside the body's box (+ margin).
+SUBSTANTIAL = 0.4         # stencil halves are ~1.0; run 4 debris was 0.05-0.19
+DEBRIS_MARGIN = 0.03
 
 
 @dataclass
@@ -111,7 +116,25 @@ def rasterize(g: Genome) -> tuple[np.ndarray, tuple[float, float]]:
         if k:
             ker = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * k + 1, 2 * k + 1))
             m = cv2.dilate(m, ker) if g.offset > 0 else cv2.erode(m, ker)
-    return m > 0, (ox, oy)
+    return drop_debris(m > 0), (ox, oy)
+
+
+def drop_debris(m: np.ndarray) -> np.ndarray:
+    """Remove small ink pieces lying outside the box around the glyph's substantial pieces. Inner dots,
+    bars and slashes stay; so do the halves of a split (stencil) glyph."""
+    n, lab, st, _ = cv2.connectedComponentsWithStats(m.astype(np.uint8), connectivity=8)
+    if n <= 2:
+        return m
+    area = st[1:, cv2.CC_STAT_AREA]
+    body = 1 + np.flatnonzero(area >= SUBSTANTIAL * area.max())
+    x0, y0 = st[body, 0].min(), st[body, 1].min()
+    x1, y1 = (st[body, 0] + st[body, 2]).max(), (st[body, 1] + st[body, 3]).max()
+    pad = int(round(DEBRIS_MARGIN * PX))
+    keep = np.zeros(n, bool)
+    for i in range(1, n):
+        x, y, w, h = st[i, :4]
+        keep[i] = x >= x0 - pad and y >= y0 - pad and x + w <= x1 + pad and y + h <= y1 + pad
+    return m & keep[lab]
 
 
 # ---------------------------------------------------------------- seeds
