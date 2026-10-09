@@ -4,7 +4,8 @@ whitelist). For each unordered pair {a, b}: (a read as b + b read as a) / (occur
 Picks the next pairs for discovery.
 
     python scripts/confusions.py FONT.ttf [--name NAME] [--top 15]
-Writes out/report/confusions_<name>.csv.
+Writes out/report/confusions_<name>.csv (wide) and confusions_<name>_directed.csv (per engine, both
+directions: a_as_b = a read as b).
 """
 import argparse
 import sys
@@ -59,6 +60,7 @@ def main():
             rows.append({"engine": e, "pair": x + y, "rate_pct": 100 * k / (n[x] + n[y]),
                          "a_as_b": sub[(x, y)], "b_as_a": sub[(y, x)]})
     df = pd.DataFrame(rows)
+    df.round(3).to_csv(ROOT / "out" / "report" / f"confusions_{a.name}_directed.csv", index=False)
     wide = df.pivot_table(index="pair", columns="engine", values="rate_pct", fill_value=0.0)
     wide["mean"] = wide.mean(1)
     wide = wide.sort_values("mean", ascending=False)
