@@ -43,6 +43,7 @@ REPORT = ROOT / "out" / "report"
 SEVERITY = 0.5
 EXHAUSTIVE_MAX = 200
 MAX_COORD_ROUNDS = 3
+MAX_GATE_TRIES = 12
 ACCEPT_P = 0.05
 GATE_P = 0.05
 CLEAN_P = 0.01
@@ -263,10 +264,13 @@ def search_cluster(con, pool, cluster, elite, sweep, parent_id, parent_path, tol
                                         "elite_objective": round(e["objective"], 4),
                                         "best_objective": round(get_score(con, ranked[0])["objective"], 4)})
         accepted = None
-        for cid in [i for i in ranked if i != elite_id][:3]:
+        # Walk down the ranking while the improvement is still significant: the top candidates can
+        # all fail the gate (e.g. several zero variants that help PaddleOCR but hurt Tesseract) while
+        # a lower-ranked change to another member character passes.
+        for cid in [i for i in ranked if i != elite_id][:MAX_GATE_TRIES]:
             better, p = improves(con, cid, elite_id)
             if not better:
-                break                    # ranked by objective: later ones will not pass either
+                break                    # ranked by objective: later ones are weaker still
             passed, detail = gate(con, cid, elite_id, parent_id, paddle, banks)
             o = json.loads(con.execute("SELECT overrides FROM cand WHERE id=?", (cid,)).fetchone()[0])
             log(con, sweep, name, "gate", {"cand": cid, "overrides": {k: v for k, v in o.items() if k not in elite
@@ -318,8 +322,12 @@ def main():
     else:
         specs = [(m, 400) for g in OBJECTIVE for m in cluster_moves(g, {})[0]]
         print(f"pre-building {len(specs)} rung-0 variants for the R2a tolerance", flush=True)
-        built = ensure_built(con, pool, specs, None, None)
-        paths = [con.execute("SELECT font FROM cand WHERE id=?", (i,)).fetchone()[0] for i in built]
+        ensure_built(con, pool, specs, None, None)
+        # Every successfully built variant, regardless of any stored R2c verdict (a stored verdict may
+        # come from an earlier tolerance; filtering on it would bias the tolerance toward the default).
+        ids = {cand_id(o, w) for o, w in specs}
+        paths = [f for i, f in con.execute("SELECT id, font FROM cand WHERE build_error IS NULL").fetchall() if i in ids]
+        built = list(ids)
         tol = tolerance(paths + [parent_path])
         tol_file.write_text(json.dumps({c: list(map(float, v)) for c, v in tol.items()}))
         # Re-check every candidate on record against the (new) tolerance, not only the pre-built set:
