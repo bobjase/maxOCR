@@ -37,12 +37,16 @@ def main():
     ap.add_argument("--pair", default="0O")
     ap.add_argument("--top", type=int, default=6)
     ap.add_argument("--archive", default="0O_run2", help="discovery run directory under out/discover")
+    ap.add_argument("--fonts-json", help="evaluate these fonts instead: JSON {name: path}")
+    ap.add_argument("--out", default=None, help="output CSV name under out/report (with --fonts-json)")
     a = ap.parse_args()
     t1, t2 = a.pair[0], a.pair[1]
     base = json.loads((ROOT / "out" / "amalgam_opt" / "08BDEOQ" / "elite.json").read_text())["font"]
     fonts = {"baseline: Source Code Pro": str(BASELINES["Source Code Pro"]), "amalgam (optimized)": base}
     arch = ROOT / "out" / "discover" / a.archive / "archive.json"
-    if arch.exists():
+    if a.fonts_json:
+        fonts = json.loads(Path(a.fonts_json).read_text())
+    elif arch.exists():
         for k, r in enumerate(json.loads(arch.read_text())[:a.top]):
             fonts[f"{a.archive} #{k + 1}"] = r["font"]
     bank, info = isolation_bank(a.pair)
@@ -67,7 +71,7 @@ def main():
                              "correct": bool((x.pred == x.truth).iloc[0])})
     df = pd.DataFrame(rows)
     out = df.groupby(["font", "engine", "kind", "target"]).correct.mean().mul(100).round(1).unstack(["engine"])
-    out.to_csv(ROOT / "out" / "discover" / a.archive / "isolation.csv")
+    out.to_csv(ROOT / "out" / "report" / a.out if a.fonts_json else ROOT / "out" / "discover" / a.archive / "isolation.csv")
     with pd.option_context("display.width", 220, "display.max_rows", 200):
         print(out.to_string())
 
