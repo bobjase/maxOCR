@@ -1,0 +1,47 @@
+diff --git a/packages/font-glyphs/src/letter/latin/o.ptl b/packages/font-glyphs/src/letter/latin/o.ptl
+index c8e7b22..ebbb379 100644
+--- a/packages/font-glyphs/src/letter/latin/o.ptl
++++ b/packages/font-glyphs/src/letter/latin/o.ptl
+@@ -17,7 +17,9 @@ glyph-block Letter-Latin-O : begin
+ 
+ 	create-glyph 'O' 'O' : glyph-proc
+ 		include : MarkSet.capital
+-		include : OShape CAP 0 SB RightSB nothing ArchDepthA ArchDepthB
++		# MaxOCR: horizontal outset of the capital O (font units), default 0.
++		local outset : fallback para.maxocrOOutset 0
++		include : OShape CAP 0 (SB - outset) (RightSB + outset) nothing ArchDepthA ArchDepthB
+ 
+ 	create-glyph 'smcpO' 0x1D0F : glyph-proc
+ 		include : MarkSet.e
+diff --git a/packages/font-glyphs/src/number/0.ptl b/packages/font-glyphs/src/number/0.ptl
+index 7b46d70..52f53bd 100644
+--- a/packages/font-glyphs/src/number/0.ptl
++++ b/packages/font-glyphs/src/number/0.ptl
+@@ -18,8 +18,10 @@ glyph-block Digits-Zero : begin
+ 
+ 	define [ZeroShapeBase shapeT] : namespace
+ 		define [outlineT sink offsetX offsetY top] : shapeT sink (top - offsetY) (offsetY) (SB + offsetX) (RightSB - offsetX)
+-		export : define [Shape top] : outlineT dispiro 0 0 top
+-		export : define [Mask top] : outlineT spiro-outline 1 1 top
++		# MaxOCR: horizontal inset of the zero's outline (font units), default 0.
++		define inset : fallback para.maxocrZeroInset 0
++		export : define [Shape top] : outlineT dispiro inset 0 top
++		export : define [Mask top] : outlineT spiro-outline (inset + 1) 1 top
+ 
+ 	define Capsule : ZeroShapeBase OShapeT
+ 	define Oval : ZeroShapeBase OvalShapeT
+diff --git a/params/parameters.toml b/params/parameters.toml
+index fb126e7..9f4dcad 100644
+--- a/params/parameters.toml
++++ b/params/parameters.toml
+@@ -77,6 +77,10 @@ slab = 0
+ # Old style number height
+ onumZeroHeightRatio = 1.145
+ 
++# MaxOCR fork parameters (rung 2). Defaults reproduce upstream Iosevka.
++maxocrZeroInset = 0
++maxocrOOutset = 0
++
+ # Diversed advance width scale factors, used in quasi-proportional families
+ advanceScaleMM = 1 # Extra-wide letters
+ advanceScaleM  = 1 # M-like letters
