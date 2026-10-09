@@ -6,6 +6,8 @@ additions present in only one font (spurs, flicks, small blobs) fade out quickly
 slider also cleans. Unchanged glyphs are copied untouched from the original.
 
     python scripts/golden_mean.py [--levels 0.25,0.5,0.75]
+    python scripts/golden_mean.py --mix "02BOSTZ:1,45678AG:0.25,1I:0.25,J:0" --tag mixA
+      (per-glyph levels: 1 = current glyph, 0 = original glyph, otherwise a blend)
 Writes ~/maxocr-work/golden/w<NN>.ttf, out/fonts/MaxOCR-Text-w<NN>.ttf (named for Windows),
 out/golden/fonts.json and out/golden/sheet.png.
 """
@@ -71,11 +73,36 @@ def sheet(fonts: dict[str, str], path: Path, lines=("0123456789", "ABCDEFGHIJKLM
     c.save(path)
 
 
+def mix(current: str, spec: str, tag: str) -> str:
+    """One font with a level per glyph; glyphs not named keep their current form."""
+    WORK.mkdir(parents=True, exist_ok=True)
+    levels = {ch: float(w) for part in spec.split(",") for chars, w in [part.split(":")] for ch in chars}
+    path = str(WORK / f"{tag}.ttf")
+    f = TTFont(current)
+    f.save(path)
+    orig_chars = "".join(ch for ch, w in levels.items() if w == 0)
+    if orig_chars:
+        transplant(path, ORIGINAL, orig_chars, path)
+    for w in sorted({w for w in levels.values() if 0 < w < 1}):
+        chars = "".join(ch for ch, x in levels.items() if x == w)
+        recipe = Recipe({ch: CharRecipe([Ingredient(ORIGINAL, 1 - w), Ingredient(current, w)]) for ch in chars},
+                        name=f"MaxOCR golden {tag}")
+        tmp = build_font(recipe, str(WORK / f"{tag}_w{int(w * 100)}_blend.ttf"))
+        transplant(path, tmp, chars, path)
+    export(path, str(ROOT / "out" / "fonts" / f"MaxOCR-Text-{tag}.ttf"), f"MaxOCR Text {tag}")
+    print(f"{tag}: {path}  ({spec})")
+    return path
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--current", default=open(Path.home() / "maxocr-work/keep/CURRENT").read().strip())
     ap.add_argument("--levels", default="0.25,0.5,0.75")
+    ap.add_argument("--mix", help="per-glyph levels, e.g. '02BOSTZ:1,45678AG:0.25,1IJ:0'")
+    ap.add_argument("--tag", default="mix")
     a = ap.parse_args()
+    if a.mix:
+        return mix(a.current, a.mix, a.tag)
     WORK.mkdir(parents=True, exist_ok=True)
     out = ROOT / "out" / "golden"
     out.mkdir(parents=True, exist_ok=True)
