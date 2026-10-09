@@ -6,8 +6,8 @@ R40c: RMS pixel distance between the two glyphs under the same degradation (high
 different shapes, i.e. real separation rather than engine-specific cues); clean accuracy of the pair
 characters on both engines vs the base.
 
-    python scripts/discover_validate.py [--pair 0O] [--top 8]
-Writes out/discover/<pair>/validation.csv.
+    python scripts/discover_validate.py [--pair 0O] [--top 8] [--fonts-json f.json --out name.csv]
+Writes out/discover/<pair>/validation.csv (or out/report/<name> with --fonts-json).
 """
 import argparse
 import dataclasses
@@ -62,14 +62,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pair", default="0O")
     ap.add_argument("--top", type=int, default=8)
+    ap.add_argument("--fonts-json", help="validate these fonts instead: JSON {name: path}")
+    ap.add_argument("--out", default="validation_fonts.csv", help="output CSV name under out/report (with --fonts-json)")
     args = ap.parse_args()
     a, b = args.pair[0], args.pair[1]
     d = ROOT / "out" / "discover" / args.pair
-    archive = json.loads((d / "archive.json").read_text())
-    base = json.loads((ROOT / "out" / "amalgam_opt" / "08BDEOQ" / "elite.json").read_text())["font"]
-    fonts = {"base (optimized amalgam)": base}
-    for k, r in enumerate(archive[:args.top]):
-        fonts[f"#{k + 1} cell {r['cell']} w{r['ratio']:.2f} iou{r['iou']:.2f}"] = r["font"]
+    if args.fonts_json:
+        fonts = json.loads(Path(args.fonts_json).read_text())
+        out_csv = ROOT / "out" / "report" / args.out
+    else:
+        archive = json.loads((d / "archive.json").read_text())
+        base = json.loads((ROOT / "out" / "amalgam_opt" / "08BDEOQ" / "elite.json").read_text())["font"]
+        fonts = {"base (optimized amalgam)": base}
+        for k, r in enumerate(archive[:args.top]):
+            fonts[f"#{k + 1} cell {r['cell']} w{r['ratio']:.2f} iou{r['iou']:.2f}"] = r["font"]
+        out_csv = d / "validation.csv"
 
     val = rung0.bank("val")
     paddle = rung0.PaddleRec()
@@ -108,7 +115,7 @@ def main():
             rows.append(row)
             print(json.dumps(row), flush=True)
     df = pd.DataFrame(rows)
-    df.to_csv(d / "validation.csv", index=False)
+    df.to_csv(out_csv, index=False)
     with pd.option_context("display.width", 250, "display.max_columns", 30):
         print(df.to_string(index=False))
 

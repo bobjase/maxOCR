@@ -277,6 +277,31 @@ Isolation bank (`scripts/discover_pair.isolation_bank`, `scripts/isolation_eval.
 
 Isolation test of high-contrast and italic faces (Bodoni MT and Bodoni MT Italic, Bell MT Italic, Goudy Old Style Italic, Perpetua Italic, Times New Roman Italic; `out/report/isolation_italic_styles.csv`): none overcomes the context prior (0 among letters 0-3% on EasyOCR and PARSeq, 0-13% on Tesseract; O among digits 0-37% on every engine), and in mixed context they are mostly worse than the upright amalgam (O on PaddleOCR / PARSeq: Bodoni Italic 23 / 43% vs amalgam 100 / 83%). Contrast and stress still enter the discovery search space: new `stress` (rotate a counter) and `contrast` (anisotropic counter scale) operators, and OFL high-contrast seeds (Bodoni Moda, Playfair Display, Libre Bodoni).
 
+### Discovery run 3 and feature transplants (2026-10-08)
+
+Discovery run 3 (isolation fitness: single, mixed and adversarial contexts; PaddleOCR, Tesseract, EasyOCR; 2,026 evaluations, 34 archive cells). Best fitness 0.556 (start) to 0.626. The top designs make the O much wider than the 0 (width ratio 1.4-2.4) and add small hooks or spurs to both.
+
+Feature transplants from fonts James tried on "BO0K" (`scripts/feature_transplant.py`): each idea is put into the optimized amalgam, changing only the 0 and/or the O, so the test measures the idea rather than a whole different font. Ideas: stencil gaps, script entry curl on the O, short old-style 0, squared (superellipse) 0 or O, white 0 on a black disk, blackletter faceted 0 (normal and short). Not tested: rough outlines (noise, not a feature) and number names written inside digits (about 3 px tall at 8 pt/200 dpi, so they blur into a dot; at large sizes they would be read as extra text).
+
+Isolation test, s=0.5, suite (a), 30 trials per cell (`out/report/isolation_transplant.csv`, compact view `scratch/summarize_iso.py`). Mean over the four engines of six cells (0 and O: alone, mixed line, adversarial neighbours):
+
+| Font | 0 among letters | O among digits | O alone | Average of six |
+|---|---|---|---|---|
+| amalgam (control) | 21 | 19 | 32 | 52 |
+| discovery run 3 #1 / #2 / #3 | 12 / 22 / 20 | 32 / 29 / 25 | 58 / 57 / 53 | 59 / 59 / 58 |
+| short old-style 0 | **35** | 19 | 32 | 49 |
+| stencil 0, stencil O + 0 | 22 | 19 / 18 | 32 / 33 | 49 |
+| curl O (script) | 21 | 12 | 33 | 51 |
+| squared 0 / squared O | 5 / 21 | 19 / 13 | 32 / 6 | 44 / 45 |
+| faceted 0 / faceted short 0 | 8 / 19 | 19 | 32 | 44 / 41 |
+| white 0 on black disk | 1 | 19 | 32 | 36 |
+
+- Only the short 0 moves the hardest cell (0 among letters): Tesseract 7 to 50%, PaddleOCR 77 to 90%; EasyOCR and PARSeq stay at 0%. It costs the lone 0 (PARSeq 83 to 30%, Tesseract 77 to 50%), and it will collide with lowercase o in the basic-Latin phase. A height dial (0.70, 0.78, 0.86 cap; on the control and on run 3 #2) is queued to find out whether a milder shortening keeps the gain without the cost.
+- Marking the O with a script curl does nothing at this size; discovery's gains on the O come from width.
+- The inverted, squared and faceted zeros are read worse as zeros (engines don't map them to 0).
+- Discovery run 3 #4 shows why PARSeq is held out: its lone 0 drops to 0% on PARSeq while the three optimizing engines are fine.
+- EasyOCR: 0% in both adversarial cells for every font so far. No shape tested overrides its context prior.
+
 ## Open questions for James
 
 1. **Per-cluster targets (Section 7 step 4).** The rule "if the R40b estimate is above 0.1%, target = 2x the estimate" gives Source Code Pro at s=0.5 a {0,O,D} target of 0.22% (estimate 0.111%) and leaves the other clusters with no stated target (estimates at or below 0.1%). The PaddleOCR baseline is 4.5%, so a ~0.2% target means closing ~95% of the gap with font changes alone. That is probably unreachable and would make the success criterion meaningless. Proposal: express targets as a fraction of headroom closed (R41), e.g. "close at least 50% of the gap between the best baseline and the probe estimate, per objective cluster". That matches the 50% figure the PRD already uses for the transfer test. Needs your call.
