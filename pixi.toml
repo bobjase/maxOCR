@@ -29,6 +29,8 @@ scikit-image = "*"
 easyocr = "*"
 onnxruntime = { version = "*", build = "*cuda*" }
 pytorch = { version = "*", build = "*cuda*" }
+transformers = ">=5.19.0,<6"
+accelerate = ">=1.15.0,<2"
 
 [tasks]
 risky = "pytest -v tests/risky"

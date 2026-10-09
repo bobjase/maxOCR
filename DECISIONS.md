@@ -566,3 +566,19 @@ The discovered glyphs work for OCR but some look messy (the 1 especially). At th
 - **MaxOCR Text**: readable, "pretty" glyphs that keep most of the gain, for human documents.
 
 Method: for each changed glyph, a slider from the stock glyph to the discovered one (SDF blend, 0-100% in steps), each step cleaned (smoothed outlines, straight stems, stroke weight matched to the font), and the full checks run on every step. Rule (James, 2026-10-09): human acceptability is a hard constraint, judged by James; within it, keep as much of the gain as possible (no fixed share). The current 1 (slanted, tapered, curved flag) is not acceptable and is the first glyph to fix.
+
+### Pair pipeline results (2026-10-09)
+
+Adoption rule (`scripts/adopt.py`, with the within-cluster guard added after James pointed out that 1, I and J are one group). Line numbers: pair confusion and overall character error, mean of four engines, case-folded reading.
+
+| Run | Decision | Pair before -> after | Character error before -> after |
+|---|---|---|---|
+| 0O_run6 | none passed | 22.8 | 7.08 |
+| 8S_g1 | #4 | 3.70 -> 2.19 | 7.08 -> 7.05 |
+| 7T_g1 | #2 | 3.59 -> 1.87 | 7.05 -> 6.80 |
+| 6G_g1 | #1 | 2.73 -> 1.54 | 6.80 -> 6.74 |
+| IJ_g1 | #3 | 3.27 -> 0.22 | 6.74 -> 6.46 |
+| 9I_g1 | none passed (all raise character error) | 2.52 | 6.46 |
+| 1A_g1 | none passed (unrestricted PARSeq loses 7-14 of 30 correct reads in a cell, mostly the lone 1) | 2.18 | 6.46 |
+
+**Current font: `~/maxocr-work/keep/current_after_IJ_g1.ttf`** (export `out/fonts/MaxOCR-current-after-IJ_g1.ttf`): 0/O, 5/S, 1/I, 2/Z, 8/B, 4/A, 8/S, 7/T, 6/G, I/J. Character error across the four engines 8.2% (original amalgam, case-folded) to 6.46%. The 1 is left for the golden-mean step.
