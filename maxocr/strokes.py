@@ -188,8 +188,9 @@ def primitive(kind: str) -> Genome:
 
 
 # ---------------------------------------------------------------- mutation
-OPS = ["jitter", "bend", "scale", "shear", "offset", "stroke_add", "cut_add", "dot", "remove", "width", "smooth"]
-OP_P = np.array([.18, .14, .12, .06, .08, .12, .08, .05, .06, .06, .05])
+OPS = ["jitter", "bend", "scale", "shear", "offset", "stroke_add", "cut_add", "dot", "remove", "width", "smooth",
+       "stress", "contrast"]
+OP_P = np.array([.16, .12, .11, .06, .07, .11, .07, .04, .05, .05, .04, .06, .06])
 
 
 def _point_on(g: Genome, rng) -> np.ndarray:
@@ -252,6 +253,20 @@ def mutate(g: Genome, rng: np.random.Generator, n_ops: int | None = None) -> tup
             p.w0, p.w1 = p.w0 * k, p.w1 * k
         elif op == "smooth" and p.kind == "contour" and n >= 6:
             p.pts = 0.5 * p.pts + 0.25 * (np.roll(p.pts, 1, 0) + np.roll(p.pts, -1, 0))
+        elif op in ("stress", "contrast"):
+            # Act on a counter (inner contour): rotating it moves the thick parts of the stroke to a
+            # diagonal (stress); stretching it unevenly trades side thickness for top/bottom (contrast).
+            counters = [q for q in g.parts if q.kind == "contour" and q.sign < 0]
+            if not counters:
+                continue
+            q = counters[int(rng.integers(len(counters)))]
+            c = q.pts.mean(0)
+            if op == "stress":
+                a = np.deg2rad(rng.normal(0, 8))
+                R = np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]])
+                q.pts = c + (q.pts - c) @ R.T
+            else:
+                q.pts = c + (q.pts - c) * np.exp(rng.normal(0, 0.06, 2))
         else:
             continue
         done.append(op)

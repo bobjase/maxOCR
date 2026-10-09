@@ -25,6 +25,8 @@ FAMILIES = [
     "atkinsonhyperlegible", "andika", "lexend",
     # mono
     "cousine", "courierprime",
+    # high contrast (Didone), seeds for discovery
+    "bodonimoda", "playfairdisplay", "librebodoni",
 ]
 
 

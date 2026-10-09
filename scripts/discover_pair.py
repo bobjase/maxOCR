@@ -153,8 +153,10 @@ def main():
 
     # Seeds: the base font's own pair, pairs from several OFL serif faces, and primitive shapes.
     seeds = [("base", from_glyph(base, a), from_glyph(base, b))]
-    for fam in ("gelasio", "librebaskerville", "spectral", "sourceserif4", "atkinsonhyperlegible", "tinos"):
-        seeds.append((fam, from_glyph(ofl[fam], a), from_glyph(ofl[fam], b)))
+    for fam in ("gelasio", "librebaskerville", "spectral", "sourceserif4", "atkinsonhyperlegible", "tinos",
+                "bodonimoda", "playfairdisplay", "librebodoni"):
+        if fam in ofl:
+            seeds.append((fam, from_glyph(ofl[fam], a), from_glyph(ofl[fam], b)))
     if (a, b) == ("0", "O"):
         seeds.append(("primitives capsule/ellipse", primitive("capsule"), primitive("ellipse")))
         seeds.append(("primitives diamond/ellipse", primitive("diamond"), primitive("ellipse")))
