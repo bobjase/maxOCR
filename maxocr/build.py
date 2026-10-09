@@ -18,17 +18,24 @@ PLAN = (ROOT / "iosevka" / "private-build-plans.toml").read_text()
 WEIGHT_KEY = "[buildPlans.MaxOCRCand.weights.Regular]\nshape = 400"
 
 
-def cand_id(overrides: dict[str, str], weight: int = 400) -> str:
-    blob = json.dumps({"v": dict(sorted(overrides.items())), "w": weight}, sort_keys=True)
-    return hashlib.sha1(blob.encode()).hexdigest()[:12]
+def cand_id(overrides: dict[str, str], weight: int = 400, metric: dict | None = None) -> str:
+    """Stable id. `metric` (metricOverride) is only hashed when given, so the ids of
+    variant-only candidates do not change."""
+    d = {"v": dict(sorted(overrides.items())), "w": weight}
+    if metric:
+        d["m"] = dict(sorted(metric.items()))
+    return hashlib.sha1(json.dumps(d, sort_keys=True).encode()).hexdigest()[:12]
 
 
-def plan_text(overrides: dict[str, str], weight: int = 400) -> str:
+def plan_text(overrides: dict[str, str], weight: int = 400, metric: dict | None = None) -> str:
     assert WEIGHT_KEY in PLAN, "build plan layout changed; update maxocr.build"
     text = PLAN.replace(WEIGHT_KEY, WEIGHT_KEY.replace("400", str(weight)))
     if overrides:
         text += "\n[buildPlans.MaxOCRCand.variants.design]\n" + "".join(
             f'{k} = "{v}"\n' for k, v in sorted(overrides.items()))
+    if metric:
+        text += "\n[buildPlans.MaxOCRCand.metricOverride]\n" + "".join(
+            f"{k} = {v}\n" for k, v in sorted(metric.items()))
     return text
 
 
@@ -55,18 +62,18 @@ class BuildPool:
             self.free.put(working_copy(i))
         self.n = n_workers
 
-    def path(self, overrides: dict[str, str], weight: int = 400) -> Path:
-        return self.out / f"{cand_id(overrides, weight)}.ttf"
+    def path(self, overrides: dict[str, str], weight: int = 400, metric: dict | None = None) -> Path:
+        return self.out / f"{cand_id(overrides, weight, metric)}.ttf"
 
-    def _build(self, overrides: dict[str, str], weight: int) -> tuple[Path, str | None]:
-        out = self.path(overrides, weight)
+    def _build(self, overrides: dict[str, str], weight: int, metric: dict | None = None) -> tuple[Path, str | None]:
+        out = self.path(overrides, weight, metric)
         if out.exists():
             return out, None
         w = self.free.get()
         try:
             plan = w / "private-build-plans.toml"
             plan.unlink(missing_ok=True)
-            plan.write_text(plan_text(overrides, weight))
+            plan.write_text(plan_text(overrides, weight, metric))
             r = subprocess.run(["npm", "run", "build", "--", "ttf-unhinted::MaxOCRCand"], cwd=w,
                                capture_output=True, text=True)
             if r.returncode != 0:
@@ -78,6 +85,7 @@ class BuildPool:
         finally:
             self.free.put(w)
 
-    def build_many(self, specs: list[tuple[dict[str, str], int]]) -> list[tuple[Path, str | None]]:
+    def build_many(self, specs: list[tuple]) -> list[tuple[Path, str | None]]:
+        """specs: (overrides, weight) or (overrides, weight, metric)."""
         with ThreadPoolExecutor(self.n) as ex:
             return list(ex.map(lambda s: self._build(*s), specs))

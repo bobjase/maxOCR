@@ -103,6 +103,13 @@ def tolerance(fonts: list[str], chars: str = PRIMARY_ALPHABET, q: float = 95) ->
             for c, b in boxes.items()}
 
 
+def tolerance_cell(tol: dict[str, tuple], parent: str, min_sb: float = 20) -> dict[str, tuple]:
+    """Proposed R2a revision (open question 4): horizontally the ink may use the glyph's whole
+    advance cell minus a minimum sidebearing; vertical bounds stay as measured from rung 0."""
+    par = measure(parent)
+    return {c: (min(min_sb, x0), y0, max(par[c].advance - min_sb, x1), y1) for c, (x0, y0, x1, y1) in tol.items()}
+
+
 def check(candidate: str, parent: str, tol: dict[str, tuple] | None) -> list[str]:
     """Returns the list of violations (empty = passes R2c)."""
     cand, par = measure(candidate), measure(parent)
