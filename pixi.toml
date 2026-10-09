@@ -20,6 +20,7 @@ pandas = "*"
 pyarrow = "*"
 matplotlib = "*"
 scipy = "*"
+shapely = "*"
 onnxruntime = { version = "*", build = "*cuda*" }
 pytorch = { version = "*", build = "*cuda*" }
 
