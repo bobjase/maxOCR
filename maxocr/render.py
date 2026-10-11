@@ -41,7 +41,9 @@ def render(font_path: str, text: str, size_pt: float = 8.0, dpi: int = 200,
     buf = hb.Buffer()
     buf.add_str(text)
     buf.guess_segment_properties()
-    hb.shape(hb_font, buf, {"liga": False, "calt": False})
+    # Contextual alternates stay off (glyph-level measurements), except for runs that test fonts whose
+    # calt feature is the point (MaxOCR Smart): set MAXOCR_CALT=1 in the environment of that run.
+    hb.shape(hb_font, buf, {"liga": False, "calt": os.environ.get("MAXOCR_CALT") == "1"})
 
     ascender = int(np.ceil(ft_face.ascender * px_per_unit))
     descender = int(np.ceil(-ft_face.descender * px_per_unit))
