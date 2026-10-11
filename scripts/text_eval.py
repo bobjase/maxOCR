@@ -39,12 +39,13 @@ not have died in vain -- that this nation, under God, shall have a new birth of 
 government of the people, by the people, for the people, shall not perish from the earth."""
 
 
-def lines() -> list[str]:
-    words = "".join(c if c.isalnum() or c.isspace() else " " for c in GETTYSBURG.upper()).split()
+def lines(mixed_case: bool = False) -> list[str]:
+    text = GETTYSBURG if mixed_case else GETTYSBURG.upper()
+    words = "".join(c if c.isalnum() or c.isspace() else " " for c in text).split()
     return textwrap.wrap(" ".join(words), 22)   # PARSeq reads at most 25 characters
 
 
-def read_tesseract_dict(imgs):
+def read_tesseract_dict(imgs, fold: bool = True):
     from tesserocr import OEM, PSM, PyTessBaseAPI
     from PIL import Image
     from maxocr.engines.tesseract import TESSDATA_BEST
@@ -52,7 +53,8 @@ def read_tesseract_dict(imgs):
     with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=PSM.SINGLE_LINE) as api:
         for im in imgs:
             api.SetImage(Image.fromarray(im))
-            out.append(api.GetUTF8Text().strip().upper())
+            t = api.GetUTF8Text().strip()
+            out.append(t.upper() if fold else t)
     return out
 
 
@@ -72,12 +74,14 @@ def main():
     ap.add_argument("--vlm", action="store_true")
     ap.add_argument("--repeats", type=int, default=8, help="degraded draws per line")
     ap.add_argument("--out", default="text_eval.csv")
+    ap.add_argument("--mixed-case", action="store_true",
+                    help="the address as written (mixed case, no punctuation), read and scored case-sensitively")
     a = ap.parse_args()
     fonts = json.loads(Path(a.fonts_json).read_text())
-    texts = lines()
+    texts = lines(a.mixed_case)
     insts = [make_instance(k, t, 1863) for k, t in enumerate(texts * a.repeats)]
     insts = [i for i in insts if not i.cropped]
-    eng = dict(alphabet=GENERAL_ALPHABET, casefold=True)
+    eng = dict(alphabet=GENERAL_ALPHABET, casefold=not a.mixed_case)
     from maxocr.engines.easyocr_rec import EasyOCRRec
     from maxocr.engines.parseq import Parseq
     paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**eng), Parseq(**eng)
@@ -93,7 +97,7 @@ def main():
                    [degrade(path, i, rung0.SEVERITY, sz) for i in insts]
             truths = [i.text for i in insts]
             preds = {"paddle": [paddle.text(im) for im in imgs], "easyocr": easy.texts(imgs),
-                     "parseq": pq.read(imgs), "tesseract (dictionary)": read_tesseract_dict(imgs)}
+                     "parseq": pq.read(imgs), "tesseract (dictionary)": read_tesseract_dict(imgs, fold=not a.mixed_case)}
             if vlm is not None:
                 preds["qwen2.5-vl"] = vlm.read(imgs)
             row = {"font": name, "condition": cond}
