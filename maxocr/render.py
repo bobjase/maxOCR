@@ -77,4 +77,29 @@ def render(font_path: str, text: str, size_pt: float = 8.0, dpi: int = 200,
             canvas[ys, xs] = np.maximum(canvas[ys, xs], sub)
         pen_x += pos.x_advance * px_per_unit
 
-    return (255 - np.round(canvas * 255)).astype(np.uint8)
+    out = (255 - np.round(canvas * 255)).astype(np.uint8)
+    if os.environ.get("MAXOCR_CROP") == "ink":
+        # Fair line boxes across fonts: real OCR pipelines crop a text line close to its ink, so the
+        # font's own ascender/descender padding should not change the letter size an engine sees.
+        # Keep the ink rows plus a margin of CROP_MARGIN x the font's capital height above and below.
+        rows = np.nonzero(canvas.max(axis=1) > 0.05)[0]
+        if len(rows):
+            m = int(round(CROP_MARGIN * _cap_px(font_path, size_pt, dpi)))
+            out = out[max(rows[0] - m, 0):min(rows[-1] + m + 1, out.shape[0])]
+    return out
+
+
+CROP_MARGIN = 0.25
+
+
+@lru_cache(maxsize=None)
+def _cap_upem(font: str) -> float:
+    path, index = split_face(font)
+    face = freetype.Face(path, index=index)
+    face.set_char_size(1000 * 64, 0, 72, 72)
+    face.load_char("H", freetype.FT_LOAD_NO_SCALE)
+    return face.glyph.metrics.height / face.units_per_EM
+
+
+def _cap_px(font: str, size_pt: float, dpi: int) -> float:
+    return _cap_upem(font) * size_pt * dpi / 72.0
