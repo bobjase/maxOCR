@@ -762,3 +762,16 @@ v0.3 checks (`out/report/size_sweep_v03.csv`, `confusions_pc_v03*.csv`): capital
 ### Cluster round 1 (v0.4 candidate, 2026-10-11)
 
 Joint blend searches on v0.3 (`text_opt_lc.py`, ingredients Courier Prime, Cousine, Andika, IBM Plex Serif, Spectral, Gelasio): cluster l/I/i/1 changing l, i; o/O/0 changing o; 5/S/s changing 5, s; Z/z/2 changing all three. Search fitness 0.71 -> 0.79, 0.75 -> 0.77, 0.82 -> 0.88, 0.76 -> 0.86. Combined: `~/maxocr-work/keep/MaxOCR-Text-v04c.ttf` (+ letter-digit spacing `MaxOCR-v04c.ttf`). Checks, fair cropping: case-sensitive codes 9.38 -> **8.29** (PARSeq 6.27 -> 5.46); mixed-case Gettysburg at s=0.5 5.22 -> **3.80** (clean 2.02 -> 2.31); capital-and-digit codes 8 pt 5.04 -> 5.20, 12 pt 3.78 -> 3.81. Per character: i 28.4 -> 4.7, s 15.6 -> 9.1, Z 19.5 -> 11.4, z 16.8 -> 10.4, 2 16.5 -> 12.7, 5 31.2 -> 27.9, o 19.2 -> 15.9; l unchanged (46%). Sheet with numbers: `out/golden/v04_labeled.png`.
+
+### Consistent lowercase heights (James: "the r is much taller than the o", 2026-10-11)
+
+Borrowed letters keep their source font's x-height (Cousine, Courier Prime are taller than the serif blend). `scripts/normalize_xheight.py` scales each lowercase glyph uniformly so its top matches the same glyph in the equal serif blend (`--tall`: the reference heights x the median ratio of the borrowed letters a g n r s x z). James: digits and symbols may keep different heights. Results (fair cropping; `confusions_pc_v04n/t*`, `text_eval_v04n/t.csv`):
+
+| | mixed codes | real text s=0.5 | real text clean |
+|---|---|---|---|
+| A. v0.4 as is (uneven heights) | 8.29 | 3.80 | 2.31 |
+| B. heights matched to the serif letters (shorter) | 8.30 | 5.00 | 2.30 |
+| C. heights matched to the borrowed letters (taller) | 8.96 | 3.71 | 2.25 |
+| Courier New | 11.42 | 5.89 | 3.60 |
+
+Shorter heights hurt damaged real text (EasyOCR 8.3 to 12.7%); taller heights help real text but cost mixed codes (lowercase closer in size to capitals: Tesseract 10.8 to 12.1%). Sheet: `out/golden/v04_heights.png`. Waiting for James.
