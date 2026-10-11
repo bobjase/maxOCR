@@ -4,7 +4,9 @@ proportions kept; sidebearings kept, advance adjusted) so its top matches the sa
 whose lowercase is one consistent design (the equal serif blend): x-height letters, overshoots of round letters,
 ascenders and the t all follow the reference. For i and j the stem top is matched, not the dot.
 
-    python scripts/normalize_xheight.py SRC.ttf REF.ttf DST.ttf [--chars abc...] [--tall]
+With --align-bottom the bottom also goes to the reference's (some blends sit above the baseline or dip below it).
+
+    python scripts/normalize_xheight.py SRC.ttf REF.ttf DST.ttf [--chars abc...] [--tall] [--match-width] [--align-bottom]
 """
 import argparse
 
@@ -41,7 +43,8 @@ def tall_factor(src: str, ref: str, chars: str = "agnrsxz") -> float:
     return ratios[len(ratios) // 2]
 
 
-def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0, match_width: bool = False) -> dict:
+def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0, match_width: bool = False,
+              align_bottom: bool = False) -> dict:
     f, r = TTFont(src), TTFont(ref)
     cf, cr = f.getBestCmap(), r.getBestCmap()
     gs = f.getGlyphSet()
@@ -50,22 +53,25 @@ def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0, 
         name = cf[ord(ch)]
         g = f["glyf"][name]
         g.recalcBounds(f["glyf"])
+        rg = r["glyf"][cr[ord(ch)]]
+        rg.recalcBounds(r["glyf"])
         top, target = body_top(f, name, ch), k * body_top(r, cr[ord(ch)], ch)
-        s = target / top
+        bot, tbot = (g.yMin, k * rg.yMin) if align_bottom else (0, 0)   # blends may sit above or dip below the line
+        s = (target - tbot) / (top - bot)
         x0, x1 = g.xMin, g.xMax
         sx = s
         if match_width:
-            rg = r["glyf"][cr[ord(ch)]]
             sx = k * (rg.xMax - rg.xMin) / max(x1 - x0, 1)   # the reference's proportions, at the same scale
-        scales[ch] = (round(sx, 3), round(s, 3))
-        if abs(s - 1) < 0.005 and abs(sx - 1) < 0.005:
+        dy = tbot - s * bot
+        scales[ch] = (round(sx, 3), round(s, 3), round(dy))
+        if abs(s - 1) < 0.005 and abs(sx - 1) < 0.005 and abs(dy) < 1:
             continue
         adv, lsb = f["hmtx"][name]
         rsb = adv - x1
         rec = DecomposingRecordingPen(gs)
         gs[name].draw(rec)
         pen = TTGlyphPen(None)
-        rec.replay(TransformPen(pen, (sx, 0, 0, s, x0 - sx * x0, 0)))   # scale about (left ink edge, baseline)
+        rec.replay(TransformPen(pen, (sx, 0, 0, s, x0 - sx * x0, dy)))   # scale about the left ink edge; bottom onto the target
         f["glyf"][name] = pen.glyph()
         f["glyf"][name].recalcBounds(f["glyf"])
         f["hmtx"][name] = (int(round(lsb + sx * (x1 - x0) + rsb)), lsb)
@@ -83,10 +89,12 @@ def main():
                     help="also scale each glyph horizontally to the reference glyph's width (x the same factor)")
     ap.add_argument("--tall", action="store_true",
                     help="match the taller, borrowed x-height: reference heights x the median ratio of borrowed letters")
+    ap.add_argument("--align-bottom", action="store_true",
+                    help="also move each glyph's bottom to the reference glyph's bottom (baseline, overshoot, descender)")
     a = ap.parse_args()
     k = tall_factor(a.src, a.ref) if a.tall else 1.0
     print("height factor", round(k, 3))
-    print(normalize(a.src, a.ref, a.dst, a.chars, k, a.match_width))
+    print(normalize(a.src, a.ref, a.dst, a.chars, k, a.match_width, a.align_bottom))
 
 
 if __name__ == "__main__":
