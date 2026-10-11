@@ -745,3 +745,7 @@ Fair rerun (`MAXOCR_CROP=ink`; `out/report/size_sweep_fair.csv`, `confusions_fai
 Case-sensitive codes (0-9A-Za-z): Courier 11.42, MaxOCR (tuned lowercase) 11.56, Sitka 13.22, Source Code Pro 13.43, Georgia 17.51; MaxOCR I/l 14.7% (Courier 2.8), Courier 1/l 38.2% and 0/O 27.1% (MaxOCR 8.6 and 17.9).
 
 - The strongest existing font is Courier New once padding is fair. MaxOCR (final) makes 24% fewer errors than Courier at 8 pt / 200 dpi and 29% fewer at 12 pt / 300 dpi on capital-and-digit codes; on mixed-case codes they tie (I/l is MaxOCR's gap). Earlier cross-font claims (e.g. "31% fewer than Sitka") are superseded by this table.
+
+Taller l under fair cropping (`confusions_fair_lc_l114/120.csv`): I/l 14.7 to 10.8 / 9.4% and 1/l 8.6 to 6.4 / 5.2%, but overall error 11.56 to 11.77 / 11.86% (lines containing l get taller, so every letter is smaller after height normalization). Not adopted; the current l stays.
+
+Fonts exported with lowercase, version 0.2 (`out/fonts/MaxOCR.ttf`, `MaxOCR-Small.ttf`, `MaxOCR-Text.ttf`; 0-9, A-Z, a-z, space; letter-digit spacing now also covers lowercase; the caps-only versions are in `out/fonts/intermediate/*-caps-only.ttf`). Metrics checked: tallest glyph 848 (I) under ascent 900; deepest -251 (j) within Windows descent 300. MaxOCR Machine stays capitals and digits only.
