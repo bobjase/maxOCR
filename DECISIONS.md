@@ -667,3 +667,20 @@ James: Source Code Pro was the best of the six spec baselines, not of the 414-fo
 
 Letter spacing (`scripts/letter_spacing.py`, shapes unchanged; `out/report/size_sweep_spacing.csv`): gap between letters relative to cap height: Georgia 0.09, Sitka 0.14, MaxOCR Text 0.15, Courier New 0.21. MaxOCR Text with gaps x1.5 / x2: 8 pt 7.13 to 6.00 / 5.50, 12 pt 4.89 to 4.64 / 4.26; lines 6% / 13% longer. Wider gaps cut errors by about a quarter at small size, more than the whole Machine-vs-Text difference. Testing x2.5, x3 and Machine x2 next.
 Wider gaps (`out/report/size_sweep_spacing2.csv`), random codes, mean of four engines, 8 pt / 12 pt: Text x2 5.50 / 4.26 (+13% line length), x2.5 5.40 / 3.93 (+19%), x3 5.23 / 3.72 (+26%); Machine 6.29 / 4.83, Machine x2 5.08 / 4.04. Most of the gain is in by x2; proposal: x2 for both fonts (waiting for James on the extra width).
+
+### MaxOCR Smart: context-dependent glyphs and spacing (James's idea, 2026-10-11)
+
+Engines read all-letter words and all-digit numbers well; they fail where a letter touches a digit. `scripts/smart_font.py` builds on MaxOCR Text: (A) `kern` feature adding 100 units at every letter-digit and digit-letter boundary; (B) `calt` contextual alternates swapping in the MaxOCR Machine form of a glyph whose neighbour is of the other kind; (C) both. Words and numbers render exactly as MaxOCR Text; applications that ignore calt/kern show MaxOCR Text. The renderer keeps calt off except with `MAXOCR_CALT=1` (set for these runs).
+
+Random codes, mean of four engines (`out/report/size_sweep_smart.csv`):
+
+| | 8 pt / 200 | 12 pt / 200 | 8 pt / 300 | 12 pt / 300 |
+|---|---|---|---|---|
+| MaxOCR Text | 7.13 | 4.89 | 5.08 | 4.33 |
+| MaxOCR Machine | 6.29 | 4.83 | 4.78 | 4.27 |
+| Text, gaps x2 everywhere | 5.50 | 4.26 | 3.97 | 3.68 |
+| Smart A (space at boundaries) | 5.60 | 3.83 | 3.88 | 3.34 |
+| Smart B (OCR glyphs at boundaries) | 6.30 | 4.78 | 4.82 | 3.98 |
+| **Smart C (both)** | **5.12** | **3.50** | **3.71** | 3.40 |
+
+Smart C: 28% fewer errors than Text at 8 pt / 200 dpi without widening words or numbers. Smart A gets most of the gain with clean glyphs everywhere. Waiting for James: C or A as the main font.
