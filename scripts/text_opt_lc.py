@@ -32,7 +32,7 @@ from maxocr.evaluate import Job, chunk, run  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 INGREDIENTS = ("ibmplexserif", "spectral", "gelasio", "notoserif", "sourceserif4", "courierprime")
-K = len(INGREDIENTS)
+K = len(INGREDIENTS)   # every ingredient set has K fonts; --ingredients replaces the default set
 N_PER = K + 4
 BOUNDS = {"logw": (-0.10, 0.10), "logh": (-0.06, 0.04), "shift": (-0.04, 0.02), "bold": (-1.5, 1.5)}
 ENGINES = ("paddle", "tesseract", "easyocr")
@@ -89,6 +89,7 @@ def main():
     ap.add_argument("--run", required=True)
     ap.add_argument("--generations", type=int, default=30)
     ap.add_argument("--popsize", type=int, default=16)
+    ap.add_argument("--ingredients", help=f"comma-separated OFL families (exactly {K}; the first three start equal)")
     a = ap.parse_args()
     pair, chars = a.pair, a.only or a.pair
     out = ROOT / "out" / "discover" / a.run
@@ -97,7 +98,9 @@ def main():
     fdir.mkdir(parents=True, exist_ok=True)
     logf = open(out / "log.jsonl", "w")
     path_of = {f["family"]: f["path"] for f in json.loads((ROOT / "out" / "ofl_faces.json").read_text())["faces"]}
-    paths = [path_of[f] for f in INGREDIENTS]
+    fams = a.ingredients.split(",") if a.ingredients else list(INGREDIENTS)
+    assert len(fams) == K, f"need {K} ingredients"
+    paths = [path_of[f] for f in fams]
     paddle, easy = rung0.PaddleRec(alphabet=ALNUM_ALPHABET), EasyOCRRec(alphabet=ALNUM_ALPHABET)
     b = bank(pair)
     pool = get_context("spawn").Pool(8)
