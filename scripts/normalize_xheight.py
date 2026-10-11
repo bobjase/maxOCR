@@ -41,7 +41,7 @@ def tall_factor(src: str, ref: str, chars: str = "agnrsxz") -> float:
     return ratios[len(ratios) // 2]
 
 
-def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0) -> dict:
+def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0, match_width: bool = False) -> dict:
     f, r = TTFont(src), TTFont(ref)
     cf, cr = f.getBestCmap(), r.getBestCmap()
     gs = f.getGlyphSet()
@@ -52,19 +52,23 @@ def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0) 
         g.recalcBounds(f["glyf"])
         top, target = body_top(f, name, ch), k * body_top(r, cr[ord(ch)], ch)
         s = target / top
-        scales[ch] = round(s, 3)
-        if abs(s - 1) < 0.005:
-            continue
         x0, x1 = g.xMin, g.xMax
+        sx = s
+        if match_width:
+            rg = r["glyf"][cr[ord(ch)]]
+            sx = k * (rg.xMax - rg.xMin) / max(x1 - x0, 1)   # the reference's proportions, at the same scale
+        scales[ch] = (round(sx, 3), round(s, 3))
+        if abs(s - 1) < 0.005 and abs(sx - 1) < 0.005:
+            continue
         adv, lsb = f["hmtx"][name]
         rsb = adv - x1
         rec = DecomposingRecordingPen(gs)
         gs[name].draw(rec)
         pen = TTGlyphPen(None)
-        rec.replay(TransformPen(pen, (s, 0, 0, s, x0 - s * x0, 0)))   # scale about (left ink edge, baseline)
+        rec.replay(TransformPen(pen, (sx, 0, 0, s, x0 - sx * x0, 0)))   # scale about (left ink edge, baseline)
         f["glyf"][name] = pen.glyph()
         f["glyf"][name].recalcBounds(f["glyf"])
-        f["hmtx"][name] = (int(round(lsb + s * (x1 - x0) + rsb)), lsb)
+        f["hmtx"][name] = (int(round(lsb + sx * (x1 - x0) + rsb)), lsb)
     f.save(dst)
     return scales
 
@@ -75,12 +79,14 @@ def main():
     ap.add_argument("ref")
     ap.add_argument("dst")
     ap.add_argument("--chars", default=LOWER)
+    ap.add_argument("--match-width", action="store_true",
+                    help="also scale each glyph horizontally to the reference glyph's width (x the same factor)")
     ap.add_argument("--tall", action="store_true",
                     help="match the taller, borrowed x-height: reference heights x the median ratio of borrowed letters")
     a = ap.parse_args()
     k = tall_factor(a.src, a.ref) if a.tall else 1.0
     print("height factor", round(k, 3))
-    print(normalize(a.src, a.ref, a.dst, a.chars, k))
+    print(normalize(a.src, a.ref, a.dst, a.chars, k, a.match_width))
 
 
 if __name__ == "__main__":
