@@ -637,3 +637,17 @@ Text base F (`~/maxocr-work/golden/mixF.ttf`, export `out/fonts/MaxOCR-Text-mixF
 - **MaxOCR Machine** = the pair-pipeline font (`~/maxocr-work/keep/MaxOCR-Machine.ttf`, export `out/fonts/MaxOCR-Machine.ttf`).
 
 Size sweep (`scripts/size_sweep.py`, `out/report/size_sweep.csv`; random codes, s=0.5, mean of four engines): 8 pt / 200 dpi Source Code Pro 12.0, original 8.2, Machine 6.3, Text 7.2; 12 pt / 300 dpi 6.6, 4.7, 4.2, 4.3. The gain over the original shrinks from ~25% to ~10% as text gets larger; MaxOCR stays about a third below Source Code Pro at every size. On random codes Tesseract and EasyOCR still miss 6-11% even at 12 pt / 300 dpi; PaddleOCR is near perfect from 8 pt up.
+
+### Final comparison (2026-10-10)
+
+Held-out VLM (Qwen2.5-VL-3B, `out/report/vlm_lines_final.csv`, `vlm_isolation_final.csv`): character error Source Code Pro 4.98, original amalgam 1.97, MaxOCR Machine 1.67, **MaxOCR Text 1.51**; isolation test (10 pairs, single/mixed/adversarial) correct 76.3 / 84.4 / 87.3 / 87.0%.
+
+| Mean character error (%) | Source Code Pro | original amalgam | MaxOCR Machine | MaxOCR Text |
+|---|---|---|---|---|
+| random codes, 8 pt / 200 dpi, four engines | 12.0 | 8.2 | 6.3 | 7.2 |
+| random codes, 12 pt / 300 dpi, four engines | 6.6 | 4.7 | 4.2 | 4.3 |
+| digits only, four engines | 2.6 | 1.0 | 1.3 | 1.0 |
+| Gettysburg Address, five readers | 5.9 | 1.9 | 1.8 | 1.9 |
+| VLM (held out), random codes | 5.0 | 2.0 | 1.7 | 1.5 |
+
+MICR E-13B on digits only: 15.5. Open: EasyOCR's context bias on 0/O; lowercase and punctuation (basic Latin); spec v0.5.
