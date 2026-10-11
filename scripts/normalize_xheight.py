@@ -4,7 +4,7 @@ proportions kept; sidebearings kept, advance adjusted) so its top matches the sa
 whose lowercase is one consistent design (the equal serif blend): x-height letters, overshoots of round letters,
 ascenders and the t all follow the reference. For i and j the stem top is matched, not the dot.
 
-    python scripts/normalize_xheight.py SRC.ttf REF.ttf DST.ttf [--chars abc...]
+    python scripts/normalize_xheight.py SRC.ttf REF.ttf DST.ttf [--chars abc...] [--tall]
 """
 import argparse
 
@@ -33,7 +33,15 @@ def body_top(f: TTFont, name: str, ch: str) -> float:
     return best[1]
 
 
-def normalize(src: str, ref: str, dst: str, chars: str = LOWER) -> dict:
+def tall_factor(src: str, ref: str, chars: str = "agnrsxz") -> float:
+    """Median ratio current/reference of top heights over letters borrowed from tall-x-height fonts."""
+    f, r = TTFont(src), TTFont(ref)
+    cf, cr = f.getBestCmap(), r.getBestCmap()
+    ratios = sorted(body_top(f, cf[ord(c)], c) / body_top(r, cr[ord(c)], c) for c in chars)
+    return ratios[len(ratios) // 2]
+
+
+def normalize(src: str, ref: str, dst: str, chars: str = LOWER, k: float = 1.0) -> dict:
     f, r = TTFont(src), TTFont(ref)
     cf, cr = f.getBestCmap(), r.getBestCmap()
     gs = f.getGlyphSet()
@@ -42,7 +50,7 @@ def normalize(src: str, ref: str, dst: str, chars: str = LOWER) -> dict:
         name = cf[ord(ch)]
         g = f["glyf"][name]
         g.recalcBounds(f["glyf"])
-        top, target = body_top(f, name, ch), body_top(r, cr[ord(ch)], ch)
+        top, target = body_top(f, name, ch), k * body_top(r, cr[ord(ch)], ch)
         s = target / top
         scales[ch] = round(s, 3)
         if abs(s - 1) < 0.005:
@@ -67,8 +75,12 @@ def main():
     ap.add_argument("ref")
     ap.add_argument("dst")
     ap.add_argument("--chars", default=LOWER)
+    ap.add_argument("--tall", action="store_true",
+                    help="match the taller, borrowed x-height: reference heights x the median ratio of borrowed letters")
     a = ap.parse_args()
-    print(normalize(a.src, a.ref, a.dst, a.chars))
+    k = tall_factor(a.src, a.ref) if a.tall else 1.0
+    print("height factor", round(k, 3))
+    print(normalize(a.src, a.ref, a.dst, a.chars, k))
 
 
 if __name__ == "__main__":
