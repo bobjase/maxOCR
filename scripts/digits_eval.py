@@ -5,8 +5,9 @@ height as the original amalgam's at 8 pt / 200 dpi. Suite (a) at s=0.5 and undeg
 Tesseract, EasyOCR and the held-out PARSeq, output restricted to 0-9A-Z as in the main harness (a code
 reader that may also see letters). Uncropped lines only.
 
-    python scripts/digits_eval.py
-Writes out/report/digits_eval.csv.
+    python scripts/digits_eval.py [--fonts-json f.json --out name.csv]
+Writes out/report/digits_eval.csv (or the --out name). Sizes are matched on the capital H (on the 0 for
+fonts without letters, i.e. MICR).
 """
 import json
 import sys
@@ -34,10 +35,11 @@ ORIGINAL = str(HOME / "maxocr-work/amalgam_opt/08BDEOQ/g06_09.ttf")
 
 
 def zero_height(path: str) -> float:
+    """Reference height for size matching: the capital H, or the 0 for digit-only fonts (MICR)."""
     f = TTFont(path, lazy=False)
     gs, cm = f.getGlyphSet(), f.getBestCmap()
     p = BoundsPen(gs)
-    gs[cm[ord("0")]].draw(p)
+    gs[cm[ord("H") if ord("H") in cm else ord("0")]].draw(p)
     return (p.bounds[3] - p.bounds[1]) / f["head"].unitsPerEm
 
 
@@ -53,7 +55,12 @@ def score(df: pd.DataFrame) -> dict:
 
 
 def main():
-    fonts = {
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fonts-json")
+    ap.add_argument("--out", default="digits_eval.csv")
+    a = ap.parse_args()
+    fonts = json.loads(Path(a.fonts_json).read_text()) if a.fonts_json else {
         "MICR E-13B (GnuMICR)": str(ROOT / "vendor/fonts/GnuMICR.ttf"),
         "OCR-A": str(BASELINES["OCR-A"]),
         "OCR-B": str(BASELINES["OCR-B"]),
@@ -98,7 +105,7 @@ def main():
                 rows.append(row)
                 print(json.dumps(row), flush=True)
     df = pd.DataFrame(rows)
-    df.to_csv(ROOT / "out" / "report" / "digits_eval.csv", index=False)
+    df.to_csv(ROOT / "out" / "report" / a.out, index=False)
     with pd.option_context("display.width", 250, "display.max_columns", 30):
         print(df[["font", "condition", "size_pt"] + [c for c in df.columns if "char_err" in c]].to_string(index=False))
 

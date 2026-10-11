@@ -608,3 +608,15 @@ James: A, I, J, 1 and Z are too sloppy even in the 25% mix; J and F look bad eve
 Clean 1/I (`out/discover/1I_clean`): all designs clean (short old-style 1, heavier I; James: OK). 1/I confusion 15.9 to 8.8% (#1) and 9.8% (#3), character error 7.45 to 7.16 / 7.23 (messy version: 3.9%). The adoption rule picks #3 (#1 loses 9/30 lone-1 reads on unrestricted PARSeq); James: they look identical, take the one with fewer errors. **Chosen: #1** (`~/maxocr-work/discover/1I_clean/c01882.ttf` glyphs 1 and I). J/F replacement: waiting for James's pick from `out/golden/jf_options.png`.
 
 Text base F (`~/maxocr-work/golden/mixF.ttf`, export `out/fonts/MaxOCR-Text-mixF.ttf`): Mix E + 1 and I from clean 1/I #1 + J and F from Noto Serif (James: "all things equal, I like Noto Serif best"; J and F are not big confusion sources, I/J ~2%, E/F under 1%). The clean 4/A search was interrupted (stopping the old loop killed it) and resumes from its archive on Mix F (`4A_clean2`); then 2/Z and I/J (`scratch/clean_rest.sh`).
+
+### Digits only, MICR, and a sizing mistake (2026-10-10)
+
+`scripts/digits_eval.py`: 3,000 random digit strings, s=0.5 and clean, four engines (0-9A-Z output). MICR E-13B via GnuMICR 0.30 (GPL-2; github.com/alerque/gnumicr tag v0.30, archive sha256 e087b0a8...; measurement only, `vendor/fonts/GnuMICR.ttf`, not redistributed). Mean character error, s=0.5:
+
+| MICR E-13B | OCR-A | OCR-B | Source Code Pro | original amalgam | MaxOCR Machine | MaxOCR Text (base F) |
+|---|---|---|---|---|---|---|
+| 15.5 | 9.4 | 1.9 | 2.6 | 0.97 | 1.25 | 1.02 |
+
+- MICR is the worst for general OCR engines (Tesseract 37%, EasyOCR 19%); it is designed for magnetic readers and dedicated E-13B recognizers.
+- Mistake caught: the first run sized each font by its 0. The new 0 is taller than the capitals, so Machine and Text were rendered at 6.4 pt instead of 8 pt and looked 6-7x worse (the "digits regression" and the dropped-digit analysis came from that). Sizes now match on the capital H (on the 0 only for MICR, which has no letters); all MaxOCR fonts render at 8 pt, as in every other test.
+- Digit heights (James's idea, `scripts/digit_heights.py`, `out/report/digits_variants.csv`): current digits 1.02%, all full height 1.62, original heights 1.12, all short 10.9, short with slashed 0 14.5, short with dotted 0 15.0. Keep the current digits.
