@@ -27,11 +27,12 @@ ROOT = Path(__file__).resolve().parents[1]
 PROMPT = "Transcribe the text in this image exactly. Output only the text."
 
 
-def tally(truth: str, pred: str, count: Counter, errs: Counter, subs: dict) -> tuple[int, int, int]:
-    """Errors (substitutions, deletions, insertions) of one line, spaces ignored; returns (errors, chars, skips)."""
+def tally(truth: str, pred: str, count: Counter, errs: Counter, subs: dict) -> tuple[int, int, int, int]:
+    """Errors (substitutions, deletions, insertions) of one line, spaces ignored;
+    returns (errors, chars, skips, substitutions)."""
     t, p = truth.replace(" ", ""), pred.replace(" ", "")
     _, mapping, n_ins = align(t, p)
-    k, run, skips = n_ins, 0, 0
+    k, run, skips, n_sub = n_ins, 0, 0, 0
     for i, j in enumerate(mapping):
         count[t[i]] += 1
         bad = j is None or p[j] != t[i]
@@ -39,9 +40,10 @@ def tally(truth: str, pred: str, count: Counter, errs: Counter, subs: dict) -> t
             k += 1
             errs[t[i]] += 1
             subs[t[i]][p[j] if j is not None else "-"] += 1
+            n_sub += j is not None
         run = run + 1 if j is None else 0
         skips += run == 3
-    return k, len(t), skips
+    return k, len(t), skips, n_sub
 
 
 def main():
@@ -55,18 +57,21 @@ def main():
     from maxocr.engines.qwenvl import QwenVL
     vlm = QwenVL(prompt=PROMPT, casefold=False)
     rows, char_rows = [], []
+    predf = open(ROOT / "out" / "report" / f"vlm_clean_{a.name}_preds.jsonl", "w")
     for name, path in fonts.items():
         count, errs, subs = Counter(), Counter(), defaultdict(Counter)
         for pt in (float(s) for s in a.sizes.split(",")):
             sz = matched_size(path, pt)
             for set_name, texts in sets.items():
                 preds = vlm.read([clean(path, t, sz, 200, True) for t in texts], max_new_tokens=64)
-                k = n = skips = 0
+                k = n = skips = n_sub = 0
                 for t, p in zip(texts, preds):
-                    dk, dn, ds = tally(t, p, count, errs, subs)
-                    k, n, skips = k + dk, n + dn, skips + ds
+                    dk, dn, ds, dsub = tally(t, p, count, errs, subs)
+                    k, n, skips, n_sub = k + dk, n + dn, skips + ds, n_sub + dsub
+                    if t.replace(" ", "") != p.replace(" ", ""):
+                        predf.write(json.dumps({"font": name, "set": set_name, "pt": pt, "truth": t, "pred": p}) + "\n")
                 rows.append({"font": name, "set": set_name, "pt": pt, "char_err": round(100 * k / n, 3),
-                             "errors": k, "chars": n, "word_skips": skips})
+                             "errors": k, "chars": n, "word_skips": skips, "substitutions": n_sub})
                 print(json.dumps(rows[-1]), flush=True)
         for c in sorted(count):
             char_rows.append({"font": name, "char": c, "count": count[c], "errors": errs[c],
@@ -77,6 +82,7 @@ def main():
     pd.DataFrame(char_rows).to_csv(ROOT / "out" / "report" / f"vlm_clean_{a.name}_chars.csv", index=False)
     summary = df.groupby(["font", "set"]).apply(lambda g: 100 * g.errors.sum() / g.chars.sum()).unstack().round(3)
     summary["skips"] = df.groupby("font").word_skips.sum()
+    summary["subst_pct"] = (100 * df.groupby("font").substitutions.sum() / df.groupby("font").chars.sum()).round(3)
     print(summary.to_string())
 
 
