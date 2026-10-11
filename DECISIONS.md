@@ -733,3 +733,15 @@ Validation (`confusions.py --alnum`, 5,000 lines, four engines incl. PARSeq): ch
 The renderer's line image spans the font's ascender to descender (plus 4 px), so each font brought its own vertical padding; engines normalize line height (PaddleOCR to 48 px), so more padding means smaller letters. Canvas height / cap height: Sitka 1.57, Georgia 1.64, MaxOCR 1.65, Verdana 1.67, Bookman 1.72, OCR-B 1.76, Source Code Pro 1.92, Courier New 1.98. Cross-font comparisons therefore favoured MaxOCR against Source Code Pro and Courier New (their letters ~15% smaller in the engine input) and slightly favoured Sitka. Comparisons between MaxOCR variants (same metrics) are unaffected. Fix: `MAXOCR_CROP=ink` crops each line to its ink plus 0.25 x the font's cap height above and below (how a detector crops a real line); the cross-font comparisons are being rerun with it (`scratch/rerun_fair.sh`).
 
 Found while testing a taller lowercase l: glyph parts above the font's ascent (900 units in MaxOCR builds) are clipped by the renderer and by Windows, so the final fonts need an ascent that covers their tallest glyph. Taller-l test with equal, unclipped metrics (ascent 1,060 for every variant; `scratch/l_taller.py`), l read correctly PaddleOCR / Tesseract / EasyOCR: current (830 units, 1.19 x cap) 69 / 40 / 51%, x1.10 83 / 53 / 69%, x1.15 84 / 56 / 76%, x1.20 86 / 62 / 76%, x1.25 92 / 67 / 79% (overall Tesseract error rises from x1.20). Pure tailed or footed l's (Courier Prime, Cousine, Andika, Atkinson) did worse than the current l (their l reads as 1); the l is mostly misread as I (421 of 5,000-line errors), Courier's as 1 (843).
+
+Fair rerun (`MAXOCR_CROP=ink`; `out/report/size_sweep_fair.csv`, `confusions_fair_lc_*.csv`, `text_eval_fair.csv`):
+
+| Mean character error (%) | MaxOCR (final) | Machine | Text | original | Courier New | Sitka | Source Code Pro | Bookman | Verdana | Georgia |
+|---|---|---|---|---|---|---|---|---|---|---|
+| codes 0-9A-Z, 8 pt / 200 dpi | **5.65** | 6.00 | 6.74 | 7.03 | 7.48 | 8.34 | 8.80 | 8.88 | 9.39 | 10.87 |
+| codes 0-9A-Z, 12 pt / 300 dpi | **3.56** | 4.17 | 4.35 | 4.19 | 5.02 | 5.29 | 5.70 | 5.09 | 5.63 | 5.40 |
+| Gettysburg, four engines | 2.06 | 1.88 | 2.06 | **1.80** | 4.70 | 2.88 | 5.43 | 3.69 | 4.36 | 3.86 |
+
+Case-sensitive codes (0-9A-Za-z): Courier 11.42, MaxOCR (tuned lowercase) 11.56, Sitka 13.22, Source Code Pro 13.43, Georgia 17.51; MaxOCR I/l 14.7% (Courier 2.8), Courier 1/l 38.2% and 0/O 27.1% (MaxOCR 8.6 and 17.9).
+
+- The strongest existing font is Courier New once padding is fair. MaxOCR (final) makes 24% fewer errors than Courier at 8 pt / 200 dpi and 29% fewer at 12 pt / 300 dpi on capital-and-digit codes; on mixed-case codes they tie (I/l is MaxOCR's gap). Earlier cross-font claims (e.g. "31% fewer than Sitka") are superseded by this table.
