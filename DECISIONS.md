@@ -684,3 +684,5 @@ Random codes, mean of four engines (`out/report/size_sweep_smart.csv`):
 | **Smart C (both)** | **5.12** | **3.50** | **3.71** | 3.40 |
 
 Smart C: 28% fewer errors than Text at 8 pt / 200 dpi without widening words or numbers. Smart A gets most of the gain with clean glyphs everywhere. Waiting for James: C or A as the main font.
+
+James chose Smart A (clean glyphs everywhere). Boundary space tuning (`out/report/size_sweep_smartA.csv`, mean of four engines, 8 pt/200 | 12 pt/300): 100 units 5.60 | 3.34, 150 5.04 | 2.95, 200 4.76 | 2.38. **But** the harness metric ignores spaces, and wide boundary gaps make engines insert word spaces into codes (`scratch/space_check.py`, 600 code lines, share read with a space, PaddleOCR / EasyOCR / Tesseract): Text 0 / 2 / 1%, Smart A 100: 0 / 7 / 6%, 150: 2 / 19 / 15%, 200: 11 / 47 / 34%. A stray space breaks a serial number, so the spacing is now scored with spaces counted (`scripts/space_aware_eval.py`: Levenshtein distance between code and upper-cased reading, spaces kept).
