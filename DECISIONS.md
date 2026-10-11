@@ -713,3 +713,11 @@ Final fonts in `out/fonts/`: **MaxOCR.ttf** (main: readable glyphs, extra space 
 ### VV / W merges and splits (James, 2026-10-11)
 
 `scripts/merge_split_eval.py`: 6-character codes with VV or W inserted (fillers exclude U, V, W, I, O, Q), s=0.5, equal capital height, four engines (`out/report/merge_split.csv`). Mean over engines: VV read as W: MaxOCR 0.3%, original 0.1, Sitka 0.9, Courier New 0.0, Source Code Pro 1.5, Verdana 9.9. W read as VV: 0% for every font. Codes read exactly: MaxOCR 68.9%, original 64.2, Sitka 59.1, Courier New 58.8, Source Code Pro 52.9, Verdana 47.8. Not a problem for MaxOCR; lowercase merges (rn/m, cl/d) remain for the basic-Latin phase.
+
+### Basic Latin, step 1: lowercase draft and first case-sensitive ranking (2026-10-11)
+
+Lowercase a-z added to MaxOCR Text as an equal blend of IBM Plex Serif, Spectral and Gelasio (the faces that dominate the capitals' recipes; `scripts/add_lowercase.py`). Case-sensitive harness: `confusions.py --alnum` (5,000 random 0-9A-Za-z strings, every engine restricted to 0-9A-Za-z, no case folding), fonts at equal capital height.
+
+Character error, mean of four engines: Courier New 13.01, **MaxOCR (untuned lowercase) 13.05**, Sitka Text 13.56, Source Code Pro 15.20, Georgia 18.54. Top MaxOCR pairs (%): I/l 17.5 (Source Code Pro 2.1, Courier 2.4: their l has a foot or tail), 0/O 17.0, J/j 11.7 (Courier 5.9), 5/S 8.0, W/w 8.0, 2/z 7.9, Z/z 7.5, 0/o 7.4 (Sitka 38.4), V/v 7.4, 1/l 7.3 (Courier 39.2), 5/s 6.9, c/e 6.4 (others 1.0-2.4), I/f 6.0 (others under 1: the bold I reads as f), 1/i 5.6. Same-shape case pairs (W/w, V/v, Z/z, X/x, C/c) are partly inherent in random mixed-case strings; the x-height is a lever to test.
+
+Disk and memory incident (2026-10-11): C: filled up (0 bytes free) and Windows hit its memory commit limit (108.6 of 109.5 GB) because of ~400 Microsoft Edge automation processes and their `edge-drive-*` temp profiles (not MaxOCR). James killed the automated Edge processes; the temp profiles were deleted (22 GB free after). On the MaxOCR side: the Qwen model (7.1 GB) and the pixi package cache were removed (the model re-downloads in ~9 min); the WSL disk was made sparse; `scripts/smart_font.py` (restored from git) and `scripts/add_lowercase.py` (rewritten) had been emptied by a failed write.
