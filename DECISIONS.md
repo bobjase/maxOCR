@@ -620,3 +620,11 @@ Text base F (`~/maxocr-work/golden/mixF.ttf`, export `out/fonts/MaxOCR-Text-mixF
 - MICR is the worst for general OCR engines (Tesseract 37%, EasyOCR 19%); it is designed for magnetic readers and dedicated E-13B recognizers.
 - Mistake caught: the first run sized each font by its 0. The new 0 is taller than the capitals, so Machine and Text were rendered at 6.4 pt instead of 8 pt and looked 6-7x worse (the "digits regression" and the dropped-digit analysis came from that). Sizes now match on the capital H (on the 0 only for MICR, which has no letters); all MaxOCR fonts render at 8 pt, as in every other test.
 - Digit heights (James's idea, `scripts/digit_heights.py`, `out/report/digits_variants.csv`): current digits 1.02%, all full height 1.62, original heights 1.12, all short 10.9, short with slashed 0 14.5, short with dotted 0 15.0. Keep the current digits.
+
+### Real-text check (R13c): Gettysburg Address (2026-10-10)
+
+`scripts/text_eval.py`: the address in capitals without punctuation (the fonts have 0-9, A-Z, space), lines of at most 22 characters, 8 degraded draws per line at s=0.5 plus clean; engines use language: PaddleOCR, EasyOCR, PARSeq on the general alphabet with case folded, Tesseract without a whitelist and with dictionaries on, Qwen2.5-VL with a plain transcription prompt. Mean character error at s=0.5 (`out/report/text_eval.csv`): Source Code Pro 5.87, original amalgam 1.89, MaxOCR Machine 1.81, MaxOCR Text (bold I) 1.89, MaxOCR Text (normal I) 2.06. Qwen2.5-VL 0.1-0.3% for every font.
+
+- On real words the pair-by-pair gains largely disappear: language context already resolves most confusions. The gains are for context-free strings (codes, serials, part numbers), as the PRD anticipated (R13c note).
+- The blend itself stays about 3x better than Source Code Pro (EasyOCR 18% vs 2-3%).
+- I options measured on the validation bank (`out/report/confusions_mixG*.csv`): bold I 1/I 8.8%, character error 7.40%; normal I 10.3%, 7.51%.
