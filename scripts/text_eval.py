@@ -20,6 +20,7 @@ import rung0  # noqa: E402
 from maxocr.align import align  # noqa: E402
 from maxocr.corpus import GENERAL_ALPHABET  # noqa: E402
 from maxocr.degrade import clean, degrade, make_instance  # noqa: E402
+from maxocr.fonts import matched_size  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 GETTYSBURG = """Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived
@@ -87,8 +88,9 @@ def main():
     rows = []
     for cond in ("s=0.5", "clean"):
         for name, path in fonts.items():
-            imgs = [clean(path, i.text, 8.0, 200, True) for i in insts] if cond == "clean" else \
-                   [degrade(path, i, rung0.SEVERITY) for i in insts]
+            sz = matched_size(path, 8.0)   # equal capital height
+            imgs = [clean(path, i.text, sz, 200, True) for i in insts] if cond == "clean" else \
+                   [degrade(path, i, rung0.SEVERITY, sz) for i in insts]
             truths = [i.text for i in insts]
             preds = {"paddle": [paddle.text(im) for im in imgs], "easyocr": easy.texts(imgs),
                      "parseq": pq.read(imgs), "tesseract (dictionary)": read_tesseract_dict(imgs)}

@@ -17,15 +17,26 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rung0  # noqa: E402
 from discover_pair import adversarial, isolation_bank  # noqa: E402
-from discover_validate import _imgs  # noqa: E402
 from maxocr.align import align  # noqa: E402
+from maxocr.degrade import degrade  # noqa: E402
 from maxocr.engines.qwenvl import QwenVL  # noqa: E402
+from maxocr.fonts import matched_size  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _imgs(args):
+    font, insts, size = args
+    import cv2
+    cv2.setNumThreads(1)
+    return [degrade(font, i, rung0.SEVERITY, size) for i in insts]
+
+
 def render(pool, font, insts):
-    return [im for part in pool.map(_imgs, [(font, insts[i:i + 100]) for i in range(0, len(insts), 100)]) for im in part]
+    """Degraded line images at equal capital height (maxocr.fonts.matched_size)."""
+    size = matched_size(font, 8.0)
+    return [im for part in pool.map(_imgs, [(font, insts[i:i + 100], size) for i in range(0, len(insts), 100)])
+            for im in part]
 
 
 def main():
