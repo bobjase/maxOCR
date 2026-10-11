@@ -709,3 +709,7 @@ Variants of MaxOCR (`scripts/weight_variant.py` outline offset +-12/24 units, `s
 - Decision: ship **MaxOCR Small** (MaxOCR with gaps x1.5, `out/fonts/MaxOCR-Small.ttf`) for print under about 7 pt; no separate large size.
 
 Final fonts in `out/fonts/`: **MaxOCR.ttf** (main: readable glyphs, extra space where letters meet digits), **MaxOCR-Small.ttf** (wider spacing, under ~7 pt), **MaxOCR-Text.ttf** (no contextual spacing), **MaxOCR-Machine.ttf** (maximum OCR, machine-only). Intermediate exports moved to `out/fonts/intermediate/` (paths quoted earlier in this log under `out/fonts/` now live there; the canonical copies are in `~/maxocr-work/keep/`).
+
+### VV / W merges and splits (James, 2026-10-11)
+
+`scripts/merge_split_eval.py`: 6-character codes with VV or W inserted (fillers exclude U, V, W, I, O, Q), s=0.5, equal capital height, four engines (`out/report/merge_split.csv`). Mean over engines: VV read as W: MaxOCR 0.3%, original 0.1, Sitka 0.9, Courier New 0.0, Source Code Pro 1.5, Verdana 9.9. W read as VV: 0% for every font. Codes read exactly: MaxOCR 68.9%, original 64.2, Sitka 59.1, Courier New 58.8, Source Code Pro 52.9, Verdana 47.8. Not a problem for MaxOCR; lowercase merges (rn/m, cl/d) remain for the basic-Latin phase.
