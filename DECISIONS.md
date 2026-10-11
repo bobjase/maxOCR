@@ -707,3 +707,5 @@ Variants of MaxOCR (`scripts/weight_variant.py` outline offset +-12/24 units, `s
 
 - 6 pt: wider spacing cuts errors by 12%; heavier hurts (counters fill in). 8 pt: MaxOCR (tuned there) is best. 12 pt: bolder + wider is only ~4% better.
 - Decision: ship **MaxOCR Small** (MaxOCR with gaps x1.5, `out/fonts/MaxOCR-Small.ttf`) for print under about 7 pt; no separate large size.
+
+Final fonts in `out/fonts/`: **MaxOCR.ttf** (main: readable glyphs, extra space where letters meet digits), **MaxOCR-Small.ttf** (wider spacing, under ~7 pt), **MaxOCR-Text.ttf** (no contextual spacing), **MaxOCR-Machine.ttf** (maximum OCR, machine-only). Intermediate exports moved to `out/fonts/intermediate/` (paths quoted earlier in this log under `out/fonts/` now live there; the canonical copies are in `~/maxocr-work/keep/`).
