@@ -17,14 +17,23 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rung0  # noqa: E402
-from discover_validate import _imgs  # noqa: E402
 from maxocr.align import align  # noqa: E402
-from maxocr.corpus import GENERAL_ALPHABET  # noqa: E402
+from maxocr.corpus import ALNUM_ALPHABET, GENERAL_ALPHABET, make_strings  # noqa: E402
+from maxocr.degrade import make_instance  # noqa: E402
 from maxocr.engines.easyocr_rec import EasyOCRRec  # noqa: E402
 from maxocr.engines.parseq import Parseq  # noqa: E402
 from maxocr.evaluate import Job, chunk, run  # noqa: E402
+from maxocr.fonts import matched_size  # noqa: E402
+from maxocr.degrade import degrade  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _imgs(args):
+    font, insts, size = args
+    import cv2
+    cv2.setNumThreads(1)
+    return [degrade(font, i, rung0.SEVERITY, size) for i in insts]
 
 
 def main():
@@ -32,15 +41,24 @@ def main():
     ap.add_argument("font")
     ap.add_argument("--name", default="font")
     ap.add_argument("--top", type=int, default=15)
+    ap.add_argument("--alnum", action="store_true",
+                    help="case-sensitive: 5,000 random 0-9A-Za-z strings, every engine restricted to 0-9A-Za-z")
     a = ap.parse_args()
     eng = dict(alphabet=GENERAL_ALPHABET, casefold=True)
     val = rung0.bank("val")
-    jobs = [Job(a.name, a.font, rung0.SEVERITY, "a", c) for c in chunk(val, 50)]
-    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=rung0.PaddleRec(**eng), progress=False, easy=EasyOCRRec(**eng))
+    wl = None
+    if a.alnum:
+        eng = dict(alphabet=ALNUM_ALPHABET)
+        wl = ALNUM_ALPHABET
+        val = [make_instance(i, s, 505) for i, s in enumerate(make_strings(5000, 505, alphabet=ALNUM_ALPHABET))]
+    size = matched_size(a.font, 8.0)   # equal capital height (8 pt for MaxOCR builds)
+    jobs = [Job(a.name, a.font, rung0.SEVERITY, "a", c, size_pt=size) for c in chunk(val, 50)]
+    chars, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=rung0.PaddleRec(**eng), progress=False, easy=EasyOCRRec(**eng),
+                      tess_whitelist=wl)
     chars = chars[~chars.cropped][["engine", "truth", "pred"]]
     model = Parseq(**eng)
     with get_context("spawn").Pool(16) as pool:
-        imgs = [im for part in pool.map(_imgs, [(a.font, val[i:i + 250]) for i in range(0, len(val), 250)]) for im in part]
+        imgs = [im for part in pool.map(_imgs, [(a.font, val[i:i + 250], size) for i in range(0, len(val), 250)]) for im in part]
     recs = []
     for inst, pred in zip(val, model.read(imgs)):
         if inst.cropped:

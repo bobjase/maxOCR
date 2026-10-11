@@ -38,13 +38,13 @@ class Job:
     clean: bool = False   # R7a: ignore severity and instance draws, render undegraded
 
 
-def _worker_init(tess_open: bool = False):
+def _worker_init(tess_open: bool = False, tess_whitelist: str | None = None):
     global _tess, _tess_open
     import cv2
     cv2.setNumThreads(1)
     from .corpus import GENERAL_ALPHABET
     from .engines.tesseract import Tesseract
-    _tess = Tesseract()
+    _tess = Tesseract(whitelist=tess_whitelist) if tess_whitelist else Tesseract()
     _tess_open = Tesseract(whitelist=GENERAL_ALPHABET) if tess_open else None
 
 
@@ -73,12 +73,13 @@ def _tess_rank(gt: str, alts: list[tuple[str, float]]) -> tuple[int, int]:
 
 
 def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict | None = None, easy=None,
-        tess_open: bool = False):
+        tess_open: bool = False, tess_whitelist: str | None = None):
     """stats, if given, is filled with seconds: worker degrade/tesseract (summed over workers),
     main wait (blocked on workers), main paddle, main bookkeeping, and wall.
     easy: optional EasyOCRRec; its rows are added as engine "easyocr" (one batch per job).
     tess_open: also run Tesseract without a whitelist (general alphabet, case-folded) as engine
-    "tesseract_open"; marks that read as punctuation then show up as insertions."""
+    "tesseract_open"; marks that read as punctuation then show up as insertions.
+    tess_whitelist: Tesseract's allowed characters (default 0-9A-Z), e.g. 0-9A-Za-z for case-sensitive runs."""
     if paddle is None:
         from .engines.paddle import PaddleRec
         paddle = PaddleRec()
@@ -88,7 +89,7 @@ def run(jobs: list[Job], n_workers: int, paddle=None, progress=True, stats: dict
     t_start = time.perf_counter()
     os.environ.update(SINGLE_THREAD_ENV)  # inherited by the spawned workers
     ctx = get_context("spawn")
-    with ctx.Pool(n_workers, initializer=_worker_init, initargs=(tess_open,)) as pool:
+    with ctx.Pool(n_workers, initializer=_worker_init, initargs=(tess_open, tess_whitelist)) as pool:
         it = pool.imap_unordered(_run_job, jobs)
         for k in range(len(jobs)):
             t0 = time.perf_counter()
