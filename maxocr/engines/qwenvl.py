@@ -1,7 +1,7 @@
 """Vision-language model reader (Qwen2.5-VL), held out like PARSeq: never used to steer the search.
 
 Reads with an open vocabulary (it cannot be restricted to 0-9A-Z); output has spaces removed and case
-folded, matching the general-alphabet reading of the other engines.
+folded (unless casefold=False), matching the general-alphabet reading of the other engines.
 """
 import numpy as np
 import torch
@@ -13,13 +13,14 @@ PROMPT = ("Transcribe the characters in this image exactly, one by one. They are
 
 
 class QwenVL:
-    def __init__(self, model: str = MODEL, device: str = "cuda", prompt: str = PROMPT):
+    def __init__(self, model: str = MODEL, device: str = "cuda", prompt: str = PROMPT, casefold: bool = True):
         from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model, torch_dtype=torch.bfloat16, device_map=device).eval()
         self.proc = AutoProcessor.from_pretrained(model)
         self.proc.tokenizer.padding_side = "left"
         self.prompt = prompt
+        self.casefold = casefold
 
     @torch.no_grad()
     def read(self, imgs: list[np.ndarray], batch: int = 32, max_new_tokens: int = 24) -> list[str]:
@@ -32,5 +33,6 @@ class QwenVL:
             gen = self.model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False)
             new = gen[:, enc["input_ids"].shape[1]:]
             for s in self.proc.batch_decode(new, skip_special_tokens=True):
-                out.append("".join(s.split()).upper())
+                s = "".join(s.split())
+                out.append(s.upper() if self.casefold else s)
         return out

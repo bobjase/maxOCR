@@ -72,6 +72,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fonts-json", required=True)
     ap.add_argument("--vlm", action="store_true")
+    ap.add_argument("--vlm-only", action="store_true", help="only the Qwen2.5-VL reader (keeps GPU memory free)")
     ap.add_argument("--repeats", type=int, default=8, help="degraded draws per line")
     ap.add_argument("--out", default="text_eval.csv")
     ap.add_argument("--mixed-case", action="store_true",
@@ -82,13 +83,14 @@ def main():
     insts = [make_instance(k, t, 1863) for k, t in enumerate(texts * a.repeats)]
     insts = [i for i in insts if not i.cropped]
     eng = dict(alphabet=GENERAL_ALPHABET, casefold=not a.mixed_case)
-    from maxocr.engines.easyocr_rec import EasyOCRRec
-    from maxocr.engines.parseq import Parseq
-    paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**eng), Parseq(**eng)
+    if not a.vlm_only:
+        from maxocr.engines.easyocr_rec import EasyOCRRec
+        from maxocr.engines.parseq import Parseq
+        paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**eng), Parseq(**eng)
     vlm = None
-    if a.vlm:
+    if a.vlm or a.vlm_only:
         from maxocr.engines.qwenvl import QwenVL
-        vlm = QwenVL(prompt="Transcribe the text in this image exactly. Output only the text.")
+        vlm = QwenVL(prompt="Transcribe the text in this image exactly. Output only the text.", casefold=not a.mixed_case)
     rows = []
     for cond in ("s=0.5", "clean"):
         for name, path in fonts.items():
@@ -96,8 +98,9 @@ def main():
             imgs = [clean(path, i.text, sz, 200, True) for i in insts] if cond == "clean" else \
                    [degrade(path, i, rung0.SEVERITY, sz) for i in insts]
             truths = [i.text for i in insts]
-            preds = {"paddle": [paddle.text(im) for im in imgs], "easyocr": easy.texts(imgs),
-                     "parseq": pq.read(imgs), "tesseract (dictionary)": read_tesseract_dict(imgs, fold=not a.mixed_case)}
+            preds = {} if a.vlm_only else {
+                "paddle": [paddle.text(im) for im in imgs], "easyocr": easy.texts(imgs),
+                "parseq": pq.read(imgs), "tesseract (dictionary)": read_tesseract_dict(imgs, fold=not a.mixed_case)}
             if vlm is not None:
                 preds["qwen2.5-vl"] = vlm.read(imgs)
             row = {"font": name, "condition": cond}
