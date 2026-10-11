@@ -45,13 +45,22 @@ def main():
     os.environ["MAXOCR_CALT"] = "1"
     import easyocr
     from maxocr.engines.paddle import PaddleRec
-    from maxocr.engines.tesseract import Tesseract
+    from PIL import Image
+    from tesserocr import OEM, PSM, PyTessBaseAPI
+    from maxocr.engines.tesseract import TESSDATA_BEST
     fonts = json.loads(Path(a.fonts_json).read_text())
     val = [i for i in rung0.bank("val") if not i.cropped][:a.lines]
     alpha = GENERAL_ALPHABET + " "
     paddle = PaddleRec(alphabet=alpha, casefold=True)
     reader = easyocr.Reader(["en"], gpu=True, detector=False, recognizer=True, verbose=False)
-    tess = Tesseract(whitelist=alpha)
+    # Whole-line text (GetUTF8Text) keeps Tesseract's word spaces; symbol iteration would drop them.
+    api = PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=PSM.SINGLE_LINE,
+                        variables={"load_system_dawg": "0", "load_freq_dawg": "0"})
+    api.SetVariable("tessedit_char_whitelist", alpha)
+
+    def tess_text(im):
+        api.SetImage(Image.fromarray(im))
+        return api.GetUTF8Text()
     rows = []
     for size in [float(x) for x in a.sizes.split(",")]:
         for name, path in fonts.items():
@@ -61,7 +70,7 @@ def main():
                      "easyocr": [" ".join(reader.recognize(im, horizontal_list=[[0, im.shape[1], 0, im.shape[0]]],
                                                            free_list=[], detail=0, allowlist=alpha, decoder="greedy",
                                                            paragraph=False)).strip().upper() for im in imgs],
-                     "tesseract": [tess.text(im).strip().upper() for im in imgs]}
+                     "tesseract": [tess_text(im).strip().upper() for im in imgs]}
             row = {"font": name, "size_pt": size, "dpi": a.dpi}
             n = sum(len(i.text) for i in val)
             for e, preds in reads.items():
