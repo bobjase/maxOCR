@@ -690,3 +690,20 @@ James chose Smart A (clean glyphs everywhere). Boundary space tuning (`out/repor
 Space-aware scores (`out/report/space_aware.csv`, Levenshtein with spaces, PaddleOCR / EasyOCR / Tesseract whole-line text, 1,000 code lines, s=0.5): 8 pt: Text 9.83, Smart A 50 8.70, Smart A 100 8.68; 12 pt: 6.60, 5.97, 5.91. Lines with a stray space (EasyOCR / Tesseract): A 50 2.0 / 1.0%, A 100 3.5 / 3.3% at 8 pt. An earlier pass that dropped Tesseract's spaces had Smart A 150 and 200 at 8.50 and 10.72 (200 worse than Text). 50 and 100 tie on error; **50 chosen** (fewer stray spaces, closer to normal spacing).
 
 **MaxOCR (final) = Smart A, 50 units** (`out/fonts/MaxOCR.ttf`): MaxOCR Text glyphs everywhere, 50 units of extra space where a letter meets a digit (kern feature); about 11% fewer errors than MaxOCR Text on codes with stray spaces counted; words and numbers identical to MaxOCR Text. MaxOCR Machine stays available for machine-only use.
+
+### Optical sizes (James, after Sitka's six optical sizes; 2026-10-11)
+
+Variants of MaxOCR (`scripts/weight_variant.py` outline offset +-12/24 units, `scripts/letter_spacing.py` x0.7 / x1.5), space-aware error, PaddleOCR / EasyOCR / Tesseract, 800 code lines, s=0.5 (`out/report/space_aware_optical.csv`):
+
+| | 6 pt | 8 pt | 12 pt |
+|---|---|---|---|
+| MaxOCR | 20.74 | **8.85** | 5.91 |
+| wider (gaps x1.5) | **18.35** | 9.04 | 6.27 |
+| bolder (+12) | 23.70 | 9.46 | 5.85 |
+| bolder + wider | 20.55 | 9.15 | **5.66** |
+| much bolder (+24) | 29.27 | 11.39 | 5.84 |
+| lighter (-12) | 25.54 | 11.68 | 8.24 |
+| tighter (gaps x0.7) | 25.14 | 10.61 | 6.65 |
+
+- 6 pt: wider spacing cuts errors by 12%; heavier hurts (counters fill in). 8 pt: MaxOCR (tuned there) is best. 12 pt: bolder + wider is only ~4% better.
+- Decision: ship **MaxOCR Small** (MaxOCR with gaps x1.5, `out/fonts/MaxOCR-Small.ttf`) for print under about 7 pt; no separate large size.
