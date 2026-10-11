@@ -651,3 +651,18 @@ Held-out VLM (Qwen2.5-VL-3B, `out/report/vlm_lines_final.csv`, `vlm_isolation_fi
 | VLM (held out), random codes | 5.0 | 2.0 | 1.7 | 1.5 |
 
 MICR E-13B on digits only: 15.5. Open: EasyOCR's context bias on 0/O; lowercase and punctuation (basic Latin); spec v0.5.
+
+### Against the best existing fonts; letter spacing (2026-10-11)
+
+James: Source Code Pro was the best of the six spec baselines, not of the 414-font Windows survey, so the comparison set now includes the survey's best (Bookman Old Style, Sitka Text, Courier New, Georgia, Verdana; `maxocr.fonts.SURVEY_BEST`, measurement only). All fonts at equal capital height (`maxocr.fonts.matched_size`; Source Code Pro had been ~6% small at equal point size).
+
+| Mean character error (%) | MaxOCR Machine | MaxOCR Text | original | Sitka Text | Courier New | Bookman | Source Code Pro | Verdana | Georgia |
+|---|---|---|---|---|---|---|---|---|---|
+| random codes, 8 pt / 200 dpi | 6.29 | 7.13 | 8.16 | 9.12 | 9.46 | 9.94 | 10.24 | 10.30 | 12.45 |
+| random codes, 12 pt / 300 dpi | 4.27 | 4.33 | 4.58 | 5.29 | 5.94 | 5.89 | 6.58 | 5.92 | 6.00 |
+| VLM (held out), random codes | 1.73 | 1.48 | 1.98 | 3.18 | 2.17 | 3.29 | 3.88 | 3.31 | 4.42 |
+| Gettysburg, four engines | 2.05 | 2.27 | 2.45 | 3.43 | 6.43 | 4.39 | 6.43 | 4.79 | 4.37 |
+
+(`out/report/size_sweep_vs_best.csv`, `vlm_lines_vs_best.csv`, `text_eval_vs_best.csv`.) The Gettysburg run with the VLM stalled with the GPU memory full (VLM plus three engines); rerun without the VLM.
+
+Letter spacing (`scripts/letter_spacing.py`, shapes unchanged; `out/report/size_sweep_spacing.csv`): gap between letters relative to cap height: Georgia 0.09, Sitka 0.14, MaxOCR Text 0.15, Courier New 0.21. MaxOCR Text with gaps x1.5 / x2: 8 pt 7.13 to 6.00 / 5.50, 12 pt 4.89 to 4.64 / 4.26; lines 6% / 13% longer. Wider gaps cut errors by about a quarter at small size, more than the whole Machine-vs-Text difference. Testing x2.5, x3 and Machine x2 next.
