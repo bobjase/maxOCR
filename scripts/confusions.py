@@ -5,7 +5,8 @@ Picks the next pairs for discovery.
 
     python scripts/confusions.py FONT.ttf [--name NAME] [--top 15]
 Writes out/report/confusions_<name>.csv (wide), confusions_<name>_directed.csv (per engine, both
-directions: a_as_b = a read as b) and confusions_<name>_char_err.csv (character error per engine).
+directions: a_as_b = a read as b), confusions_<name>_char_err.csv (character error per engine) and
+confusions_<name>_perchar.csv (error rate of every character per engine).
 """
 import argparse
 import sys
@@ -71,6 +72,9 @@ def main():
     err = chars.groupby("engine").apply(lambda g: 100 * float((g.pred != g.truth).mean()), include_groups=False)
     err.round(3).to_csv(ROOT / "out" / "report" / f"confusions_{a.name}_char_err.csv", header=["char_err_pct"])
     print("character error %:", err.round(2).to_dict(), "mean", round(float(err.mean()), 2))
+    per = chars.assign(err=chars.pred != chars.truth).groupby(["engine", "truth"]).err.agg(["mean", "size"]).reset_index()
+    per.rename(columns={"truth": "char", "mean": "err", "size": "n"}).round(4).to_csv(
+        ROOT / "out" / "report" / f"confusions_{a.name}_perchar.csv", index=False)
     rows = []
     for e, g in chars.groupby("engine"):
         n = Counter(g.truth)
