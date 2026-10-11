@@ -13,17 +13,18 @@ PROMPT = ("Transcribe the characters in this image exactly, one by one. They are
 
 
 class QwenVL:
-    def __init__(self, model: str = MODEL, device: str = "cuda"):
+    def __init__(self, model: str = MODEL, device: str = "cuda", prompt: str = PROMPT):
         from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model, torch_dtype=torch.bfloat16, device_map=device).eval()
         self.proc = AutoProcessor.from_pretrained(model)
         self.proc.tokenizer.padding_side = "left"
+        self.prompt = prompt
 
     @torch.no_grad()
     def read(self, imgs: list[np.ndarray], batch: int = 32, max_new_tokens: int = 24) -> list[str]:
         out = []
-        msg = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": PROMPT}]}]
+        msg = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": self.prompt}]}]
         text = self.proc.apply_chat_template(msg, tokenize=False, add_generation_prompt=True)
         for i in range(0, len(imgs), batch):
             ims = [Image.fromarray(im).convert("RGB") for im in imgs[i:i + batch]]
