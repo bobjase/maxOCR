@@ -628,3 +628,12 @@ Text base F (`~/maxocr-work/golden/mixF.ttf`, export `out/fonts/MaxOCR-Text-mixF
 - On real words the pair-by-pair gains largely disappear: language context already resolves most confusions. The gains are for context-free strings (codes, serials, part numbers), as the PRD anticipated (R13c note).
 - The blend itself stays about 3x better than Source Code Pro (EasyOCR 18% vs 2-3%).
 - I options measured on the validation bank (`out/report/confusions_mixG*.csv`): bold I 1/I 8.8%, character error 7.40%; normal I 10.3%, 7.51%.
+
+### MaxOCR Text final choices (James, 2026-10-10)
+
+- 2/Z: blend option #2 (fewer errors overall than #1).
+- I: the big bold I from the clean 1/I search (James: "we have to go with bold I, even though it looks weird"); 1/I 8.8% vs 10.3% for the normal I.
+- **MaxOCR Text** = Mix G (`~/maxocr-work/keep/MaxOCR-Text.ttf`, export `out/fonts/MaxOCR-Text.ttf`): 0, O, 2(blend), B, S, T and Z(blend) from the OCR search; 4, 5, 6, 7, 8, G at the 25% slider; 1 and I from the clean 1/I search; J and F from Noto Serif; A original.
+- **MaxOCR Machine** = the pair-pipeline font (`~/maxocr-work/keep/MaxOCR-Machine.ttf`, export `out/fonts/MaxOCR-Machine.ttf`).
+
+Size sweep (`scripts/size_sweep.py`, `out/report/size_sweep.csv`; random codes, s=0.5, mean of four engines): 8 pt / 200 dpi Source Code Pro 12.0, original 8.2, Machine 6.3, Text 7.2; 12 pt / 300 dpi 6.6, 4.7, 4.2, 4.3. The gain over the original shrinks from ~25% to ~10% as text gets larger; MaxOCR stays about a third below Source Code Pro at every size. On random codes Tesseract and EasyOCR still miss 6-11% even at 12 pt / 300 dpi; PaddleOCR is near perfect from 8 pt up.
