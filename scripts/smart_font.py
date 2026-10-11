@@ -32,12 +32,13 @@ def same_glyph(fa, fb, na, nb) -> bool:
 def build(text: str, machine: str, dst: str, alternates: bool, kern: int, family: str | None) -> str:
     f, m = TTFont(text), TTFont(machine)
     cf, cm = f.getBestCmap(), m.getBestCmap()
-    name = {c: cf[ord(c)] for c in LETTERS + DIGITS}
+    letters = LETTERS + "".join(c for c in "abcdefghijklmnopqrstuvwxyz" if ord(c) in cf)   # lowercase when present
+    name = {c: cf[ord(c)] for c in letters + DIGITS}
     alt = {}
     if alternates:
         order = f.getGlyphOrder()
-        for c in LETTERS + DIGITS:
-            if not same_glyph(f, m, name[c], cm[ord(c)]):
+        for c in letters + DIGITS:
+            if ord(c) in cm and not same_glyph(f, m, name[c], cm[ord(c)]):
                 a = name[c] + ".ocr"
                 f["glyf"].glyphs[a] = copy.deepcopy(m["glyf"][cm[ord(c)]])
                 f["hmtx"].metrics[a] = m["hmtx"][cm[ord(c)]]
@@ -46,9 +47,9 @@ def build(text: str, machine: str, dst: str, alternates: bool, kern: int, family
         f.setGlyphOrder(order)
         f["glyf"].setGlyphOrder(order)
     cls = lambda chars, alts=True: "[" + " ".join([name[c] for c in chars] + ([alt[c] for c in chars if c in alt] if alts else [])) + "]"  # noqa: E731
-    fea = [f"@LET = {cls(LETTERS)};", f"@DIG = {cls(DIGITS)};"]
+    fea = [f"@LET = {cls(letters)};", f"@DIG = {cls(DIGITS)};"]
     if alt:
-        ls = [c for c in LETTERS if c in alt]
+        ls = [c for c in letters if c in alt]
         ds = [c for c in DIGITS if c in alt]
         fea += [f"@LSRC = [{' '.join(name[c] for c in ls)}];", f"@LALT = [{' '.join(alt[c] for c in ls)}];",
                 f"@DSRC = [{' '.join(name[c] for c in ds)}];", f"@DALT = [{' '.join(alt[c] for c in ds)}];",
