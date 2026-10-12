@@ -855,3 +855,7 @@ Full checks (`confusions_pc_v07l*`, `text_eval_story_v07l.csv`, `vlm_clean_v07l*
 ### v0.8 adopted (2026-10-12)
 
 Exported as version 0.8 (`scratch/export_v08.sh`; v0.7 in `out/fonts/intermediate/*-v07.ttf`): v0.7 + lowercase l from Work Sans. Full character set sheet `out/golden/v08_charset.png`.
+
+### Lowercase style matching (James: "1", 2026-10-12)
+
+Sources of v0.8's lowercase: Courier Prime (typewriter slab) a, b, g, t; Cousine (monospace sans) h, n, r; Andika/Cousine-heavy blends o, s, x, z; Work Sans l; the rest (c d e f i j k m p q u v w y) from the serif blend. For a, b, g, t, h, n, r, x, s, o, z: every serif OFL face's glyph inside v0.8 at the exact lowercase bands, scaled uniformly (`exact_heights.py uniform_lower`, so donors keep their proportions), scored on a bank oversampling the letter and its top confusions (`scratch/lc_style.py`, `out/report/lcstyle_u00XX.csv`).

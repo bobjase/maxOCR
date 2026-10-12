@@ -46,8 +46,9 @@ def bands(f: TTFont) -> dict[str, float]:
 
 
 def exact(src: str, dst: str, x=None, asc=None, desc=None, t=None, caps: bool = False,
-          uniform_caps: bool = False, only: str | None = None) -> dict:
-    """only: process just these characters (the bands still come from the whole font)."""
+          uniform_caps: bool = False, only: str | None = None, uniform_lower: bool = False) -> dict:
+    """only: process just these characters (the bands still come from the whole font); uniform_lower: lowercase
+    scaled in both directions too (a donor glyph keeps its proportions)."""
     f = TTFont(src)
     for c in LOWER:
         f["glyf"][f.getBestCmap()[ord(c)]].recalcBounds(f["glyf"])
@@ -78,7 +79,7 @@ def exact(src: str, dst: str, x=None, asc=None, desc=None, t=None, caps: bool = 
         rec = DecomposingRecordingPen(gs)
         gs[name].draw(rec)
         pen = TTGlyphPen(None)
-        sx = s if (uniform_caps and c in CAPS) else 1.0   # default vertical only: widths and sidebearings kept
+        sx = s if (uniform_caps and c in CAPS) or (uniform_lower and c in LOWER) else 1.0   # default vertical only
         x0, x1 = g.xMin, g.xMax
         rec.replay(TransformPen(pen, (sx, 0, 0, s, x0 - sx * x0, dy)))   # about the left ink edge
         f["glyf"][name] = pen.glyph()

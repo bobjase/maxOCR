@@ -101,7 +101,7 @@ def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, w
         build_font(Recipe({letter: CharRecipe([Ingredient(path_of[family], 1.0)], boldness=bold, width_scale=width)},
                           name="donor"), tmp)
         add_glyphs(base, tmp, letter, dst)
-    exact(dst, dst, caps=True, uniform_caps=True, only=letter)
+    exact(dst, dst, caps=True, uniform_caps=True, only=letter, uniform_lower=family != "self")
     if band is not None and family != "self":
         to_band(dst, letter, *band)
     if height != 1.0:
