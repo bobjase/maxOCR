@@ -73,8 +73,9 @@ def render(font_path: str, text: str, size_pt: float = 8.0, dpi: int = 200,
             x0 = PAD + int(round(pen_x + pos.x_offset * px_per_unit)) + ox_int + slot.bitmap_left
             y0 = baseline - slot.bitmap_top
             ys, xs = slice(max(y0, 0), min(y0 + bmp.rows, h)), slice(max(x0, 0), min(x0 + bmp.width, w))
-            sub = glyph[ys.start - y0:ys.stop - y0, xs.start - x0:xs.stop - x0] / 255.0
-            canvas[ys, xs] = np.maximum(canvas[ys, xs], sub)
+            if ys.start < ys.stop and xs.start < xs.stop:   # a glyph wholly outside the canvas adds nothing
+                sub = glyph[ys.start - y0:ys.stop - y0, xs.start - x0:xs.stop - x0] / 255.0
+                canvas[ys, xs] = np.maximum(canvas[ys, xs], sub)
         pen_x += pos.x_advance * px_per_unit
 
     out = (255 - np.round(canvas * 255)).astype(np.uint8)
