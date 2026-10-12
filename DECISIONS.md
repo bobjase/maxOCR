@@ -850,3 +850,8 @@ James picked round 1. Exported as version 0.7 (`scratch/export_v07.sh`; 95 chara
 ### Lowercase l (James: "go", 2026-10-12)
 
 v0.7's l is misread 44.9% (mixed codes; PARSeq 55, Tesseract 52, EasyOCR 42, Paddle 30), mostly as I (415) and 1 (215). The earlier taller-l test helped I/l but cost overall (taller lines). Donor screen inside v0.7 at the ascender band (`cand_l_screen.csv`, focus l I 1 i): Work Sans 72.7 (overall 12.77) vs our l 62.4 (13.12); Fira Sans, Noto Serif 66.9; widening our l makes it worse (1.2x 63.1, 1.4x 55.3, 1.6x 48.2: read as 1). Work Sans and Fira Sans l's end in a small tail to the right. Grid (`cand_l_grid.csv`, focus l I 1 i L): Work Sans at normal width 68.5 vs v0.7 59.0 (overall 11.90 vs 12.07); a wider tail is read as L (Work Sans 1.3x 63.5, 1.5x 55.8). Full checks of v0.7 + Work Sans l running (`MaxOCR-Text-v07l.ttf`).
+Full checks (`confusions_pc_v07l*`, `text_eval_story_v07l.csv`, `vlm_clean_v07l*`), v0.7 -> v0.7 + Work Sans l: l misread 44.9 -> 37.3; mixed codes 8.97 -> 8.92; story s=0.5 4.65 -> 4.54, clean 2.25 -> 2.28; VLM clean prose+codes 0.335 -> 0.393, but the extra substitutions are mostly one prose line the model reordered ("summer holidays begin The" -> "The summer holidays begin"); it misread the new l once. James: yes.
+
+### v0.8 adopted (2026-10-12)
+
+Exported as version 0.8 (`scratch/export_v08.sh`; v0.7 in `out/fonts/intermediate/*-v07.ttf`): v0.7 + lowercase l from Work Sans. Full character set sheet `out/golden/v08_charset.png`.
