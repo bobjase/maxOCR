@@ -30,15 +30,44 @@ ENGINES = ("paddle", "tesseract", "easyocr")
 FOCUS = "Ss58"
 
 
-def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, width: float = 1.0) -> str:
-    """bold: SDF threshold shift (a single-font S needs >= 2 to change); width: horizontal scale (S vs s proportions)."""
-    tag = f"S_{family}_b{bold:g}_w{width:g}"
+def enlarge_s(path: str, h: float, below: float) -> None:
+    """Scale the S uniformly to h x cap height; the extra height goes `below` (share) under the baseline."""
+    from fontTools.pens.recordingPen import DecomposingRecordingPen
+    from fontTools.pens.transformPen import TransformPen
+    from fontTools.pens.ttGlyphPen import TTGlyphPen
+    from fontTools.ttLib import TTFont
+    f = TTFont(path)
+    name = f.getBestCmap()[ord("S")]
+    g = f["glyf"][name]
+    g.recalcBounds(f["glyf"])
+    cap = g.yMax - g.yMin
+    x0, x1 = g.xMin, g.xMax
+    dy = g.yMin * (1 - h) - below * (h - 1) * cap
+    rec = DecomposingRecordingPen(f.getGlyphSet())
+    f.getGlyphSet()[name].draw(rec)
+    pen = TTGlyphPen(None)
+    rec.replay(TransformPen(pen, (h, 0, 0, h, x0 - h * x0, dy)))
+    f["glyf"][name] = pen.glyph()
+    f["glyf"][name].recalcBounds(f["glyf"])
+    adv, lsb = f["hmtx"][name]
+    f["hmtx"][name] = (int(round(adv + (h - 1) * (x1 - x0))), lsb)
+    f.save(path)
+
+
+def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, width: float = 1.0,
+          height: float = 1.0, below: float = 0.13) -> str:
+    """bold: SDF threshold shift (a single-font S needs >= 2 to change); width: horizontal scale (S vs s proportions);
+    height: S size relative to the cap height (uniform, like v0.4's tall S; 1 = even capitals), `below` of the extra
+    under the baseline (v0.4's S: 0.13)."""
+    tag = f"S_{family}_b{bold:g}_w{width:g}_h{height:g}_d{below:g}"
     tmp = str(out / f"{tag}_blend.ttf")
     build_font(Recipe({"S": CharRecipe([Ingredient(path_of[family], 1.0)], boldness=bold, width_scale=width)},
                       name="S donor"), tmp)
     dst = str(out / f"{tag}.ttf")
     add_glyphs(base, tmp, "S", dst)
     exact(dst, dst, caps=True, uniform_caps=True)
+    if height != 1.0:
+        enlarge_s(dst, height, below)
     return dst
 
 
@@ -49,6 +78,8 @@ def main():
     ap.add_argument("--refs", default="", help="name=path,... scored as they are")
     ap.add_argument("--bold", default="0", help="boldness values to try per donor (blend.py units)")
     ap.add_argument("--widths", default="1", help="width scales to try per donor")
+    ap.add_argument("--heights", default="1", help="S size vs cap height to try (uniform scale)")
+    ap.add_argument("--below", default="0.13", help="shares of the extra height below the baseline to try")
     ap.add_argument("--out", default="s_candidates.csv")
     a = ap.parse_args()
     out = WORK / "s_cand"
@@ -58,8 +89,11 @@ def main():
     for fam in a.donors.split(","):
         for b in (float(v) for v in a.bold.split(",")):
             for w in (float(v) for v in a.widths.split(",")):
-                name = f"S from {fam}" + (f" bold {b:g}" if b else "") + (f" width {w:g}" if w != 1 else "")
-                fonts[name] = build(a.base, fam, path_of, out, b, w)
+                for h in (float(v) for v in a.heights.split(",")):
+                    for dn in (float(v) for v in a.below.split(",")) if h != 1 else (0.0,):
+                        name = (f"S from {fam}" + (f" bold {b:g}" if b else "") + (f" width {w:g}" if w != 1 else "")
+                                + (f" height {h:g} below {dn:g}" if h != 1 else ""))
+                        fonts[name] = build(a.base, fam, path_of, out, b, w, h, dn)
     from maxocr.engines.easyocr_rec import EasyOCRRec
     paddle, easy = rung0.PaddleRec(alphabet=ALNUM_ALPHABET), EasyOCRRec(alphabet=ALNUM_ALPHABET)
     b = bank(FOCUS)
