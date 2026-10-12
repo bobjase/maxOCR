@@ -866,3 +866,4 @@ James: S1.
 ### v0.9 adopted (2026-10-12)
 
 Exported as version 0.9 (`scratch/export_v09.sh`; v0.8 in `out/fonts/intermediate/*-v08.ttf`): v0.8 + serif lowercase a (Merriweather), b (Spectral), h (PT Serif), n (Libre Baskerville), o (Source Serif 4), x (PT Serif). Still non-serif for accuracy: t, z (moderate cost), s, g, r (high cost), l (Work Sans). Full character set sheet `out/golden/v09_charset.png`.
+Specimen page for the current version (republished on each release): https://claude.ai/artifact/TrVjxydoADdpD2kbuTHU9N (`scratch/specimen_page.py`).
