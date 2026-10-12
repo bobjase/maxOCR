@@ -72,3 +72,14 @@ def shuffled_lines(width: int = 28, seed: int = 7) -> list[str]:
     words = " ".join(PROSE.split()).split()
     random.Random(seed).shuffle(words)
     return textwrap.wrap(" ".join(words), width)
+
+
+def story_lines(width: int = 28, punct: bool = True) -> list[str]:
+    """The grocery story (maxocr/grocery_story.txt: prices, UPC/SKU/receipt numbers, confusable words), wrapped.
+    punct=False keeps letters, digits and spaces only (for fonts without punctuation)."""
+    import textwrap
+    from pathlib import Path
+    text = (Path(__file__).parent / "grocery_story.txt").read_text(encoding="utf-8").split("\n", 1)[1]
+    if not punct:
+        text = "".join(c if c.isalnum() or c.isspace() else " " for c in text)
+    return textwrap.wrap(" ".join(text.split()), width)
