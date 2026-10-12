@@ -46,7 +46,8 @@ def bands(f: TTFont) -> dict[str, float]:
 
 
 def exact(src: str, dst: str, x=None, asc=None, desc=None, t=None, caps: bool = False,
-          uniform_caps: bool = False) -> dict:
+          uniform_caps: bool = False, only: str | None = None) -> dict:
+    """only: process just these characters (the bands still come from the whole font)."""
     f = TTFont(src)
     for c in LOWER:
         f["glyf"][f.getBestCmap()[ord(c)]].recalcBounds(f["glyf"])
@@ -59,6 +60,8 @@ def exact(src: str, dst: str, x=None, asc=None, desc=None, t=None, caps: bool = 
         b["cap"] = Counter(f["glyf"][cm[ord(c)]].yMax for c in CAPS).most_common(1)[0][0]
     moves = {}
     for c in LOWER + (CAPS if caps else ""):
+        if only is not None and c not in only:
+            continue
         name = cm[ord(c)]
         g = f["glyf"][name]
         if c in CAPS:
