@@ -826,3 +826,11 @@ vv fix (`merge_vv_fix.csv`, on v05d_old0): vv read as w, mean of four engines: a
 Punctuation survey complete (450 faces, `out/report/punct_survey*.csv`): marks read right, Courier Prime (OFL) **64.6** (first of all 450), Courier New 59.8, Lucida Console 59.4, Cousine (OFL) 59.2, Sitka Text 57.4, Verdana Bold 56.0, Consolas 55.8; best proportional OFL Crimson Pro 45.1, Gelasio 44.8. Sheet `out/golden/punct_survey.png`. Plan: borrow mostly from Courier Prime and Cousine with generous spacing, then test the marks inside MaxOCR.
 
 v0.6 candidate full checks (`~/maxocr-work/keep/MaxOCR-Text-v06c.ttf`: v0.5 + digits on [-105, 700] except the tall 0 + v w y sidebearings >= 40; `confusions_pc_v06c*`, `text_eval_v06c.csv`, `vlm_clean_v06c*`): mixed codes **8.97** (v0.5 9.38, v0.4 9.15); digits mean misread 15.1 (v0.5 17.0), 0 39.7 (40.4), v 15.3 (21.3), w 16.2 (18.7), y 6.6 (7.9); real text 3.96 at s=0.5 (v0.5 4.16), clean 2.44 (2.39); VLM clean prose+codes 0.335, codes 0.69 (v0.5 0.31 / 0.76; letter misreads 7, noise level).
+
+### v0.6 adopted (2026-10-12)
+
+James: yes. Exported as version 0.6 (`scratch/export_v06.sh`; v0.5 in `out/fonts/intermediate/*-v05.ttf`): v0.5 + digits on [-105, 700] except the tall 0 + v w y sidebearings >= 40 (Small: 60, now that `letter_spacing.py` leaves negative sidebearings alone). Full character set sheet `out/golden/v06c_charset.png`.
+
+### Punctuation, round 1 (2026-10-12)
+
+`scripts/add_punct.py` adds the 32 ASCII marks, each rebuilt from an OFL donor at the MaxOCR cap height (donor position and advance relative to its cap height, so monospaced donors bring wide cells); `scripts/punct_eval.py` scores fonts on the survey's bank at equal capital height. Candidates on v0.6 Text: all marks from Courier Prime; all from Cousine; per mark the better of the two (survey); per mark the best OFL face (survey). References: Courier Prime, Cousine, Courier New.
