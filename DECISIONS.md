@@ -846,3 +846,7 @@ James picked round 1. Exported as version 0.7 (`scratch/export_v07.sh`; 95 chara
 
 1. Punctuation spacing: marks borrowed from monospaced faces keep wide cells ("$8.49.", "1,305" look gappy). Try tightening and measure the cost.
 2. Bowls of b and d (and similar) too tall: their counters reach 509 / 511 vs the o's 466 (x-height 541), so the bowls rise ~8% of the x-height above the round letters; p 481, q 485 slightly high too (g 457, e 493). Bring the bowls down to the o's height (shape edit within the glyph, not a scale of the whole letter) and measure.
+
+### Lowercase l (James: "go", 2026-10-12)
+
+v0.7's l is misread 44.9% (mixed codes; PARSeq 55, Tesseract 52, EasyOCR 42, Paddle 30), mostly as I (415) and 1 (215). The earlier taller-l test helped I/l but cost overall (taller lines). Donor screen inside v0.7 at the ascender band (`cand_l_screen.csv`, focus l I 1 i): Work Sans 72.7 (overall 12.77) vs our l 62.4 (13.12); Fira Sans, Noto Serif 66.9; widening our l makes it worse (1.2x 63.1, 1.4x 55.3, 1.6x 48.2: read as 1). Work Sans and Fira Sans l's end in a small tail to the right. Grid (`cand_l_grid.csv`, focus l I 1 i L): Work Sans at normal width 68.5 vs v0.7 59.0 (overall 11.90 vs 12.07); a wider tail is read as L (Work Sans 1.3x 63.5, 1.5x 55.8). Full checks of v0.7 + Work Sans l running (`MaxOCR-Text-v07l.ttf`).
