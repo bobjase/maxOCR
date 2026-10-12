@@ -27,6 +27,7 @@ CORNER_DEG = 38.0
 CORNER_WIN = 6           # samples each side (12 units)
 MIN_LINE = 24.0          # units: shortest straight run (serif sides)
 LONG_LINE = 70.0         # longer runs may wobble a little and still be straight (stems)
+STEM_LINE = 150.0        # a straight run in the middle of a curve must be at least this long (a stem, not a flat)
 SHORT = 14.0             # pieces and gaps shorter than this become straight joins
 SNAP_DEG = 4.0
 SPLIT_TOL = 12.0         # a quarter is drawn as one curve unless that misses the outline by more than this
@@ -110,7 +111,8 @@ def line_runs(Q: np.ndarray) -> list[tuple[int, int]]:
                     break
                 # a short straight run only counts where it starts or ends at a corner (the flat sides of a serif);
                 # in the middle of a curve it is just a gentle stretch of that curve
-                if L >= LONG_LINE or (L >= MIN_LINE and (s == 0 or e == n - 1)):
+                at_corner = s == 0 or e == n - 1
+                if (at_corner and L >= MIN_LINE) or L >= STEM_LINE:
                     best = e
             e += 1
         if best is not None:
@@ -242,17 +244,18 @@ def shallow_dents(P: np.ndarray, cs: list[int], reach: int = 15, depth: float = 
     return out
 
 
-def fair_contour(P: np.ndarray, sigma: float, tol: float) -> list:
-    """Segments [('line', A, B) | ('curve', c0, c1, c2, c3)] of the cleaned contour, in the original direction."""
+def fair_contour(P: np.ndarray, sigma: float, tol: float, keep_shape: bool = True) -> list:
+    """Segments [('line', A, B) | ('curve', c0, c1, c2, c3)] of the cleaned contour, in the original direction.
+    keep_shape (default): every corner stays, inside corners included, and curves follow the outline within tol;
+    otherwise shallow V-notches are dropped and quarters are drawn as single curves (this changes the letter)."""
     n = len(P)
     cs = corners(P)
-    dents = set(shallow_dents(P, cs))
-    cs = [i for i in cs if i not in dents]
-    if not cs:                                       # smooth closed shape (o, dot): start at the leftmost point
-        cs = [int(np.argmin(P[:, 0]))]
-        closed_smooth = True
-    else:
-        closed_smooth = False
+    if not keep_shape:
+        dents = set(shallow_dents(P, cs))
+        cs = [i for i in cs if i not in dents]
+    if not cs:                                       # a closed round shape (counter, o, dot): four points
+        return round_loop(P)
+    closed_smooth = False
     segs = []
     for j, s in enumerate(cs):
         e = cs[(j + 1) % len(cs)]
@@ -309,8 +312,44 @@ def fair_contour(P: np.ndarray, sigma: float, tol: float) -> list:
                 tb = -tangents[c1] if c1 in tangents else t1
                 # one curve per quarter (extreme to extreme), the way a bowl is drawn; split only when a single
                 # curve cannot follow the stretch at all (an S-bend), never to copy small flats
-                for bz in fit_cubic(R[c0:c1 + 1], ta, tb, SPLIT_TOL):
+                for bz in fit_cubic(R[c0:c1 + 1], ta, tb, tol if keep_shape else SPLIT_TOL):
                     segs.append(("curve",) + tuple(np.asarray(x) for x in bz))
+    return segs
+
+
+def round_loop(P: np.ndarray) -> list:
+    """A closed shape without corners, drawn like a circle: one point each at its leftmost, top, rightmost and bottom,
+    with horizontal or vertical tangents there, and one curve per quarter (a flat stretch is not copied)."""
+    n = len(P)
+
+    def middle_of_side(values: np.ndarray, i: int, slack: float = 2.0) -> int:
+        """The extreme point moved to the middle of the stretch that lies within slack of the extreme value (so a
+        flat side gets its point in its middle, not at one end)."""
+        target = values[i]
+        lo = hi = 0
+        while lo < n // 4 and abs(values[(i - lo - 1) % n] - target) <= slack:
+            lo += 1
+        while hi < n // 4 and abs(values[(i + hi + 1) % n] - target) <= slack:
+            hi += 1
+        return (i + (hi - lo) // 2) % n
+
+    xs, ys = P[:, 0], P[:, 1]
+    left, right = middle_of_side(xs, int(np.argmin(xs))), middle_of_side(xs, int(np.argmax(xs)))
+    top, bottom = middle_of_side(ys, int(np.argmax(ys))), middle_of_side(ys, int(np.argmin(ys)))
+    ext = sorted({left, right, top, bottom})
+    tang = {}
+    for i in ext:
+        d = P[(i + 2) % n] - P[(i - 2) % n]
+        if i in (left, right):
+            tang[i] = np.array([0.0, math.copysign(1, d[1])])
+        else:
+            tang[i] = np.array([math.copysign(1, d[0]), 0.0])
+    segs = []
+    for k, i in enumerate(ext):
+        j = ext[(k + 1) % len(ext)]
+        idx = np.arange(i, j + (n if j <= i else 0) + 1) % n
+        for bz in fit_cubic(P[idx], tang[i], -tang[j], SPLIT_TOL):
+            segs.append(("curve",) + tuple(np.asarray(x) for x in bz))
     return segs
 
 
@@ -340,7 +379,7 @@ def draw(segs, pen):
     pen.closePath()
 
 
-def fair_font(src: str, dst: str, chars: str, sigma: float, tol: float) -> None:
+def fair_font(src: str, dst: str, chars: str, sigma: float, tol: float, keep_shape: bool = True) -> None:
     f = TTFont(src)
     cm = f.getBestCmap()
     for c in chars:
@@ -349,7 +388,7 @@ def fair_font(src: str, dst: str, chars: str, sigma: float, tol: float) -> None:
             continue
         path = pathops.Path()
         for P in contours_of(f, name):
-            draw(fair_contour(P, sigma, tol), path.getPen())
+            draw(fair_contour(P, sigma, tol, keep_shape), path.getPen())
         path.simplify(fix_winding=True)              # removes any small self-overlap left by the fitting
         tt = TTGlyphPen(None)
         path.draw(Cu2QuPen(tt, max_err=0.6, reverse_direction=True))
@@ -366,10 +405,11 @@ def main():
     ap.add_argument("src")
     ap.add_argument("dst")
     ap.add_argument("--chars", default=string.ascii_lowercase)
-    ap.add_argument("--smooth", type=float, default=30.0, help="smoothing length along curves (font units)")
-    ap.add_argument("--tol", type=float, default=2.5, help="curve fit tolerance (font units)")
+    ap.add_argument("--smooth", type=float, default=0.0, help="smoothing length along curves (font units); 0 keeps the shape")
+    ap.add_argument("--tol", type=float, default=3.0, help="how closely the new curves follow the outline (font units)")
+    ap.add_argument("--reshape", action="store_true", help="drop notches and draw one curve per quarter (changes shape)")
     a = ap.parse_args()
-    fair_font(a.src, a.dst, a.chars, a.smooth, a.tol)
+    fair_font(a.src, a.dst, a.chars, a.smooth, a.tol, keep_shape=not a.reshape)
     print(a.dst)
 
 
