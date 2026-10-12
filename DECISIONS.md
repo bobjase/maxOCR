@@ -867,3 +867,7 @@ James: S1.
 
 Exported as version 0.9 (`scratch/export_v09.sh`; v0.8 in `out/fonts/intermediate/*-v08.ttf`): v0.8 + serif lowercase a (Merriweather), b (Spectral), h (PT Serif), n (Libre Baskerville), o (Source Serif 4), x (PT Serif). Still non-serif for accuracy: t, z (moderate cost), s, g, r (high cost), l (Work Sans). Full character set sheet `out/golden/v09_charset.png`.
 Specimen page for the current version (republished on each release): https://claude.ai/artifact/TrVjxydoADdpD2kbuTHU9N (`scratch/specimen_page.py`).
+
+### f, g, j look weird (James, 2026-10-12)
+
+f: bulky, blobby top (serif blend); g: Courier Prime typewriter g; j: lumpy hook (blend artifact). Screen of every OFL face inside v0.9 (`out/report/fgj_u00XX.csv`, focus f E F i / g 9 G J / j i J 5), letter read right (overall error): f now 93.7 (8.87), Lato 94.1 (8.42), Work Sans 93.4 (8.25), Open Sans 93.0, Merriweather 90.8 (8.55), Tinos 89.7 (8.29); g now 93.8 (9.44) = Courier Prime, every serif g 82-86 (read as 8, 9, E; error +1.0-1.7); j now 94.1 (11.09), donors 75-87. `maxocr/blend.py` CharRecipe gains `smooth` (Gaussian blur of the SDF): our own glyphs rebuilt smoothed (`smooth_{f,g,j}.csv`): g smooth 6 94.0 (9.27), j smooth 2 / 4 / 6 93.0 / 92.0 / 87.8, f smooth 6 93.0 (heavier). Options page https://claude.ai/artifact/JxNKAGK7qA38MAUD93roHc (`out/golden/fgj.png`).

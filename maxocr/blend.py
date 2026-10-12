@@ -24,7 +24,7 @@ from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont
-from scipy.ndimage import distance_transform_edt
+from scipy.ndimage import distance_transform_edt, gaussian_filter
 
 from .render import render, split_face
 
@@ -57,6 +57,7 @@ class CharRecipe:
     height_scale: float = 1.0
     bottom_shift: float = 0.0     # in cap units
     boldness: float = 0.0         # extra SDF offset for this glyph, px of the normalized box
+    smooth: float = 0.0           # Gaussian blur of the blended SDF (px of the normalized box): rounds off lumps
 
 
 @dataclass
@@ -112,6 +113,8 @@ def _blend(ch: str, r: CharRecipe, boldness: float) -> tuple[np.ndarray, Geometr
     total = sum(i.weight for i in r.ingredients)
     ws = [i.weight / total for i in r.ingredients]
     sdf = sum(w * normalized_sdf(i.font, ch) for w, i in zip(ws, r.ingredients))
+    if r.smooth > 0:
+        sdf = gaussian_filter(sdf, r.smooth)
     mask = _clean(sdf < (boldness + r.boldness))
     geos = [_geometry(i.font, ch) for i in r.ingredients]
     g = Geometry(*(sum(w * getattr(x, k) for w, x in zip(ws, geos))
