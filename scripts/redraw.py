@@ -209,6 +209,8 @@ def kept_stretch(segs, p0, p3) -> list:
 
 
 def redraw_contour(P: np.ndarray, nodes: list, original=None) -> list:
+    if len(nodes) < 3:
+        raise ValueError("give at least 3 nodes per contour (with 2 the direction around the contour is ambiguous)")
     snapped = []
     for x, y, kind, span, *angle in nodes:
         i, p = snap(P, x, y, kind)
