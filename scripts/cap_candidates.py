@@ -7,7 +7,8 @@ correct-read rate of each focus character and overall error.
 
     python scripts/cap_candidates.py BASE.ttf --letter S --focus Ss58 --donors tinos,lora,self [--refs name=path,...]
         [--bold 0,2] [--widths 0.8,1,1.2] [--heights 1,1.1] [--below 0.13] [--out s_candidates.csv]
---donors all: every face in out/ofl_faces.json plus self. --band lo,hi places donor glyphs on a band (digits). Writes out/report/<out>; fonts in ~/maxocr-work/s_cand/.
+--donors all: every face in out/ofl_faces.json plus self. --band lo,hi places donor glyphs on a band (digits).
+--general: punctuation marks (lines over 0-9A-Za-z + punctuation; engines on that alphabet, case-sensitive). Writes out/report/<out>; fonts in ~/maxocr-work/s_cand/.
 """
 import argparse
 import json
@@ -28,7 +29,9 @@ from add_lowercase import add_glyphs  # noqa: E402
 from exact_heights import exact  # noqa: E402
 from maxocr.blend import CharRecipe, Ingredient, Recipe, build_font  # noqa: E402
 from maxocr.build import WORK  # noqa: E402
-from maxocr.corpus import ALNUM_ALPHABET  # noqa: E402
+from maxocr.corpus import ALNUM_ALPHABET, GENERAL_ALPHABET, make_strings  # noqa: E402
+from maxocr.degrade import make_instance  # noqa: E402
+from maxocr.fonts import matched_size  # noqa: E402
 from maxocr.evaluate import Job, chunk, run  # noqa: E402
 from text_opt_lc import bank  # noqa: E402
 
@@ -87,7 +90,7 @@ def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, w
     """bold: SDF threshold shift (a single-font glyph needs >= 2 to change); width: horizontal scale (capital vs
     lowercase proportions); height: size relative to the cap height (uniform, like v0.4's tall S; 1 = even
     capitals), `below` of the extra under the baseline (v0.4's S: 0.13)."""
-    tag = f"{letter}_{family}_b{bold:g}_w{width:g}_h{height:g}_d{below:g}"
+    tag = f"u{ord(letter):04X}_{family}_b{bold:g}_w{width:g}_h{height:g}_d{below:g}"
     dst = str(out / f"{tag}.ttf")
     if family == "self":
         shutil.copy(base, dst)
@@ -118,6 +121,8 @@ def main():
     ap.add_argument("--heights", default="1", help="size vs cap height to try (uniform scale)")
     ap.add_argument("--below", default="0.13", help="shares of the extra height below the baseline to try")
     ap.add_argument("--band", help="lo,hi font units: put donor glyphs on this band (digits: -105,700)")
+    ap.add_argument("--general", action="store_true",
+                    help="punctuation: lines over 0-9A-Za-z + punctuation, engines on that alphabet (case-sensitive)")
     ap.add_argument("--out", default="s_candidates.csv")
     a = ap.parse_args()
     L = a.letter
@@ -141,10 +146,17 @@ def main():
                         except Exception as e:   # a donor without the letter, or a degenerate blend
                             print(f"skip {name}: {e}", flush=True)
     from maxocr.engines.easyocr_rec import EasyOCRRec
-    paddle, easy = rung0.PaddleRec(alphabet=ALNUM_ALPHABET), EasyOCRRec(alphabet=ALNUM_ALPHABET)
-    lines = bank(a.focus)
-    jobs = [Job(p, p, rung0.SEVERITY, "a", c) for p in fonts.values() for c in chunk(lines, 40)]
-    ch, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=easy, tess_whitelist=ALNUM_ALPHABET)
+    alphabet = GENERAL_ALPHABET if a.general else ALNUM_ALPHABET
+    paddle = rung0.PaddleRec(alphabet=alphabet, casefold=False)
+    easy = EasyOCRRec(alphabet=alphabet, casefold=False)
+    if a.general:
+        w = np.array([8.0 if c in a.focus else 1.0 for c in alphabet])
+        lines = [i for i in (make_instance(k, t, 6161) for k, t in
+                             enumerate(make_strings(400, 6161, alphabet=alphabet, weights=w / w.sum()))) if not i.cropped]
+    else:
+        lines = bank(a.focus)
+    jobs = [Job(p, p, rung0.SEVERITY, "a", c, size_pt=matched_size(p, 8.0)) for p in fonts.values() for c in chunk(lines, 40)]
+    ch, _, _ = run(jobs, rung0.EVAL_WORKERS, paddle=paddle, progress=False, easy=easy, tess_whitelist=alphabet)
     rows = []
     for name, p in fonts.items():
         g = ch[ch.font == p]
