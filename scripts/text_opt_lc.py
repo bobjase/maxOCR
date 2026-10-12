@@ -8,6 +8,8 @@ error above the base font - REGRESS x any drop of a pair glyph's accuracy below 
 
     python scripts/text_opt_lc.py --pair Il --only l --base FONT.ttf --run Il_lc [--generations 30]
 --only: the glyphs that change (default: both); the other pair glyph is held fixed but still scored.
+--exact-caps: every candidate's capitals are set on [0, cap height] (exact_heights.py), so height is not a lever;
+--width-range lo,hi: width-scale bounds (default 0.905-1.105), the search starts at their geometric middle.
 Writes out/discover/<run>/{log.jsonl,archive.json}; fonts in ~/maxocr-work/discover/<run>/.
 """
 import argparse
@@ -23,6 +25,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rung0  # noqa: E402
 from add_lowercase import add_glyphs  # noqa: E402
+from exact_heights import exact  # noqa: E402
 from maxocr.blend import CharRecipe, Ingredient, Recipe, build_font  # noqa: E402
 from maxocr.build import WORK  # noqa: E402
 from maxocr.corpus import ALNUM_ALPHABET, make_strings  # noqa: E402
@@ -54,10 +57,12 @@ def decode(x, chars, paths) -> dict[str, CharRecipe]:
 
 
 def _build(args):
-    rec, base, chars, path = args
+    rec, base, chars, path, exact_caps = args
     tmp = path.replace(".ttf", "_blend.ttf")
     build_font(Recipe(rec, name="MaxOCR lc candidate"), tmp)
     add_glyphs(base, tmp, chars, path)
+    if exact_caps:
+        exact(path, path, caps=True, uniform_caps=True)
     return path
 
 
@@ -90,7 +95,14 @@ def main():
     ap.add_argument("--generations", type=int, default=30)
     ap.add_argument("--popsize", type=int, default=16)
     ap.add_argument("--ingredients", help=f"comma-separated OFL families (exactly {K}; the first three start equal)")
+    ap.add_argument("--exact-caps", action="store_true", help="set every capital on [0, cap height] after building")
+    ap.add_argument("--width-range", help="lo,hi width-scale bounds (default 0.905,1.105)")
     a = ap.parse_args()
+    if a.width_range:
+        lo, hi = (float(v) for v in a.width_range.split(","))
+        BOUNDS["logw"] = (float(np.log(lo)), float(np.log(hi)))
+    w0 = float(np.mean(BOUNDS["logw"]))
+    w_std = (BOUNDS["logw"][1] - BOUNDS["logw"][0]) / 5
     pair, chars = a.pair, a.only or a.pair
     out = ROOT / "out" / "discover" / a.run
     out.mkdir(parents=True, exist_ok=True)
@@ -115,14 +127,14 @@ def main():
     everyone = []
     print(json.dumps({"event": "seeded", "base": round(base["fitness"], 4),
                       "base_acc": {e: base[e]["acc"] for e in ENGINES}}), flush=True)
-    x0 = np.array(([np.log(1 / 3)] * 3 + [np.log(0.02)] * (K - 3) + [0.0, 0.0, 0.0, 0.0]) * len(chars))
+    x0 = np.array(([np.log(1 / 3)] * 3 + [np.log(0.02)] * (K - 3) + [w0, 0.0, 0.0, 0.0]) * len(chars))
     es = cma.CMAEvolutionStrategy(x0, 0.5, {"popsize": a.popsize, "seed": 13, "verbose": -9,
-                                           "CMA_stds": ([1.0] * K + [0.04, 0.03, 0.02, 0.6]) * len(chars)})
+                                           "CMA_stds": ([1.0] * K + [w_std, 0.03, 0.02, 0.6]) * len(chars)})
     for gen in range(a.generations):
         xs = es.ask()
         recs = [decode(x, chars, paths) for x in xs]
         fps = [str(fdir / f"g{gen:02d}_{k:02d}.ttf") for k in range(len(xs))]
-        pool.map(_build, [(r, a.base, chars, p) for r, p in zip(recs, fps)])
+        pool.map(_build, [(r, a.base, chars, p, a.exact_caps) for r, p in zip(recs, fps)])
         sc = evaluate({str(k): p for k, p in enumerate(fps)}, base)
         fits = [sc[str(k)]["fitness"] for k in range(len(xs))]
         es.tell(xs, [-f for f in fits])
