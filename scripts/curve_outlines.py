@@ -17,7 +17,7 @@ import potrace
 from fontTools.pens.cu2quPen import Cu2QuPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import binary_closing, binary_opening, gaussian_filter
 
 DEFAULT_CHARS = string.digits + string.ascii_letters + string.punctuation
 
@@ -43,7 +43,12 @@ def _area(poly) -> float:
     return sum(x1 * y2 - x2 * y1 for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1])) / 2
 
 
-def trace_glyph(face, gid: int, alphamax: float, tolerance: float, blur: float = 0.0):
+def _disc(r: int) -> np.ndarray:
+    y, x = np.ogrid[-r:r + 1, -r:r + 1]
+    return x * x + y * y <= r * r
+
+
+def trace_glyph(face, gid: int, alphamax: float, tolerance: float, blur: float = 0.0, close: int = 0, open_: int = 0):
     """Contours of one glyph in font units: list of (start, segments) with segments as potrace gives them,
     mapped from bitmap pixels (y down) to font units (y up)."""
     face.load_glyph(gid, freetype.FT_LOAD_NO_HINTING | freetype.FT_LOAD_NO_BITMAP | freetype.FT_LOAD_RENDER)
@@ -52,6 +57,15 @@ def trace_glyph(face, gid: int, alphamax: float, tolerance: float, blur: float =
         return []
     img = np.array(bmp.buffer, dtype=np.uint8).reshape(bmp.rows, bmp.pitch)[:, :bmp.width]
     left, top = face.glyph.bitmap_left, face.glyph.bitmap_top
+    if close or open_:   # fill notches narrower than 2*close, shave bumps narrower than 2*open (font units)
+        pad = max(close, open_) + 2
+        ink = np.pad(img >= 128, pad)
+        if close:
+            ink = binary_closing(ink, _disc(close))
+        if open_:
+            ink = binary_opening(ink, _disc(open_))
+        img = ink.astype(np.uint8) * 255
+        left, top = left - pad, top + pad
     if blur > 0:   # melt facets and wobbles (font units = pixels); real corners keep most of their shape
         pad = int(3 * blur) + 2
         img = np.pad(img, pad)
@@ -110,7 +124,7 @@ def _reverse(start, segs):
 
 
 def curve_font(src: str, dst: str, chars: str = DEFAULT_CHARS, alphamax: float = 1.0, tolerance: float = 0.2,
-               blur: float = 0.0) -> dict:
+               blur: float = 0.0, close: int = 0, open_: int = 0) -> dict:
     f = TTFont(src)
     upem = f["head"].unitsPerEm
     face = freetype.Face(src)
@@ -123,7 +137,7 @@ def curve_font(src: str, dst: str, chars: str = DEFAULT_CHARS, alphamax: float =
         if name is None or f["glyf"][name].numberOfContours <= 0:
             continue
         before = len(f["glyf"][name].getCoordinates(f["glyf"])[0])
-        contours = trace_glyph(face, face.get_char_index(ord(c)), alphamax, tolerance, blur)
+        contours = trace_glyph(face, face.get_char_index(ord(c)), alphamax, tolerance, blur, close, open_)
         if not contours:
             continue
         tt = TTGlyphPen(None)
@@ -146,8 +160,10 @@ def main():
     ap.add_argument("--alphamax", type=float, default=1.0, help="potrace corner threshold (higher = smoother)")
     ap.add_argument("--tolerance", type=float, default=0.2, help="potrace curve optimisation tolerance")
     ap.add_argument("--blur", type=float, default=0.0, help="Gaussian blur (font units) before tracing: smooths flats")
+    ap.add_argument("--close", type=int, default=0, help="fill notches narrower than 2x this (font units)")
+    ap.add_argument("--open", type=int, default=0, dest="open_", help="shave bumps narrower than 2x this (font units)")
     a = ap.parse_args()
-    s = curve_font(a.src, a.dst, a.chars, a.alphamax, a.tolerance, a.blur)
+    s = curve_font(a.src, a.dst, a.chars, a.alphamax, a.tolerance, a.blur, a.close, a.open_)
     print({c: f"{b}->{n}" for c, (b, n) in list(s.items())[:12]}, "...", len(s), "glyphs")
 
 

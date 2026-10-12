@@ -407,6 +407,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/wayland-protocols-1.49-hd8ed1ab_0.conda
       - pypi: https://files.pythonhosted.org/packages/44/1b/98a371d1b72cf004555698362266889a87c9bb0bed14a814652b32972034/potracer-0.0.4-py2.py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/b4/20/711d733b252696aedd78175e0f60acd42299de680d5a50a2750b96578841/skia_pathops-0.9.2-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-8_kmp_llvm.conda
   build_number: 8
@@ -6999,3 +7000,13 @@ packages:
   requires_dist:
   - numpy
   - potrace-cli ; extra == 'cli'
+- pypi: https://files.pythonhosted.org/packages/b4/20/711d733b252696aedd78175e0f60acd42299de680d5a50a2750b96578841/skia_pathops-0.9.2-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+  name: skia-pathops
+  version: 0.9.2
+  sha256: d94c18a60b1e56910240a65dcc841cca37067f6432a4881d20baff17b6d77915
+  requires_dist:
+  - pytest ; extra == 'testing'
+  - coverage ; extra == 'testing'
+  - pytest-xdist ; extra == 'testing'
+  - pytest-randomly ; extra == 'testing'
+  requires_python: '>=3.10'
