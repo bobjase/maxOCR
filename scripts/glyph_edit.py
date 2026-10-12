@@ -98,7 +98,8 @@ def rounded_rect(x0, y0, x1, y1, r) -> pathops.Path:
     return p
 
 
-def flat_bar(p: pathops.Path, stem_y: float, lo: float, hi: float, round_frac: float = 0.3) -> pathops.Path:
+def flat_bar(p: pathops.Path, stem_y: float, lo: float, hi: float, round_frac: float = 0.3,
+             left_trim: float = 0.0) -> pathops.Path:
     """Replace a crossbar (found between heights lo and hi: the rows clearly wider than the stem) with one bar that is
     flat on top and bottom, as thick as the old bar, symmetric about the stem with the longer arm's length, and with
     subtly rounded ends (corner radius = round_frac x thickness). The stem is left as it is."""
@@ -112,10 +113,26 @@ def flat_bar(p: pathops.Path, stem_y: float, lo: float, hi: float, round_frac: f
     y0, y1 = rows[0][0], rows[-1][0]
     arm = max(max(xc - a, b - xc) for _, a, b in rows)
     t = y1 - y0
-    cut = pathops.op(rect(-BIG, y0 - 2, x0, y1 + 2), rect(x1, y0 - 2, BIG, y1 + 2), pathops.PathOp.UNION)
+    m = 14   # the old bar's rounded ends and its brackets stand up to m above and below its flat middle: cut them too,
+    #          but only outside what continues through the bar (the stem below, the arch above, which is a little wider)
+    below0, below1 = stem_span(p, y0 - m - 2)
+    cut = rect(-BIG, y0 - m, below0, y1 + m)              # everything beside the stem/arch, from m below to m above
+    cut = pathops.op(cut, rect(below1, y0 - m, BIG, y1 + m), pathops.PathOp.UNION)
+    # inside the stem's width nothing is cut; above the bar the arch is wider than the stem, so its two edges are
+    # continued straight down (along their own slope) onto the bar: no flare, no vertical cut, no kink
+    ya, yb = y1 + m + 2, y1 + m + 30
+    la, _, ra, _ = clip(p, (-BIG, ya - 1, BIG, ya + 1)).bounds
+    lb, _, rb, _ = clip(p, (-BIG, yb - 1, BIG, yb + 1)).bounds
+    l_at = lambda y: la + (lb - la) * (y - ya) / (yb - ya)
+    r_at = lambda y: ra + (rb - ra) * (y - ya) / (yb - ya)
     rest = pathops.op(p, cut, pathops.PathOp.DIFFERENCE)
-    bar = rounded_rect(xc - arm, y0, xc + arm, y1, round_frac * t)
-    return pathops.op(rest, bar, pathops.PathOp.UNION)
+    neck = pathops.Path()
+    pen = neck.getPen()
+    pen.moveTo((l_at(y1 - 5), y1 - 5)); pen.lineTo((l_at(ya), ya)); pen.lineTo((r_at(ya), ya))
+    pen.lineTo((r_at(y1 - 5), y1 - 5)); pen.closePath()
+    bar = rounded_rect(xc - arm + left_trim, y0, xc + arm, y1, round_frac * t)   # left_trim: optical correction
+    out = pathops.op(rest, bar, pathops.PathOp.UNION)
+    return pathops.op(out, neck, pathops.PathOp.UNION)
 
 
 def write(f: TTFont, c: str, p: pathops.Path) -> None:
@@ -141,6 +158,8 @@ def main():
     ap.add_argument("--y0", type=float, help="mirror_band: bottom of the band")
     ap.add_argument("--y1", type=float, help="mirror_band: top of the band")
     ap.add_argument("--keep", default="left", choices=["left", "right"])
+    ap.add_argument("--left-trim", type=float, default=0.0,
+                    help="flat_bar: shorten the left arm by this much (the f's top leans right, so equal arms look unequal)")
     a = ap.parse_args()
     f = TTFont(a.src)
     if a.op == "mirror_foot":
@@ -148,7 +167,7 @@ def main():
     elif a.op == "mirror_band":
         p = mirror_band(glyph_path(f, a.char), a.stem_y, a.y0, a.y1, a.keep)
     else:
-        p = flat_bar(glyph_path(f, a.char), a.stem_y, a.y0, a.y1)
+        p = flat_bar(glyph_path(f, a.char), a.stem_y, a.y0, a.y1, left_trim=a.left_trim)
     write(f, a.char, p)
     f.save(a.dst)
     print(a.dst, a.char)
