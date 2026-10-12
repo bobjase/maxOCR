@@ -7,7 +7,7 @@ correct-read rate of each focus character and overall error.
 
     python scripts/cap_candidates.py BASE.ttf --letter S --focus Ss58 --donors tinos,lora,self [--refs name=path,...]
         [--bold 0,2] [--widths 0.8,1,1.2] [--heights 1,1.1] [--below 0.13] [--out s_candidates.csv]
---donors all: every face in out/ofl_faces.json plus self. Writes out/report/<out>; fonts in ~/maxocr-work/s_cand/.
+--donors all: every face in out/ofl_faces.json plus self. --band lo,hi places donor glyphs on a band (digits). Writes out/report/<out>; fonts in ~/maxocr-work/s_cand/.
 """
 import argparse
 import json
@@ -57,8 +57,33 @@ def transform_glyph(path: str, letter: str, sx: float, sy: float, below: float =
     f.save(path)
 
 
+def to_band(path: str, letter: str, lo: float, hi: float) -> None:
+    """Scale the glyph uniformly (about its left ink edge) so its ink spans exactly [lo, hi] (font units)."""
+    f = TTFont(path)
+    g = f["glyf"][f.getBestCmap()[ord(letter)]]
+    g.recalcBounds(f["glyf"])
+    s = (hi - lo) / (g.yMax - g.yMin)
+    transform_glyph(path, letter, s, s, 0.0)
+    f = TTFont(path)
+    g = f["glyf"][f.getBestCmap()[ord(letter)]]
+    g.recalcBounds(f["glyf"])
+    shift_glyph(path, letter, lo - g.yMin)
+
+
+def shift_glyph(path: str, letter: str, dy: float) -> None:
+    f = TTFont(path)
+    name = f.getBestCmap()[ord(letter)]
+    rec = DecomposingRecordingPen(f.getGlyphSet())
+    f.getGlyphSet()[name].draw(rec)
+    pen = TTGlyphPen(None)
+    rec.replay(TransformPen(pen, (1, 0, 0, 1, 0, dy)))
+    f["glyf"][name] = pen.glyph()
+    f["glyf"][name].recalcBounds(f["glyf"])
+    f.save(path)
+
+
 def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, width: float = 1.0,
-          height: float = 1.0, below: float = 0.13, letter: str = "S") -> str:
+          height: float = 1.0, below: float = 0.13, letter: str = "S", band: tuple | None = None) -> str:
     """bold: SDF threshold shift (a single-font glyph needs >= 2 to change); width: horizontal scale (capital vs
     lowercase proportions); height: size relative to the cap height (uniform, like v0.4's tall S; 1 = even
     capitals), `below` of the extra under the baseline (v0.4's S: 0.13)."""
@@ -74,6 +99,8 @@ def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, w
                           name="donor"), tmp)
         add_glyphs(base, tmp, letter, dst)
     exact(dst, dst, caps=True, uniform_caps=True, only=letter)
+    if band is not None and family != "self":
+        to_band(dst, letter, *band)
     if height != 1.0:
         transform_glyph(dst, letter, height, height, below)
     return dst
@@ -90,6 +117,7 @@ def main():
     ap.add_argument("--widths", default="1", help="width scales to try per donor")
     ap.add_argument("--heights", default="1", help="size vs cap height to try (uniform scale)")
     ap.add_argument("--below", default="0.13", help="shares of the extra height below the baseline to try")
+    ap.add_argument("--band", help="lo,hi font units: put donor glyphs on this band (digits: -105,700)")
     ap.add_argument("--out", default="s_candidates.csv")
     a = ap.parse_args()
     L = a.letter
@@ -108,7 +136,8 @@ def main():
                         name = (f"{L} from {fam}" + (f" bold {bo:g}" if bo else "") + (f" width {w:g}" if w != 1 else "")
                                 + (f" height {h:g} below {dn:g}" if h != 1 else ""))
                         try:
-                            fonts[name] = build(a.base, fam, path_of, out, bo, w, h, dn, L)
+                            band = tuple(float(v) for v in a.band.split(",")) if a.band else None
+                            fonts[name] = build(a.base, fam, path_of, out, bo, w, h, dn, L, band)
                         except Exception as e:   # a donor without the letter, or a degenerate blend
                             print(f"skip {name}: {e}", flush=True)
     from maxocr.engines.easyocr_rec import EasyOCRRec
