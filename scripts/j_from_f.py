@@ -10,11 +10,14 @@ src, dst = sys.argv[1], sys.argv[2]
 f = TTFont(src)
 i, ff = glyph_path(f, "i"), glyph_path(f, "f")
 j0, j1 = stem_span(i, 300)                       # the i's stem
-f0, f1 = stem_span(ff, 610)                      # the f's stem just below its arch
+f0, f1 = stem_span(ff, 250)                      # the f's stem (below its crossbar)
 XH, DESC, ASC = 541, -235, 828
 head = clip(i, (-500, 260, 1500, 700))           # i's head serif and upper stem (no foot)
 dot = clip(i, (-500, 650, 1500, 1200))
-top = clip(ff, (-500, 600, 1500, 1200))          # f's arch and terminal (above its crossbar and its flare)
+# the f's stem and arch as one piece, crossbar removed: the stem below the crossbar is straight, so keeping the f's own
+# stem means the j's edge runs from stem into hook in one line, as on the f (no butt joint, no corner)
+s0, s1 = stem_span(ff, 250)
+top = pathops.op(clip(ff, (-500, 600, 1500, 1200)), clip(ff, (s0, 150, s1, 640)), pathops.PathOp.UNION)
 _, _, _, ftop = top.bounds
 sx = (j1 - j0) / (f1 - f0)                       # match the f stem's width to the i stem's
 # rotate half a turn: x' = c - sx*x, y' = d - y; the f stem's right edge lands on the j stem's left edge... mirrored,
@@ -23,7 +26,7 @@ c = j1 + sx * f0
 d = DESC + ftop
 hook = transformed(top, (-sx, 0, 0, -1, c, d))
 _, hb, _, ht = hook.bounds
-stem = rect(j0, ht - 20, j1, 300)                # joins the hook to the head
+stem = rect(j0, ht - 40, j1, 300)                # meets the f's own stem well above the hook
 
 def circle(cx, cy, r) -> pathops.Path:
     """A perfect circle: four quarter arcs (cubic, kappa 0.5523)."""

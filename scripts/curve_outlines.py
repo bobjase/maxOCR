@@ -17,7 +17,7 @@ import potrace
 from fontTools.pens.cu2quPen import Cu2QuPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont
-from scipy.ndimage import binary_closing, binary_opening, gaussian_filter
+from scipy.ndimage import binary_closing, binary_erosion, binary_opening, gaussian_filter
 
 DEFAULT_CHARS = string.digits + string.ascii_letters + string.punctuation
 
@@ -48,7 +48,8 @@ def _disc(r: int) -> np.ndarray:
     return x * x + y * y <= r * r
 
 
-def trace_glyph(face, gid: int, alphamax: float, tolerance: float, blur: float = 0.0, close: int = 0, open_: int = 0):
+def trace_glyph(face, gid: int, alphamax: float, tolerance: float, blur: float = 0.0, close: int = 0, open_: int = 0,
+                erode: int = 0, erode_x: int = 0):
     """Contours of one glyph in font units: list of (start, segments) with segments as potrace gives them,
     mapped from bitmap pixels (y down) to font units (y up)."""
     face.load_glyph(gid, freetype.FT_LOAD_NO_HINTING | freetype.FT_LOAD_NO_BITMAP | freetype.FT_LOAD_RENDER)
@@ -57,9 +58,13 @@ def trace_glyph(face, gid: int, alphamax: float, tolerance: float, blur: float =
         return []
     img = np.array(bmp.buffer, dtype=np.uint8).reshape(bmp.rows, bmp.pitch)[:, :bmp.width]
     left, top = face.glyph.bitmap_left, face.glyph.bitmap_top
-    if close or open_:   # fill notches narrower than 2*close, shave bumps narrower than 2*open (font units)
-        pad = max(close, open_) + 2
+    if close or open_ or erode or erode_x:   # fill notches < 2*close, shave bumps < 2*open, thin edges (units)
+        pad = max(close, open_, erode, erode_x) + 2
         ink = np.pad(img >= 128, pad)
+        if erode:
+            ink = binary_erosion(ink, _disc(erode))
+        if erode_x:   # thin only from the sides: vertical stems get lighter, horizontal strokes keep their thickness
+            ink = binary_erosion(ink, np.ones((1, 2 * erode_x + 1), bool))
         if close:
             ink = binary_closing(ink, _disc(close))
         if open_:
@@ -124,7 +129,7 @@ def _reverse(start, segs):
 
 
 def curve_font(src: str, dst: str, chars: str = DEFAULT_CHARS, alphamax: float = 1.0, tolerance: float = 0.2,
-               blur: float = 0.0, close: int = 0, open_: int = 0) -> dict:
+               blur: float = 0.0, close: int = 0, open_: int = 0, erode: int = 0, erode_x: int = 0) -> dict:
     f = TTFont(src)
     upem = f["head"].unitsPerEm
     face = freetype.Face(src)
@@ -137,7 +142,7 @@ def curve_font(src: str, dst: str, chars: str = DEFAULT_CHARS, alphamax: float =
         if name is None or f["glyf"][name].numberOfContours <= 0:
             continue
         before = len(f["glyf"][name].getCoordinates(f["glyf"])[0])
-        contours = trace_glyph(face, face.get_char_index(ord(c)), alphamax, tolerance, blur, close, open_)
+        contours = trace_glyph(face, face.get_char_index(ord(c)), alphamax, tolerance, blur, close, open_, erode, erode_x)
         if not contours:
             continue
         tt = TTGlyphPen(None)
@@ -162,8 +167,10 @@ def main():
     ap.add_argument("--blur", type=float, default=0.0, help="Gaussian blur (font units) before tracing: smooths flats")
     ap.add_argument("--close", type=int, default=0, help="fill notches narrower than 2x this (font units)")
     ap.add_argument("--open", type=int, default=0, dest="open_", help="shave bumps narrower than 2x this (font units)")
+    ap.add_argument("--erode", type=int, default=0, help="thin every edge by this many font units (lighter weight)")
+    ap.add_argument("--erode-x", type=int, default=0, help="thin only from the sides by this many units (lighter stems)")
     a = ap.parse_args()
-    s = curve_font(a.src, a.dst, a.chars, a.alphamax, a.tolerance, a.blur, a.close, a.open_)
+    s = curve_font(a.src, a.dst, a.chars, a.alphamax, a.tolerance, a.blur, a.close, a.open_, a.erode, a.erode_x)
     print({c: f"{b}->{n}" for c, (b, n) in list(s.items())[:12]}, "...", len(s), "glyphs")
 
 

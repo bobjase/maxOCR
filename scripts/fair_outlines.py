@@ -408,7 +408,10 @@ def main():
     ap.add_argument("--smooth", type=float, default=0.0, help="smoothing length along curves (font units); 0 keeps the shape")
     ap.add_argument("--tol", type=float, default=3.0, help="how closely the new curves follow the outline (font units)")
     ap.add_argument("--reshape", action="store_true", help="drop notches and draw one curve per quarter (changes shape)")
+    ap.add_argument("--corner", type=float, default=CORNER_DEG,
+                    help="smallest turn (degrees) kept as a sharp corner; gentler bends are drawn as smooth curves")
     a = ap.parse_args()
+    globals()["CORNER_DEG"] = a.corner
     fair_font(a.src, a.dst, a.chars, a.smooth, a.tol, keep_shape=not a.reshape)
     print(a.dst)
 
