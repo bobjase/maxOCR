@@ -841,3 +841,8 @@ Grocery story with punctuation (`text_eval_story.csv`, 22-character lines, 4 dra
 ### v0.7 adopted (punctuation, 2026-10-12)
 
 James picked round 1. Exported as version 0.7 (`scratch/export_v07.sh`; 95 characters: 0-9, A-Z, a-z, space and the 32 ASCII marks; v0.6 in `out/fonts/intermediate/*-v06.ttf`). Full character set sheet `out/golden/v07_charset.png`. James asked whether ligatures should separate vv/w and similar: not needed; the sidebearing fix brings vv -> w to 0% and works in every application, while ligatures and pair kerning are features some applications ignore (Word has kerning off by default). Pair kerning stays the option if a new merge appears.
+
+### Cleanup round (at the end; James, 2026-10-12)
+
+1. Punctuation spacing: marks borrowed from monospaced faces keep wide cells ("$8.49.", "1,305" look gappy). Try tightening and measure the cost.
+2. Bowls of b and d (and similar) too tall: their counters reach 509 / 511 vs the o's 466 (x-height 541), so the bowls rise ~8% of the x-height above the round letters; p 481, q 485 slightly high too (g 457, e 493). Bring the bowls down to the o's height (shape edit within the glyph, not a scale of the whole letter) and measure.
