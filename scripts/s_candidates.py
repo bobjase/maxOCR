@@ -3,7 +3,8 @@
 (exact_heights.py). Scored like text_opt_lc.py: 400 random 0-9A-Za-z lines oversampling S, s, 5, 8, s=0.5,
 PaddleOCR, Tesseract, EasyOCR case-sensitive; per candidate the correct-read rate of S, s, 5, 8 and overall error.
 
-    python scripts/s_candidates.py BASE.ttf --donors tinos,lora,publicsans [--refs name=path,...] [--bold 0,1]
+    python scripts/s_candidates.py BASE.ttf --donors tinos,lora,publicsans [--refs name=path,...] [--bold 0,2]
+        [--widths 0.8,1,1.2] [--out s_candidates.csv]
 Writes out/report/s_candidates.csv; fonts in ~/maxocr-work/s_cand/.
 """
 import argparse
@@ -29,10 +30,13 @@ ENGINES = ("paddle", "tesseract", "easyocr")
 FOCUS = "Ss58"
 
 
-def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0) -> str:
-    tmp = str(out / f"S_{family}_b{bold:g}_blend.ttf")
-    build_font(Recipe({"S": CharRecipe([Ingredient(path_of[family], 1.0)], boldness=bold)}, name="S donor"), tmp)
-    dst = str(out / f"S_{family}_b{bold:g}.ttf")
+def build(base: str, family: str, path_of: dict, out: Path, bold: float = 0.0, width: float = 1.0) -> str:
+    """bold: SDF threshold shift (a single-font S needs >= 2 to change); width: horizontal scale (S vs s proportions)."""
+    tag = f"S_{family}_b{bold:g}_w{width:g}"
+    tmp = str(out / f"{tag}_blend.ttf")
+    build_font(Recipe({"S": CharRecipe([Ingredient(path_of[family], 1.0)], boldness=bold, width_scale=width)},
+                      name="S donor"), tmp)
+    dst = str(out / f"{tag}.ttf")
     add_glyphs(base, tmp, "S", dst)
     exact(dst, dst, caps=True, uniform_caps=True)
     return dst
@@ -44,6 +48,7 @@ def main():
     ap.add_argument("--donors", required=True)
     ap.add_argument("--refs", default="", help="name=path,... scored as they are")
     ap.add_argument("--bold", default="0", help="boldness values to try per donor (blend.py units)")
+    ap.add_argument("--widths", default="1", help="width scales to try per donor")
     ap.add_argument("--out", default="s_candidates.csv")
     a = ap.parse_args()
     out = WORK / "s_cand"
@@ -52,7 +57,9 @@ def main():
     fonts = dict(r.split("=", 1) for r in a.refs.split(",") if r)
     for fam in a.donors.split(","):
         for b in (float(v) for v in a.bold.split(",")):
-            fonts[f"S from {fam}" + (f" bold {b:g}" if b else "")] = build(a.base, fam, path_of, out, b)
+            for w in (float(v) for v in a.widths.split(",")):
+                name = f"S from {fam}" + (f" bold {b:g}" if b else "") + (f" width {w:g}" if w != 1 else "")
+                fonts[name] = build(a.base, fam, path_of, out, b, w)
     from maxocr.engines.easyocr_rec import EasyOCRRec
     paddle, easy = rung0.PaddleRec(alphabet=ALNUM_ALPHABET), EasyOCRRec(alphabet=ALNUM_ALPHABET)
     b = bank(FOCUS)
