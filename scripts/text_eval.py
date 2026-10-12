@@ -3,6 +3,7 @@ fonts have only 0-9, A-Z and space). Lines of at most 22 characters (PARSeq's li
 suite (a), plus clean. Engines may use language: PaddleOCR, EasyOCR and PARSeq read the general
 alphabet with case folded; Tesseract reads without a whitelist and with its dictionaries ON; the
 Qwen2.5-VL reader (open vocabulary) is optional. Character error from alignment, spaces ignored.
+--story: the grocery story with all its punctuation instead (fonts must have the marks), case-sensitive.
 
     python scripts/text_eval.py --fonts-json f.json [--vlm] [--out text_eval.csv]
 """
@@ -75,11 +76,17 @@ def main():
     ap.add_argument("--vlm-only", action="store_true", help="only the Qwen2.5-VL reader (keeps GPU memory free)")
     ap.add_argument("--repeats", type=int, default=8, help="degraded draws per line")
     ap.add_argument("--out", default="text_eval.csv")
+    ap.add_argument("--story", action="store_true",
+                    help="the grocery story (maxocr/grocery_story.txt) with its punctuation, read case-sensitively")
     ap.add_argument("--mixed-case", action="store_true",
                     help="the address as written (mixed case, no punctuation), read and scored case-sensitively")
     a = ap.parse_args()
     fonts = json.loads(Path(a.fonts_json).read_text())
-    texts = lines(a.mixed_case)
+    if a.story:
+        from maxocr.prose import story_lines
+        texts, a.mixed_case = story_lines(22), True
+    else:
+        texts = lines(a.mixed_case)
     insts = [make_instance(k, t, 1863) for k, t in enumerate(texts * a.repeats)]
     insts = [i for i in insts if not i.cropped]
     eng = dict(alphabet=GENERAL_ALPHABET, casefold=not a.mixed_case)
