@@ -13,7 +13,9 @@ snapped onto the outline. kind:
   c  corner: incoming and outgoing directions taken from the outline on either side
   p  a corner placed exactly at x, y (not snapped)
 span: what is drawn from this node to the next: "c" one curve following our outline, "l" a straight line, "r" a clean
-rounding (an elliptical quarter in the corner where the two tangents meet: brackets, rounded ends).
+rounding (an elliptical quarter in the corner where the two tangents meet: brackets, rounded ends), "k" keep our
+original outline unchanged up to the next node (so an edit can touch only the messy stretch), "s" a plain smooth
+curve along the two tangents (handles a third of the chord; not fitted to the old outline, which is wrong there).
 An optional fifth value gives the tangent's angle in degrees (a line's slope; its direction follows the outline), or
 [in, out]: the directions of travel arriving at and leaving a corner, in degrees, in the order the nodes are written.
 
@@ -125,7 +127,88 @@ def round_span(p0, p3, t0, t1) -> list[np.ndarray]:
     return [p0, p0 + 0.5523 * (X - p0), p3 + 0.5523 * (X - p3), p3]
 
 
-def redraw_contour(P: np.ndarray, nodes: list) -> list:
+def original_segments(f: TTFont, name: str) -> list[list]:
+    """Each contour's own TrueType segments, ("line", p0, p1) or ("quad", p0, c, p1), starting at its first on-curve
+    point (the same start and direction as contours_of)."""
+    g = f["glyf"][name]
+    coords, ends, flags = g.getCoordinates(f["glyf"])
+    out, start = [], 0
+    for e in ends:
+        pts = [(np.array(coords[i], float), bool(flags[i] & 1)) for i in range(start, e + 1)]
+        start = e + 1
+        if not any(on for _, on in pts):
+            pts.insert(1, ((pts[0][0] + pts[1][0]) / 2, True))
+        k = next(i for i, (_, on) in enumerate(pts) if on)
+        pts = pts[k:] + pts[:k]
+        # expand implied on-curve points between two off-curve points
+        full = []
+        for i, (q, on) in enumerate(pts):
+            full.append((q, on))
+            nq, non = pts[(i + 1) % len(pts)]
+            if not on and not non:
+                full.append(((q + nq) / 2, True))
+        segs, i, n = [], 0, len(full)
+        while i < n:
+            p0 = full[i][0]
+            q, on = full[(i + 1) % n]
+            if on:
+                segs.append(("line", p0, q)); i += 1
+            else:
+                segs.append(("quad", p0, q, full[(i + 2) % n][0])); i += 2
+        out.append(segs)
+    return out
+
+
+def _seg_point(sg, t):
+    if sg[0] == "line":
+        return (1 - t) * sg[1] + t * sg[2]
+    return (1 - t) ** 2 * sg[1] + 2 * (1 - t) * t * sg[2] + t * t * sg[3]
+
+
+def _locate(segs, p) -> tuple[int, float]:
+    best = (1e18, 0, 0.0)
+    ts = np.linspace(0, 1, 65)
+    for si, sg in enumerate(segs):
+        pts = np.array([_seg_point(sg, t) for t in ts])
+        d = np.hypot(*(pts - p).T)
+        k = int(np.argmin(d))
+        if d[k] < best[0]:
+            best = (d[k], si, ts[k])
+    return best[1], best[2]
+
+
+def _sub(sg, ta, tb):
+    """The piece of a segment between parameters ta < tb."""
+    if sg[0] == "line":
+        return ("line", _seg_point(sg, ta), _seg_point(sg, tb))
+    p0, c, p1 = sg[1], sg[2], sg[3]
+    a, b = _seg_point(sg, ta), _seg_point(sg, tb)
+    # the sub-curve's control point is the blossom B(ta, tb)
+    ctrl = (1 - ta) * (1 - tb) * p0 + ((1 - ta) * tb + ta * (1 - tb)) * c + ta * tb * p1
+    return ("quad", a, ctrl, b)
+
+
+def kept_stretch(segs, p0, p3) -> list:
+    """Our original outline from p0 to p3 (both on it), going forward."""
+    s0, t0 = _locate(segs, p0)
+    s1, t1 = _locate(segs, p3)
+    out = []
+    if s0 == s1 and t1 >= t0:
+        out.append(_sub(segs[s0], t0, t1))
+    else:
+        out.append(_sub(segs[s0], t0, 1.0))
+        k = (s0 + 1) % len(segs)
+        while k != s1:
+            out.append(segs[k]); k = (k + 1) % len(segs)
+        out.append(_sub(segs[s1], 0.0, t1))
+    out = [sg for sg in out if np.hypot(*(sg[-1] - sg[1])) > 1e-6]
+    # start and end exactly at the nodes
+    out[0] = (out[0][0], np.asarray(p0, float)) + tuple(out[0][2:])
+    out[-1] = tuple(out[-1][:-1]) + (np.asarray(p3, float),)
+    return out
+
+
+def redraw_contour(P: np.ndarray, nodes: list, original=None) -> list:
     snapped = []
     for x, y, kind, span, *angle in nodes:
         i, p = snap(P, x, y, kind)
@@ -158,6 +241,13 @@ def redraw_contour(P: np.ndarray, nodes: list) -> list:
         if span == "r":
             segs.append(("curve",) + tuple(round_span(p0, p3, tans[k][1], tans[(k + 1) % m][0])))
             continue
+        if span == "k":
+            segs.extend(kept_stretch(original, p0, p3))
+            continue
+        if span == "s":
+            h = float(np.hypot(*(p3 - p0))) / 3
+            segs.append(("curve", p0, p0 + h * tans[k][1], p3 - h * tans[(k + 1) % m][0], p3))
+            continue
         idx = np.arange(i0 + 1, i1 + (n if i1 <= i0 else 0)) % n
         Q = P[idx] if len(idx) else np.vstack([p0, p3])
         segs.append(("curve",) + tuple(fit_span(Q, p0, p3, tans[k][1], tans[(k + 1) % m][0])))
@@ -169,6 +259,8 @@ def draw_segs(segs, pen) -> None:
     for s in segs:
         if s[0] == "line":
             pen.lineTo(tuple(map(float, s[2])))
+        elif s[0] == "quad":
+            pen.qCurveTo(tuple(map(float, s[2])), tuple(map(float, s[3])))
         else:
             pen.curveTo(*(tuple(map(float, q)) for q in s[2:5]))
     pen.closePath()
@@ -189,12 +281,13 @@ def redraw_glyph(f: TTFont, ch: str, spec: dict) -> pathops.Path:
     name = f.getBestCmap()[ord(ch)]
     polys = contours_of(f, name)
     originals = original_contours(f, name)
+    oseg = original_segments(f, name)
     path = pathops.Path()
     pen = path.getPen()
     for ci, P in enumerate(polys):
         nodes = spec.get(str(ci))
         if nodes:
-            draw_segs(redraw_contour(P, nodes), pen)
+            draw_segs(redraw_contour(P, nodes, oseg[ci]), pen)
         else:
             for op, args in originals[ci]:
                 getattr(pen, op)(*args)
