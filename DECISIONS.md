@@ -930,3 +930,8 @@ Quick test (`eval_68d.csv`), error / 6 / 8: now 9.57 / 94.0 / 92.4; 6 rounded 9.
 ### v0.93 adopted (2026-10-12)
 
 James: yes. Exported as version 0.93 (`scratch/export_v093.sh`; v0.92 in `out/fonts/intermediate/*-v092.ttf`): v0.92 + O at 80% width + Z at 1.2x a normal Z + 6 (joint, round left side) + 8 (joint, round counters) (`~/maxocr-work/keep/MaxOCR-Text-v093.ttf`). Full checks vs v0.92 running (`scratch/v093_checks.sh`) to refresh the specimen numbers.
+v0.93 full checks vs v0.92 (`text_eval_story_v093.csv`, `confusions_pc_v093*`, `vlm_clean_v093*`): story s=0.5 4.59 -> 4.63, clean 2.29 -> 2.26; codes 8.84 (v0.91) -> 8.88; VLM prose 0.248 -> 0.248, codes 0.568 -> 0.631, shuffled 1.99 -> 1.97. Within noise.
+James asked overall vs best: codes 8.88 vs best 8.29 (v0.4 before the heights were evened), story s=0.5 4.63 vs best 4.54 (v0.8), clean 2.26 vs 2.00 (v0.9); Courier New 11.42 / 6.5 / 3.5.
+
+### C and T (James: "C (too wide) and T (simplify) are next", 2026-10-12)
+C is 880 units wide (wider than the new O, 798). T's bar ends droop into heavy drops and its stem is waisted. Candidates (`scripts/CT_parts.py`, from v0.93): C at 85% / 75% width; T drawn plain to our proportions (straight bar as thick as the E's arms with lightly rounded ends, straight stem as wide as the I's, small foot slab, small brackets), and the same with our E's arm-end serif at both bar ends. A T stitched from the I's top slab left steps (the I's top is not flat) and was dropped. Quick tests running (`eval_C.csv`, `eval_T.csv`).
