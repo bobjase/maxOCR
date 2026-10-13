@@ -1,0 +1,352 @@
+font,text,condition,paddle,easyocr,parseq,tesseract,mean
+MaxOCR,paragraphs,clean,0.18,3.27,5.27,0.18,2.22
+MaxOCR,codes,clean,0.0,8.57,3.83,5.19,4.4
+MaxOCR,numbers,clean,0.0,2.56,0.21,0.0,0.69
+MaxOCR,paragraphs,blurry,0.18,3.64,4.42,0.55,2.2
+MaxOCR,codes,blurry,0.0,13.87,4.74,6.76,6.34
+MaxOCR,numbers,blurry,0.0,4.27,0.32,0.0,1.15
+MaxOCR,paragraphs,noisy,0.18,9.03,6.12,2.06,4.35
+MaxOCR,codes,noisy,0.0,20.86,6.88,12.06,9.95
+MaxOCR,numbers,noisy,0.0,15.47,1.71,0.85,4.51
+MaxOCR,paragraphs,low-res,0.42,9.64,8.67,1.52,5.06
+MaxOCR,codes,low-res,1.58,22.1,9.7,27.4,15.19
+MaxOCR,numbers,low-res,0.0,2.88,0.21,7.15,2.56
+MaxOCR,paragraphs,jpeg,0.12,2.79,5.58,0.36,2.21
+MaxOCR,codes,jpeg,0.0,9.58,3.83,5.64,4.76
+MaxOCR,numbers,jpeg,0.0,3.31,0.21,0.21,0.93
+MaxOCR,paragraphs,ink bleed,0.12,3.45,3.94,0.24,1.94
+MaxOCR,codes,ink bleed,0.11,11.61,4.85,5.3,5.47
+MaxOCR,numbers,ink bleed,0.0,3.84,0.53,0.0,1.09
+MaxOCR,paragraphs,damaged,0.42,13.39,6.18,5.33,6.33
+MaxOCR,codes,damaged,1.13,19.28,7.55,14.09,10.51
+MaxOCR,numbers,damaged,0.21,8.75,0.64,5.12,3.68
+MaxOCR,paragraphs,heavy,17.09,58.73,22.3,21.27,29.85
+MaxOCR,codes,heavy,21.87,64.83,26.61,42.5,38.95
+MaxOCR,numbers,heavy,8.32,36.71,10.25,19.42,18.68
+Arial,paragraphs,clean,0.06,6.06,8.3,0.55,3.74
+Arial,codes,clean,1.24,11.95,4.62,7.22,6.26
+Arial,numbers,clean,0.0,12.91,0.53,0.21,3.41
+Arial,paragraphs,blurry,2.3,38.85,10.06,4.3,13.88
+Arial,codes,blurry,2.93,42.95,7.89,18.71,18.12
+Arial,numbers,blurry,0.0,23.27,1.49,2.24,6.75
+Arial,paragraphs,noisy,0.24,15.33,11.52,3.21,7.58
+Arial,codes,noisy,1.8,23.45,9.81,14.66,12.43
+Arial,numbers,noisy,0.32,23.69,4.27,2.56,7.71
+Arial,paragraphs,low-res,3.39,20.42,13.39,5.21,10.6
+Arial,codes,low-res,3.61,29.43,9.81,33.15,19.0
+Arial,numbers,low-res,0.0,15.8,0.43,12.06,7.07
+Arial,paragraphs,jpeg,0.48,6.85,8.42,1.15,4.22
+Arial,codes,jpeg,1.24,13.42,5.19,10.71,7.64
+Arial,numbers,jpeg,0.0,13.02,0.32,0.21,3.39
+Arial,paragraphs,ink bleed,1.27,36.85,12.24,2.24,13.15
+Arial,codes,ink bleed,5.19,38.56,10.71,16.01,17.62
+Arial,numbers,ink bleed,0.0,23.05,3.09,5.02,7.79
+Arial,paragraphs,damaged,4.18,42.24,15.82,9.39,17.91
+Arial,codes,damaged,7.67,49.61,15.22,28.86,25.34
+Arial,numbers,damaged,2.24,30.31,3.31,15.05,12.73
+Arial,paragraphs,heavy,31.88,78.79,39.27,44.18,48.53
+Arial,codes,heavy,41.49,83.99,45.66,72.83,60.99
+Arial,numbers,heavy,26.15,74.28,24.87,55.18,45.12
+Times New Roman,paragraphs,clean,0.48,6.91,7.45,0.55,3.85
+Times New Roman,codes,clean,0.11,10.48,6.99,5.86,5.86
+Times New Roman,numbers,clean,0.0,5.98,0.64,0.0,1.66
+Times New Roman,paragraphs,blurry,1.45,29.94,8.61,2.0,10.5
+Times New Roman,codes,blurry,4.17,22.55,7.89,13.75,12.09
+Times New Roman,numbers,blurry,0.0,15.15,0.96,1.17,4.32
+Times New Roman,paragraphs,noisy,1.15,16.55,11.76,3.09,8.14
+Times New Roman,codes,noisy,1.01,26.49,13.3,13.75,13.64
+Times New Roman,numbers,noisy,0.32,20.28,10.35,3.2,8.54
+Times New Roman,paragraphs,low-res,4.06,32.3,17.58,9.7,15.91
+Times New Roman,codes,low-res,7.44,32.81,16.01,37.66,23.48
+Times New Roman,numbers,low-res,0.21,17.29,2.03,18.89,9.61
+Times New Roman,paragraphs,jpeg,0.85,10.36,9.33,1.27,5.45
+Times New Roman,codes,jpeg,2.25,15.67,9.58,10.37,9.47
+Times New Roman,numbers,jpeg,0.0,6.94,0.64,0.11,1.92
+Times New Roman,paragraphs,ink bleed,0.42,28.61,10.24,0.97,10.06
+Times New Roman,codes,ink bleed,1.24,28.64,11.39,11.27,13.13
+Times New Roman,numbers,ink bleed,0.0,12.81,0.11,0.11,3.26
+Times New Roman,paragraphs,damaged,2.97,39.21,10.97,8.12,15.32
+Times New Roman,codes,damaged,5.41,34.16,14.21,20.74,18.63
+Times New Roman,numbers,damaged,1.39,21.34,1.92,8.11,8.19
+Times New Roman,paragraphs,heavy,39.03,80.67,36.97,36.3,48.24
+Times New Roman,codes,heavy,43.74,81.62,46.0,66.07,59.36
+Times New Roman,numbers,heavy,17.72,69.69,14.51,47.28,37.3
+Calibri,paragraphs,clean,0.18,6.12,7.03,0.55,3.47
+Calibri,codes,clean,1.13,15.45,5.3,9.47,7.84
+Calibri,numbers,clean,0.0,5.34,0.43,0.0,1.44
+Calibri,paragraphs,blurry,0.36,13.82,6.36,1.52,5.51
+Calibri,codes,blurry,2.03,30.1,6.88,12.63,12.91
+Calibri,numbers,blurry,0.0,9.39,0.0,0.11,2.38
+Calibri,paragraphs,noisy,0.18,12.55,7.64,2.24,5.65
+Calibri,codes,noisy,1.47,29.2,12.51,13.3,14.12
+Calibri,numbers,noisy,0.11,19.96,3.95,2.35,6.59
+Calibri,paragraphs,low-res,1.09,13.27,10.61,3.15,7.03
+Calibri,codes,low-res,4.51,27.96,10.94,30.44,18.46
+Calibri,numbers,low-res,0.0,8.32,0.32,7.9,4.13
+Calibri,paragraphs,jpeg,0.24,9.03,6.42,0.3,4.0
+Calibri,codes,jpeg,1.47,18.15,5.75,10.37,8.93
+Calibri,numbers,jpeg,0.0,6.62,0.43,0.11,1.79
+Calibri,paragraphs,ink bleed,0.55,16.42,8.61,1.45,6.76
+Calibri,codes,ink bleed,2.37,25.82,7.22,12.51,11.98
+Calibri,numbers,ink bleed,0.0,10.89,0.21,0.0,2.78
+Calibri,paragraphs,damaged,2.91,27.94,9.88,5.7,11.61
+Calibri,codes,damaged,6.54,42.28,13.98,23.9,21.67
+Calibri,numbers,damaged,0.75,17.5,1.17,6.83,6.56
+Calibri,paragraphs,heavy,22.12,71.64,27.27,29.27,37.58
+Calibri,codes,heavy,40.02,83.31,43.18,66.4,58.23
+Calibri,numbers,heavy,16.86,66.81,15.05,46.42,36.28
+Segoe UI,paragraphs,clean,0.18,8.0,8.24,0.67,4.27
+Segoe UI,codes,clean,1.24,12.29,4.85,6.76,6.29
+Segoe UI,numbers,clean,0.0,7.68,0.53,0.0,2.05
+Segoe UI,paragraphs,blurry,0.48,23.21,9.03,3.03,8.94
+Segoe UI,codes,blurry,2.37,32.02,7.44,16.01,14.46
+Segoe UI,numbers,blurry,0.0,13.23,0.21,0.43,3.47
+Segoe UI,paragraphs,noisy,0.42,14.79,13.82,2.85,7.97
+Segoe UI,codes,noisy,1.69,27.62,10.71,10.37,12.6
+Segoe UI,numbers,noisy,0.53,23.91,6.3,1.81,8.14
+Segoe UI,paragraphs,low-res,1.09,15.94,10.55,4.3,7.97
+Segoe UI,codes,low-res,3.49,29.2,10.37,36.53,19.9
+Segoe UI,numbers,low-res,0.0,9.39,2.03,13.66,6.27
+Segoe UI,paragraphs,jpeg,0.12,8.24,7.52,0.97,4.21
+Segoe UI,codes,jpeg,1.24,13.64,5.3,8.23,7.1
+Segoe UI,numbers,jpeg,0.0,8.32,0.64,0.11,2.27
+Segoe UI,paragraphs,ink bleed,0.61,20.42,7.94,1.58,7.64
+Segoe UI,codes,ink bleed,2.37,26.61,7.89,9.7,11.64
+Segoe UI,numbers,ink bleed,0.0,11.21,0.0,0.0,2.8
+Segoe UI,paragraphs,damaged,1.82,27.64,11.45,5.7,11.65
+Segoe UI,codes,damaged,3.38,41.04,13.98,20.74,19.79
+Segoe UI,numbers,damaged,1.49,17.72,1.17,7.47,6.96
+Segoe UI,paragraphs,heavy,23.09,73.27,29.7,32.42,39.62
+Segoe UI,codes,heavy,37.54,81.51,38.78,64.71,55.64
+Segoe UI,numbers,heavy,16.12,59.23,15.8,40.88,33.01
+Verdana,paragraphs,clean,0.42,5.27,6.55,0.3,3.13
+Verdana,codes,clean,0.23,14.43,5.75,9.36,7.44
+Verdana,numbers,clean,0.0,12.06,0.64,0.0,3.18
+Verdana,paragraphs,blurry,0.42,20.36,7.15,1.27,7.3
+Verdana,codes,blurry,0.79,32.69,6.65,14.54,13.67
+Verdana,numbers,blurry,0.0,17.18,0.32,0.11,4.4
+Verdana,paragraphs,noisy,0.55,15.03,8.24,2.55,6.59
+Verdana,codes,noisy,0.11,26.04,11.84,12.51,12.62
+Verdana,numbers,noisy,0.0,24.97,5.76,2.45,8.29
+Verdana,paragraphs,low-res,2.18,11.58,10.85,4.18,7.2
+Verdana,codes,low-res,2.37,29.31,9.92,29.09,17.67
+Verdana,numbers,low-res,2.77,10.78,1.17,12.17,6.72
+Verdana,paragraphs,jpeg,0.3,5.09,5.88,0.48,2.94
+Verdana,codes,jpeg,0.23,15.45,5.98,10.71,8.09
+Verdana,numbers,jpeg,0.0,13.13,0.64,0.0,3.44
+Verdana,paragraphs,ink bleed,4.36,19.33,8.79,2.61,8.77
+Verdana,codes,ink bleed,2.93,24.24,9.7,12.29,12.29
+Verdana,numbers,ink bleed,0.0,14.19,0.21,0.0,3.6
+Verdana,paragraphs,damaged,3.09,26.24,12.73,7.09,12.29
+Verdana,codes,damaged,3.16,36.53,11.39,24.35,18.86
+Verdana,numbers,damaged,0.53,19.42,0.75,6.62,6.83
+Verdana,paragraphs,heavy,19.03,68.12,26.79,27.15,35.27
+Verdana,codes,heavy,29.43,78.58,35.74,56.93,50.17
+Verdana,numbers,heavy,11.95,55.71,11.21,34.79,28.41
+Georgia,paragraphs,clean,0.3,3.33,7.33,0.67,2.91
+Georgia,codes,clean,1.35,10.03,6.31,7.78,6.37
+Georgia,numbers,clean,0.0,8.0,0.32,0.0,2.08
+Georgia,paragraphs,blurry,0.12,17.09,6.79,1.03,6.26
+Georgia,codes,blurry,3.27,21.08,9.47,10.6,11.11
+Georgia,numbers,blurry,0.0,9.61,0.32,0.0,2.48
+Georgia,paragraphs,noisy,0.36,11.52,8.79,2.12,5.7
+Georgia,codes,noisy,1.8,21.87,9.13,11.61,11.1
+Georgia,numbers,noisy,0.0,19.74,4.27,1.49,6.37
+Georgia,paragraphs,low-res,1.64,14.3,12.18,4.18,8.07
+Georgia,codes,low-res,5.86,25.14,14.54,34.05,19.9
+Georgia,numbers,low-res,1.49,11.95,0.96,11.1,6.38
+Georgia,paragraphs,jpeg,0.18,3.82,7.09,0.67,2.94
+Georgia,codes,jpeg,2.25,10.94,7.1,10.26,7.64
+Georgia,numbers,jpeg,0.0,8.43,0.53,0.0,2.24
+Georgia,paragraphs,ink bleed,0.42,16.24,8.48,3.15,7.07
+Georgia,codes,ink bleed,2.59,32.24,15.11,13.08,15.75
+Georgia,numbers,ink bleed,0.0,16.12,0.32,0.75,4.3
+Georgia,paragraphs,damaged,0.97,31.33,9.88,6.42,12.15
+Georgia,codes,damaged,7.33,36.98,15.67,22.32,20.57
+Georgia,numbers,damaged,1.07,17.18,1.81,5.66,6.43
+Georgia,paragraphs,heavy,34.42,78.36,35.45,34.79,45.76
+Georgia,codes,heavy,48.93,83.88,50.17,67.87,62.71
+Georgia,numbers,heavy,30.1,68.84,31.91,46.74,44.4
+Consolas,paragraphs,clean,3.09,4.91,8.24,0.42,4.17
+Consolas,codes,clean,1.47,17.47,8.34,11.16,9.61
+Consolas,numbers,clean,0.0,11.1,1.71,1.71,3.63
+Consolas,paragraphs,blurry,1.94,13.82,8.55,1.52,6.46
+Consolas,codes,blurry,2.93,38.67,11.95,13.98,16.88
+Consolas,numbers,blurry,0.0,18.89,2.03,2.03,5.74
+Consolas,paragraphs,noisy,1.27,17.52,9.52,3.58,7.97
+Consolas,codes,noisy,2.03,27.51,13.3,15.56,14.6
+Consolas,numbers,noisy,0.0,26.15,8.96,4.27,9.84
+Consolas,paragraphs,low-res,0.79,12.61,11.21,2.91,6.88
+Consolas,codes,low-res,4.85,35.51,15.22,33.15,22.18
+Consolas,numbers,low-res,0.11,15.9,1.92,18.57,9.12
+Consolas,paragraphs,jpeg,2.0,5.09,8.36,0.48,3.98
+Consolas,codes,jpeg,2.14,17.47,9.47,12.97,10.51
+Consolas,numbers,jpeg,0.0,11.53,1.6,1.81,3.73
+Consolas,paragraphs,ink bleed,3.27,14.12,8.3,0.91,6.65
+Consolas,codes,ink bleed,5.3,31.0,12.85,13.75,15.72
+Consolas,numbers,ink bleed,0.0,15.47,6.08,3.2,6.19
+Consolas,paragraphs,damaged,2.18,21.94,10.42,5.03,9.89
+Consolas,codes,damaged,5.86,39.46,12.18,25.03,20.63
+Consolas,numbers,damaged,0.53,24.76,6.19,9.5,10.25
+Consolas,paragraphs,heavy,14.24,59.21,24.12,22.48,30.01
+Consolas,codes,heavy,33.82,75.54,37.54,58.62,51.38
+Consolas,numbers,heavy,14.51,63.18,16.33,43.76,34.45
+Courier New,paragraphs,clean,0.85,2.36,9.45,0.36,3.25
+Courier New,codes,clean,0.45,11.95,5.3,8.34,6.51
+Courier New,numbers,clean,0.0,4.16,2.13,0.11,1.6
+Courier New,paragraphs,blurry,0.85,4.24,8.12,0.42,3.41
+Courier New,codes,blurry,1.13,20.41,6.09,8.34,8.99
+Courier New,numbers,blurry,0.0,7.04,1.28,0.0,2.08
+Courier New,paragraphs,noisy,0.67,19.82,12.73,3.88,9.28
+Courier New,codes,noisy,0.79,25.25,9.92,13.3,12.32
+Courier New,numbers,noisy,0.0,33.08,13.34,4.48,12.73
+Courier New,paragraphs,low-res,0.61,7.94,10.73,3.39,5.67
+Courier New,codes,low-res,2.03,24.8,8.23,32.02,16.77
+Courier New,numbers,low-res,0.0,7.58,4.38,18.14,7.53
+Courier New,paragraphs,jpeg,0.55,3.33,8.36,0.67,3.23
+Courier New,codes,jpeg,0.23,13.42,5.52,9.47,7.16
+Courier New,numbers,jpeg,0.0,6.3,2.03,0.96,2.32
+Courier New,paragraphs,ink bleed,1.39,7.03,6.91,0.24,3.89
+Courier New,codes,ink bleed,1.58,19.5,6.99,7.44,8.88
+Courier New,numbers,ink bleed,0.0,6.72,0.64,0.0,1.84
+Courier New,paragraphs,damaged,1.76,12.48,9.15,5.21,7.15
+Courier New,codes,damaged,2.48,24.58,8.68,17.14,13.22
+Courier New,numbers,damaged,0.32,15.69,3.52,8.32,6.96
+Courier New,paragraphs,heavy,13.82,53.94,21.64,22.18,27.89
+Courier New,codes,heavy,22.89,65.84,28.86,43.07,40.16
+Courier New,numbers,heavy,12.06,45.25,13.87,21.77,23.24
+Bookman Old Style,paragraphs,clean,0.73,4.48,7.64,0.42,3.32
+Bookman Old Style,codes,clean,0.23,11.05,4.74,4.96,5.25
+Bookman Old Style,numbers,clean,0.0,9.5,0.32,0.0,2.46
+Bookman Old Style,paragraphs,blurry,0.48,16.61,6.79,0.91,6.2
+Bookman Old Style,codes,blurry,2.59,20.63,5.19,7.33,8.94
+Bookman Old Style,numbers,blurry,0.0,12.91,0.11,0.0,3.25
+Bookman Old Style,paragraphs,noisy,0.55,15.03,10.67,2.18,7.11
+Bookman Old Style,codes,noisy,0.68,21.42,7.44,9.24,9.7
+Bookman Old Style,numbers,noisy,0.0,22.73,4.38,1.81,7.23
+Bookman Old Style,paragraphs,low-res,1.58,17.21,11.03,3.82,8.41
+Bookman Old Style,codes,low-res,3.38,21.76,9.47,27.73,15.59
+Bookman Old Style,numbers,low-res,0.0,8.32,1.28,10.78,5.09
+Bookman Old Style,paragraphs,jpeg,0.36,6.85,8.36,0.42,4.0
+Bookman Old Style,codes,jpeg,0.45,11.16,5.75,6.43,5.95
+Bookman Old Style,numbers,jpeg,0.0,10.89,0.32,0.0,2.8
+Bookman Old Style,paragraphs,ink bleed,0.55,23.39,9.27,0.36,8.39
+Bookman Old Style,codes,ink bleed,3.04,24.24,9.92,9.36,11.64
+Bookman Old Style,numbers,ink bleed,0.0,12.59,0.21,0.43,3.31
+Bookman Old Style,paragraphs,damaged,1.27,26.61,8.79,4.61,10.32
+Bookman Old Style,codes,damaged,4.74,32.69,11.39,17.81,16.66
+Bookman Old Style,numbers,damaged,0.43,15.47,1.71,6.83,6.11
+Bookman Old Style,paragraphs,heavy,24.12,71.76,26.18,29.76,37.95
+Bookman Old Style,codes,heavy,31.45,77.56,37.77,53.55,50.08
+Bookman Old Style,numbers,heavy,13.45,53.36,14.09,29.99,27.72
+Sitka Text,paragraphs,clean,0.42,5.21,5.7,0.48,2.95
+Sitka Text,codes,clean,1.47,9.7,6.31,7.44,6.23
+Sitka Text,numbers,clean,0.0,7.26,0.43,0.0,1.92
+Sitka Text,paragraphs,blurry,0.3,5.7,4.48,0.55,2.76
+Sitka Text,codes,blurry,2.48,15.22,7.89,9.36,8.74
+Sitka Text,numbers,blurry,0.0,10.03,0.11,0.21,2.59
+Sitka Text,paragraphs,noisy,0.48,12.55,7.27,2.48,5.7
+Sitka Text,codes,noisy,1.47,20.63,9.7,10.26,10.51
+Sitka Text,numbers,noisy,0.21,20.06,4.27,2.67,6.8
+Sitka Text,paragraphs,low-res,0.79,10.36,9.64,3.09,5.97
+Sitka Text,codes,low-res,4.51,21.2,12.4,26.38,16.12
+Sitka Text,numbers,low-res,0.21,9.39,1.28,13.45,6.08
+Sitka Text,paragraphs,jpeg,0.3,4.42,6.06,0.3,2.77
+Sitka Text,codes,jpeg,1.47,12.06,6.88,8.12,7.13
+Sitka Text,numbers,jpeg,0.0,8.32,0.32,0.43,2.27
+Sitka Text,paragraphs,ink bleed,0.3,14.55,6.97,0.79,5.65
+Sitka Text,codes,ink bleed,2.03,19.39,8.34,11.05,10.2
+Sitka Text,numbers,ink bleed,0.0,8.0,0.43,0.11,2.13
+Sitka Text,paragraphs,damaged,0.79,18.73,9.15,4.79,8.37
+Sitka Text,codes,damaged,4.17,27.4,12.97,19.17,15.93
+Sitka Text,numbers,damaged,0.53,15.8,1.81,5.87,6.0
+Sitka Text,paragraphs,heavy,18.79,66.06,23.94,30.12,34.73
+Sitka Text,codes,heavy,29.99,75.31,39.46,57.5,50.56
+Sitka Text,numbers,heavy,13.87,54.0,13.66,31.16,28.17
+OCR-A Extended,paragraphs,clean,1.39,7.88,12.97,4.0,6.56
+OCR-A Extended,codes,clean,3.83,28.41,10.6,19.62,15.62
+OCR-A Extended,numbers,clean,0.11,7.9,5.66,24.12,9.45
+OCR-A Extended,paragraphs,blurry,1.39,28.85,16.3,4.06,12.65
+OCR-A Extended,codes,blurry,9.81,52.31,16.01,24.24,25.59
+OCR-A Extended,numbers,blurry,0.32,42.37,10.35,31.06,21.02
+OCR-A Extended,paragraphs,noisy,1.21,23.33,13.7,7.39,11.41
+OCR-A Extended,codes,noisy,5.19,41.26,18.6,27.62,23.17
+OCR-A Extended,numbers,noisy,0.11,34.15,13.02,30.2,19.37
+OCR-A Extended,paragraphs,low-res,2.18,16.06,16.91,9.82,11.24
+OCR-A Extended,codes,low-res,9.58,40.14,18.15,37.2,26.27
+OCR-A Extended,numbers,low-res,0.11,10.67,5.23,35.22,12.81
+OCR-A Extended,paragraphs,jpeg,0.36,8.24,12.3,4.55,6.36
+OCR-A Extended,codes,jpeg,5.52,30.89,12.06,23.11,17.89
+OCR-A Extended,numbers,jpeg,0.0,10.14,7.47,32.76,12.59
+OCR-A Extended,paragraphs,ink bleed,2.61,26.12,16.0,6.79,12.88
+OCR-A Extended,codes,ink bleed,7.22,46.67,14.66,21.65,22.55
+OCR-A Extended,numbers,ink bleed,0.0,23.27,8.22,17.5,12.25
+OCR-A Extended,paragraphs,damaged,2.73,27.52,16.97,10.67,14.47
+OCR-A Extended,codes,damaged,12.18,50.85,19.17,32.81,28.75
+OCR-A Extended,numbers,damaged,1.71,35.65,10.25,31.59,19.8
+OCR-A Extended,paragraphs,heavy,14.91,66.91,28.73,26.3,34.21
+OCR-A Extended,codes,heavy,36.75,74.63,41.94,57.38,52.67
+OCR-A Extended,numbers,heavy,19.85,72.47,27.11,60.09,44.88
+Courier Prime,paragraphs,clean,0.42,2.85,8.61,0.36,3.06
+Courier Prime,codes,clean,0.56,12.85,5.64,7.1,6.54
+Courier Prime,numbers,clean,0.0,3.09,1.07,0.0,1.04
+Courier Prime,paragraphs,blurry,0.73,9.09,7.94,0.24,4.5
+Courier Prime,codes,blurry,1.13,25.7,6.31,7.33,10.12
+Courier Prime,numbers,blurry,0.0,19.21,1.6,0.0,5.2
+Courier Prime,paragraphs,noisy,0.36,18.61,8.3,3.15,7.6
+Courier Prime,codes,noisy,0.68,24.24,6.88,11.72,10.88
+Courier Prime,numbers,noisy,0.0,32.44,7.04,2.56,10.51
+Courier Prime,paragraphs,low-res,0.73,6.79,10.42,1.76,4.92
+Courier Prime,codes,low-res,1.92,29.31,8.57,20.63,15.11
+Courier Prime,numbers,low-res,0.0,7.58,2.56,10.57,5.18
+Courier Prime,paragraphs,jpeg,0.3,3.21,7.52,0.24,2.82
+Courier Prime,codes,jpeg,0.56,13.98,5.41,7.78,6.93
+Courier Prime,numbers,jpeg,0.0,3.63,1.28,0.32,1.31
+Courier Prime,paragraphs,ink bleed,0.61,16.3,7.09,0.73,6.18
+Courier Prime,codes,ink bleed,1.58,35.17,8.23,8.46,13.36
+Courier Prime,numbers,ink bleed,0.0,20.38,0.96,0.0,5.33
+Courier Prime,paragraphs,damaged,1.7,19.45,7.88,5.09,8.53
+Courier Prime,codes,damaged,4.06,37.66,12.29,20.07,18.52
+Courier Prime,numbers,damaged,0.53,21.13,3.74,7.04,8.11
+Courier Prime,paragraphs,heavy,13.15,58.85,19.82,21.76,28.39
+Courier Prime,codes,heavy,30.78,74.07,35.51,51.75,48.03
+Courier Prime,numbers,heavy,10.57,59.55,14.19,24.97,27.32
+MaxOCR,paragraphs,smudged,0.42,5.88,7.33,0.97,3.65
+MaxOCR,codes,smudged,0.23,9.24,6.31,7.22,5.75
+MaxOCR,numbers,smudged,0.0,3.31,0.64,0.32,1.07
+Arial,paragraphs,smudged,1.15,17.76,10.79,2.97,8.17
+Arial,codes,smudged,2.37,21.08,8.34,16.57,12.09
+Arial,numbers,smudged,0.0,16.44,0.32,1.81,4.64
+Times New Roman,paragraphs,smudged,1.33,22.24,13.64,3.39,10.15
+Times New Roman,codes,smudged,1.8,17.47,15.22,16.8,12.82
+Times New Roman,numbers,smudged,0.0,9.28,0.85,0.64,2.69
+Calibri,paragraphs,smudged,0.67,14.73,8.79,2.36,6.64
+Calibri,codes,smudged,3.04,23.34,10.94,14.66,13.0
+Calibri,numbers,smudged,0.0,8.32,0.64,1.81,2.69
+Segoe UI,paragraphs,smudged,0.48,15.39,11.09,2.3,7.32
+Segoe UI,codes,smudged,2.14,17.36,9.58,14.88,10.99
+Segoe UI,numbers,smudged,0.11,11.31,0.64,0.96,3.25
+Verdana,paragraphs,smudged,0.55,7.52,7.45,0.79,4.08
+Verdana,codes,smudged,1.01,18.04,8.91,13.87,10.46
+Verdana,numbers,smudged,0.0,14.19,0.53,0.21,3.73
+Georgia,paragraphs,smudged,1.09,13.27,11.03,1.94,6.83
+Georgia,codes,smudged,4.62,14.66,13.3,14.43,11.75
+Georgia,numbers,smudged,0.32,10.25,0.75,0.85,3.04
+Consolas,paragraphs,smudged,1.64,6.61,9.58,1.58,4.85
+Consolas,codes,smudged,4.51,22.21,13.75,17.81,14.57
+Consolas,numbers,smudged,0.0,13.13,2.24,6.94,5.58
+Courier New,paragraphs,smudged,0.67,3.15,10.61,0.79,3.8
+Courier New,codes,smudged,0.45,13.19,6.76,10.15,7.64
+Courier New,numbers,smudged,0.0,5.66,2.24,0.85,2.19
+Bookman Old Style,paragraphs,smudged,0.79,10.3,10.73,2.91,6.18
+Bookman Old Style,codes,smudged,0.45,11.95,8.79,9.13,7.58
+Bookman Old Style,numbers,smudged,0.0,12.38,0.32,0.11,3.2
+Sitka Text,paragraphs,smudged,1.03,7.33,8.55,2.3,4.8
+Sitka Text,codes,smudged,2.59,13.08,10.71,10.82,9.3
+Sitka Text,numbers,smudged,0.0,8.86,0.32,0.85,2.51
+OCR-A Extended,paragraphs,smudged,1.21,13.27,14.24,5.82,8.63
+OCR-A Extended,codes,smudged,6.99,34.61,15.78,26.04,20.86
+OCR-A Extended,numbers,smudged,0.21,18.04,5.55,28.18,13.0
+Courier Prime,paragraphs,smudged,0.42,3.94,8.3,0.42,3.27
+Courier Prime,codes,smudged,1.8,18.94,7.78,11.5,10.01
+Courier Prime,numbers,smudged,0.0,5.23,1.71,2.03,2.24

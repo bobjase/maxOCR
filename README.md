@@ -19,30 +19,16 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ## How it compares
 
-Character error rate (the share of characters an OCR engine gets wrong), averaged over eight print conditions from
+Character error rate (the share of characters an OCR engine gets wrong), averaged over nine print conditions from
 crisp to badly damaged. Lower is better.
 
 ![Average character error by font](docs/benchmark.png)
 
-| Font | Paragraphs | Codes | Numbers | **All three** |
-|---|---:|---:|---:|---:|
-| **MaxOCR** | **6.8** | **11.9** | **4.2** | **7.6** |
-| Courier New | 8.0 | 14.2 | 7.3 | 9.8 |
-| Sitka Text | 8.6 | 15.7 | 7.0 | 10.4 |
-| Courier Prime | 8.2 | 16.2 | 8.0 | 10.8 |
-| Bookman Old Style | 10.7 | 15.5 | 7.2 | 11.2 |
-| Verdana | 10.4 | 17.6 | 8.1 | 12.1 |
-| Calibri | 10.2 | 19.3 | 7.7 | 12.4 |
-| Segoe UI | 11.5 | 18.4 | 8.1 | 12.7 |
-| Consolas | 9.5 | 20.2 | 10.4 | 13.3 |
-| Georgia | 11.4 | 19.4 | 9.3 | 13.4 |
-| Times New Roman | 14.7 | 19.5 | 9.3 | 14.5 |
-| Arial | 14.9 | 20.9 | 11.8 | 15.9 |
-| OCR-A Extended | 13.7 | 26.6 | 19.0 | 19.8 |
+![Average character error by font and kind of text](docs/table_summary.png)
 
 Across all three kinds of text, MaxOCR makes **22% fewer errors than the next best font** (Courier New) and **about
-half as many as Arial or Times New Roman**. The gap is largest on **numbers**: 4.2% against 7.0% for the
-next best font.
+half as many as Arial or Times New Roman**. The gap is largest on **numbers**: 3.8% against 6.5% for the next best
+font.
 
 The comparison set is the fonts people use most (Arial, Times New Roman, Calibri, Segoe UI, Verdana, Georgia,
 Consolas, Courier New), the leaders of a 413-font survey we ran at the start of the project (Bookman Old Style,
@@ -57,7 +43,7 @@ The three kinds of text:
 - **Codes**: random mixed-case letters and digits, 6–12 characters long, like order numbers, serials and passwords.
 - **Numbers**: digits only, in groups separated by spaces, like barcodes, card numbers and phone numbers.
 
-The eight print conditions:
+The nine print conditions:
 
 | Condition | What it simulates |
 |---|---|
@@ -66,83 +52,45 @@ The eight print conditions:
 | Noisy | A speckled, grainy scan |
 | Low-res | A fax, or an image shrunk to half size and blown back up |
 | JPEG | Heavy compression (quality 15) |
-| Smudged | Ink spread: every stroke about 1 pixel heavier |
-| Damaged | Several kinds at once, mildly: blur, ink spread, tilt, perspective, uneven light, noise, JPEG |
-| Heavy | The same combination, severely |
+| Ink bleed | Ink spreading into the paper: every stroke about 1 pixel heavier |
+| Smudged | A finger dragged through wet ink: the whole line smeared sideways, more in some places than others |
+| Damaged | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, mild |
+| Heavy | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, severe |
 
-Here is each condition applied to its own name, exactly as the engines receive it: 8 pt text at 200 dpi, enlarged
-3× so the pixels are visible. Blurry text looks bolder because, as in most OCR pipelines, every image is converted
-to black and white before it is read.
+Here is each condition applied to its own name. The left column is actual size, the 8 pt text as scanned at 200 dpi,
+exactly what the engines receive. The right column is the same damage enlarged 3× so you can see it. Both are
+shown in grey; the engines get them after a final black-and-white step, as in most OCR pipelines.
 
 ![Each print condition applied to its own name](docs/damage.png)
 
-The best value in each column is bold.
+In the tables below, the best value in each column has a green background. The same numbers are in
+[docs/benchmark_results.csv](docs/benchmark_results.csv).
 
 **Paragraphs**
 
-| Font | Clean | Blurry | Noisy | Low-res | JPEG | Smudged | Damaged | Heavy | **Average** |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **MaxOCR** | **2.2** | **2.2** | **4.3** | 5.1 | **2.2** | **1.9** | **6.3** | 29.9 | **6.8** |
-| Courier New | 3.2 | 3.4 | 9.3 | 5.7 | 3.2 | 3.9 | 7.2 | **27.9** | 8.0 |
-| Courier Prime | 3.1 | 4.5 | 7.6 | **4.9** | 2.8 | 6.2 | 8.5 | 28.4 | 8.2 |
-| Sitka Text | 3.0 | 2.8 | 5.7 | 6.0 | 2.8 | 5.7 | 8.4 | 34.7 | 8.6 |
-| Consolas | 4.2 | 6.5 | 8.0 | 6.9 | 4.0 | 6.7 | 9.9 | 30.0 | 9.5 |
-| Calibri | 3.5 | 5.5 | 5.7 | 7.0 | 4.0 | 6.8 | 11.6 | 37.6 | 10.2 |
-| Verdana | 3.1 | 7.3 | 6.6 | 7.2 | 2.9 | 8.8 | 12.3 | 35.3 | 10.4 |
-| Bookman Old Style | 3.3 | 6.2 | 7.1 | 8.4 | 4.0 | 8.4 | 10.3 | 38.0 | 10.7 |
-| Georgia | 2.9 | 6.3 | 5.7 | 8.1 | 2.9 | 7.1 | 12.2 | 45.8 | 11.4 |
-| Segoe UI | 4.3 | 8.9 | 8.0 | 8.0 | 4.2 | 7.6 | 11.7 | 39.6 | 11.5 |
-| OCR-A Extended | 6.6 | 12.7 | 11.4 | 11.2 | 6.4 | 12.9 | 14.5 | 34.2 | 13.7 |
-| Times New Roman | 3.9 | 10.5 | 8.1 | 15.9 | 5.5 | 10.1 | 15.3 | 48.2 | 14.7 |
-| Arial | 3.7 | 13.9 | 7.6 | 10.6 | 4.2 | 13.2 | 17.9 | 48.5 | 15.0 |
+![Paragraphs: character error by font and print condition](docs/table_paragraphs.png)
 
 **Codes**
 
-| Font | Clean | Blurry | Noisy | Low-res | JPEG | Smudged | Damaged | Heavy | **Average** |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **MaxOCR** | **4.4** | **6.3** | 9.9 | 15.2 | **4.8** | **5.5** | **10.5** | **39.0** | **11.9** |
-| Courier New | 6.5 | 9.0 | 12.3 | 16.8 | 7.2 | 8.9 | 13.2 | 40.2 | 14.3 |
-| Bookman Old Style | 5.2 | 8.9 | **9.7** | 15.6 | 6.0 | 11.6 | 16.7 | 50.1 | 15.5 |
-| Sitka Text | 6.2 | 8.7 | 10.5 | 16.1 | 7.1 | 10.2 | 15.9 | 50.6 | 15.7 |
-| Courier Prime | 6.5 | 10.1 | 10.9 | **15.1** | 6.9 | 13.4 | 18.5 | 48.0 | 16.2 |
-| Verdana | 7.4 | 13.7 | 12.6 | 17.7 | 8.1 | 12.3 | 18.9 | 50.2 | 17.6 |
-| Segoe UI | 6.3 | 14.5 | 12.6 | 19.9 | 7.1 | 11.6 | 19.8 | 55.6 | 18.4 |
-| Calibri | 7.8 | 12.9 | 14.1 | 18.5 | 8.9 | 12.0 | 21.7 | 58.2 | 19.3 |
-| Georgia | 6.4 | 11.1 | 11.1 | 19.9 | 7.6 | 15.8 | 20.6 | 62.7 | 19.4 |
-| Times New Roman | 5.9 | 12.1 | 13.6 | 23.5 | 9.5 | 13.1 | 18.6 | 59.4 | 19.5 |
-| Consolas | 9.6 | 16.9 | 14.6 | 22.2 | 10.5 | 15.7 | 20.6 | 51.4 | 20.2 |
-| Arial | 6.3 | 18.1 | 12.4 | 19.0 | 7.6 | 17.6 | 25.3 | 61.0 | 20.9 |
-| OCR-A Extended | 15.6 | 25.6 | 23.2 | 26.3 | 17.9 | 22.6 | 28.8 | 52.7 | 26.6 |
+![Codes: character error by font and print condition](docs/table_codes.png)
 
 **Numbers**
 
-| Font | Clean | Blurry | Noisy | Low-res | JPEG | Smudged | Damaged | Heavy | **Average** |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **MaxOCR** | **0.7** | **1.1** | **4.5** | **2.6** | **0.9** | **1.1** | **3.7** | **18.7** | **4.2** |
-| Sitka Text | 1.9 | 2.6 | 6.8 | 6.1 | 2.3 | 2.1 | 6.0 | 28.2 | 7.0 |
-| Bookman Old Style | 2.5 | 3.2 | 7.2 | 5.1 | 2.8 | 3.3 | 6.1 | 27.7 | 7.2 |
-| Courier New | 1.6 | 2.1 | 12.7 | 7.5 | 2.3 | 1.8 | 7.0 | 23.2 | 7.3 |
-| Calibri | 1.4 | 2.4 | 6.6 | 4.1 | 1.8 | 2.8 | 6.6 | 36.3 | 7.7 |
-| Courier Prime | 1.0 | 5.2 | 10.5 | 5.2 | 1.3 | 5.3 | 8.1 | 27.3 | 8.0 |
-| Verdana | 3.2 | 4.4 | 8.3 | 6.7 | 3.4 | 3.6 | 6.8 | 28.4 | 8.1 |
-| Segoe UI | 2.0 | 3.5 | 8.1 | 6.3 | 2.3 | 2.8 | 7.0 | 33.0 | 8.1 |
-| Georgia | 2.1 | 2.5 | 6.4 | 6.4 | 2.2 | 4.3 | 6.4 | 44.4 | 9.3 |
-| Times New Roman | 1.7 | 4.3 | 8.5 | 9.6 | 1.9 | 3.3 | 8.2 | 37.3 | 9.3 |
-| Consolas | 3.6 | 5.7 | 9.8 | 9.1 | 3.7 | 6.2 | 10.2 | 34.5 | 10.4 |
-| Arial | 3.4 | 6.8 | 7.7 | 7.1 | 3.4 | 7.8 | 12.7 | 45.1 | 11.7 |
-| OCR-A Extended | 9.4 | 21.0 | 19.4 | 12.8 | 12.6 | 12.2 | 19.8 | 44.9 | 19.0 |
+![Numbers: character error by font and print condition](docs/table_numbers.png)
 
 What the tables show:
 
 - **Numbers:** MaxOCR has the fewest errors in every condition, and usually by a wide margin.
-- **Clean, blurry, JPEG and smudged print:** MaxOCR leads for every kind of text.
+- **Clean, blurry, JPEG and ink-bleed print:** MaxOCR leads for every kind of text.
 - **Where another font edges ahead:**
-  - heavily damaged paragraphs: Courier New, 27.9 vs 29.9;
+  - smudged paragraphs: Courier Prime, 3.3 vs 3.6;
   - low-resolution paragraphs and codes: Courier Prime, by 0.1–0.2;
-  - noisy codes: Bookman Old Style, 9.7 vs 9.9.
+  - noisy codes: Bookman Old Style, 9.7 vs 9.9;
+  - heavily damaged paragraphs: Courier New, 27.9 vs 29.9.
 
-  All four are within the test's noise (see below).
-- **OCR-A Extended**, the font designed for 1960s optical readers, does worst of all with today's engines.
+  The first three are under half a point, within the test's noise (see below). Courier New's 2-point lead on heavily
+  damaged paragraphs may be real.
+- **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
 
 ## Letters that run together
 
