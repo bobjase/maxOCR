@@ -48,6 +48,12 @@ def get(url: str) -> bytes:
         return r.read()
 
 
+def wsl_path(p: Path) -> str:
+    """Paths are read by the WSL evaluation tools: C:\x\y -> /mnt/c/x/y."""
+    s = str(p).replace("\\", "/")
+    return "/mnt/" + s[0].lower() + s[2:] if len(s) > 2 and s[1] == ":" else s
+
+
 def pick(files: list[str]) -> str | None:
     """The upright default face: a variable font without 'Italic', else '-Regular'."""
     upright = [f for f in files if f.endswith(".ttf") and "Italic" not in f]
@@ -74,7 +80,7 @@ def main():
             if not path.exists():
                 path.parent.mkdir(exist_ok=True)
                 path.write_bytes(get(f"https://raw.githubusercontent.com/google/fonts/{commit}/ofl/{fam}/{name}"))
-            out.append({"family": fam, "file": name, "path": str(path),
+            out.append({"family": fam, "file": name, "path": wsl_path(path),
                         "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
             print(f"ok {fam}: {name}")
         except Exception as e:
