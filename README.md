@@ -131,13 +131,13 @@ number means that font made fewer errors than MaxOCR.
 ## Letters that run together
 
 OCR engines often read two narrow letters as one wide one. Each pair was printed inside codes, blurred and read by
-the same four engines. These numbers come from version 0.91; none of the letters involved has changed since.
+the same four engines (version 0.97).
 
 | Pair read as one letter | MaxOCR |
 |---|---:|
 | vv as w | 0.0% |
-| VV as W | 0.5% |
-| rn as m | 1.0% |
+| VV as W | 0.4% |
+| rn as m | 0.4% |
 | cl as d | 0.0% |
 | ri as n | 0.0% |
 | in as m | 0.0% |
