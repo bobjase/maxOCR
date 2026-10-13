@@ -955,3 +955,4 @@ Standard bench, v0.94 -> test bed (`text_eval_story_testbed1.csv`, `confusions_p
 ### v0.95 adopted (2026-10-13)
 
 James: "Keep all four". Exported as version 0.95 (`scratch/export_v095.sh`; v0.94 in `out/fonts/intermediate/*-v094.ttf`): v0.94 + EB Garamond C (normal width), Sorts Mill Goudy O (1.15x), Sanchez g, Literata t (`~/maxocr-work/keep/MaxOCR-Text-v095.ttf`; all four OFL). Specimen updated with the test bed's measured numbers (codes 9.0, story 4.8 / 2.4, VLM 0.33; `out/golden/v095_charset.png`).
+James: "Last one is J". Our J is the typewriter J (slab top, monoline hook). Screen of the 58 serif/slab faces' J inside v0.95 (`scratch/screen_J.py`, `screen95_u004A.csv`, focus J j I 1 T U) running.
