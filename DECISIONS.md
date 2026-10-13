@@ -961,3 +961,7 @@ J screen (`screen95_u004A.csv`), overall error / J / j read right: now 10.79 / 8
 ### v0.96 adopted (2026-10-13)
 
 James: "Domine it is". Exported as version 0.96 (`scratch/export_v096.sh`; v0.95 in `out/fonts/intermediate/*-v095.ttf`): v0.95 + Domine J (OFL; quick test 10.64 vs 10.79, J read right 89.3 vs 84.6) (`~/maxocr-work/keep/MaxOCR-Text-v096.ttf`).
+
+### README benchmark (James: "write up a read me ... comparators to major fonts ... as well as the best fonts we found ... paragraphs versus codes versus straight numbers ... clean versus blurry and other damage", 2026-10-13)
+
+`scripts/readme_bench.py`: MaxOCR v0.96 vs Arial, Times New Roman, Calibri, Segoe UI, Verdana, Georgia, Consolas, Courier New (the fonts people use most), Bookman Old Style and Sitka Text (survey leaders), OCR-A Extended (the classic OCR font) and Courier Prime (best open-licence face for punctuation). Text: paragraphs (grocery story lines), codes (random mixed-case letters and digits, 6-12), numbers (digit groups). Conditions at 8 pt / 200 dpi, equal capital height: clean, blurry (sigma 1.2 px), noisy (std 25 + 1% salt-and-pepper), low-res (half resolution, nearest back up), jpeg (quality 15), smudged (ink 1 px heavier), damaged (combined, severity 0.5: the standard test), heavy (combined, 1.0). Engines PaddleOCR, EasyOCR, PARSeq, Tesseract (dictionaries on); character error, spaces ignored; 100 lines per text type. Running (`readme_bench.csv`).
