@@ -78,19 +78,26 @@ In the tables below, the best value in each column has a green background. The s
 
 ![Numbers: character error by font and print condition](docs/table_numbers.png)
 
-What the tables show, compared with the best other font in each condition. With 100 lines per cell, differences
-under about one point are within the test's noise (see "How it was measured").
+What the tables show: how many fewer errors MaxOCR makes than **the best other font** in each condition. A negative
+number means that font made fewer errors than MaxOCR.
 
-| Text | MaxOCR clearly ahead (by more than 1 point) | MaxOCR slightly ahead (under 1 point) | Another font ahead |
-|---|---|---|---|
-| Paragraphs | noisy, ink bleed | clean, blurry, JPEG, damaged | low-res and smudged (Courier Prime, by 0.1 and 0.4), heavy (Courier New, by 2.0) |
-| Codes | blurry, JPEG, ink bleed, smudged, damaged, heavy | clean | noisy (Bookman Old Style, by 0.3), low-res (Courier Prime, by 0.1) |
-| Numbers | noisy, low-res, smudged, damaged, heavy | clean, blurry, JPEG, ink bleed | none |
+| Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Paragraphs | 24% | 20% | 23% | −3% | 20% | 50% | −12% | 11% | −7% |
+| Codes | 16% | 27% | −3% | −1% | 20% | 38% | 24% | 20% | 3% |
+| Numbers | 34% | 45% | 29% | 38% | 29% | 41% | 51% | 39% | 20% |
 
-- MaxOCR's clearest advantage is on damaged print, especially for codes and numbers, which have no surrounding
-  words to help an engine guess.
-- On clean print every good font does well, and MaxOCR's lead is small.
-- Courier New's 2-point lead on heavily damaged paragraphs is the only place another font is clearly better.
+- **Clean print.** MaxOCR makes 24% fewer errors than the best other font on paragraphs (Georgia), 16% fewer on codes
+  (Bookman Old Style) and 34% fewer on numbers (Courier Prime). Against the everyday fonts it's 34–68% fewer than the
+  average of Arial, Times New Roman and Calibri.
+- **Numbers.** MaxOCR leads in all nine conditions, with 20–51% fewer errors than the best other font.
+- **Damage.** The largest leads are under ink bleed (38–50%) and on blurry and smudged codes and numbers.
+- **Where another font is ahead.**
+  - Paragraphs: Courier Prime on low-res and smudged print, and Courier New on heavy damage.
+  - Codes: Bookman Old Style on noisy print, and Courier Prime on low-res print.
+  - Apart from smudged paragraphs (12%), these gaps are small (1–7%).
+- **Engine agreement.** In 19 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+  other font. That includes every cell for numbers.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
 
 ## Letters that run together
@@ -123,8 +130,9 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 - **Scoring.** Character error from an alignment of the engine's output with the true text, ignoring spaces.
 - **Printing.** 8 pt at 200 dpi. Every font is set at the same capital height, so fonts with large letters get no
   advantage. Every image is converted to black and white (Otsu), as most OCR pipelines do.
-- **Sample size.** 100 lines per kind of text per condition, the same lines for every font. With 100 lines,
-  differences under about one point are within noise.
+- **Sample size.** 100 lines per kind of text per condition, the same lines for every font, read by each of the four
+  engines. A lead that all four engines agree on is unlikely to be chance; where they split, treat the result as
+  close to a tie.
 - **Simulated damage.** All damage is simulated. A print-and-scan test on paper is still to come.
 - **Reproducing.** Install the project environment with `pixi install` (under WSL on Windows; the comparison fonts
   are read from `C:\Windows\Fonts`). Then run `pixi run python scripts/readme_bench.py`; results go to
