@@ -6,6 +6,8 @@ All fonts here are SIL Open Font License, so blends of them may be released unde
     python scripts/fetch_ofl.py
 """
 import hashlib
+import shutil
+import subprocess
 import json
 import urllib.request
 from pathlib import Path
@@ -27,10 +29,20 @@ FAMILIES = [
     "cousine", "courierprime",
     # high contrast (Didone), seeds for discovery
     "bodonimoda", "playfairdisplay", "librebodoni",
+    # more serif and slab text faces (James, 2026-10-12: look for C O g t that match our style)
+    "crimsontext", "cardo", "domine", "noticiatext", "oldstandardtt", "rasa", "yrsa", "neuton", "librecaslontext",
+    "sortsmillgoudy", "frankruhllibre", "petrona", "newsreader", "brygada1918", "besley", "castoro",
+    "gentiumbookplus", "charissil", "zillaslab", "arvo", "kreon", "aleo", "faustina", "manuale", "piazzolla", "alike",
+    "adamina", "andadapro", "radley", "sanchez", "enriqueta", "martel", "mate", "rokkitt", "quattrocento", "trirong",
+    "cambo", "lustria", "unna", "ovo",
 ]
 
 
 def get(url: str) -> bytes:
+    if url.startswith("https://api.github.com/") and shutil.which("gh"):
+        # the GitHub CLI's login lifts the anonymous limit of 60 API calls an hour
+        return subprocess.run(["gh", "api", url.removeprefix("https://api.github.com/")], capture_output=True,
+                              check=True).stdout
     req = urllib.request.Request(url, headers={"User-Agent": "maxocr"})
     with urllib.request.urlopen(req, timeout=60) as r:
         return r.read()
