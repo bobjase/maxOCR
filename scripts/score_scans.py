@@ -53,6 +53,7 @@ def main():
     paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**eng), Parseq(**eng)
     k = a.dpi / 200
     results = []
+    readings = open(OUT / "scan_readings.jsonl", "w")
     for f in sorted([g for g in glob.glob(str(OUT / "scan_p*.png")) if re.fullmatch(r"scan_p\d+\.png", Path(g).name)], key=lambda s: int(re.findall(r"\d+", Path(s).name)[0])):
         n = int(re.findall(r"\d+", Path(f).name)[0])
         t = truth[n]
@@ -96,6 +97,10 @@ def main():
             lines, crops = t[kind], crops_by[kind]
             preds = {"paddle": [paddle.text(im) for im in crops], "easyocr": in_batches(easy.texts, crops),
                      "parseq": in_batches(pq.read, crops), "tesseract": read_tesseract_dict(crops, fold=False)}
+            for e, ps in preds.items():
+                for j, (tl, pl) in enumerate(zip(lines, ps)):
+                    readings.write(json.dumps({"page": n, "font": t["font"], "text": kind, "engine": e, "line": j,
+                                               "truth": tl, "read": pl}) + "\n")
             row = {"page": n, "font": t["font"], "text": kind, **{e: round(char_err(lines, p), 2) for e, p in preds.items()}}
             row["mean"] = round(float(np.mean([row[e] for e in preds])), 2)
             results.append(row)
