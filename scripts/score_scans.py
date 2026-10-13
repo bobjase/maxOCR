@@ -39,9 +39,41 @@ def rows(img: np.ndarray, merge: int) -> list[tuple[int, int]]:
     return [r for r in runs if r[1] - r[0] > 3]
 
 
+def words(line: np.ndarray, gap: int) -> list[np.ndarray]:
+    """A line image cut into words at gaps of at least `gap` blank columns (PARSeq reads one word at a time, as in
+    a real OCR pipeline: it is trained on at most 25 characters and squeezes every image to 32x128)."""
+    ink = (line < 128).any(0)
+    cols = np.where(ink)[0]
+    if not len(cols):
+        return [line]
+    gaps = np.diff(cols) - 1
+    sizes = np.sort(gaps[gaps > 0])
+    # word spaces are the big gaps on the line, letter spaces the small ones: split the two groups where they
+    # separate best (largest jump between sorted gap sizes), never below `gap` columns
+    if len(sizes) > 1:
+        jump = int(np.argmax(np.diff(sizes)))
+        gap = max(gap, int(sizes[jump]))
+    cuts, start = [], cols[0]
+    for a, b in zip(cols[:-1], cols[1:]):
+        if b - a - 1 > gap:
+            cuts.append((start, a + 1)); start = b
+    cuts.append((start, cols[-1] + 1))
+    return [np.pad(line[:, max(0, x0 - 4): x1 + 4], ((0, 0), (4, 4)), constant_values=255) for x0, x1 in cuts]
+
+
+def read_by_words(pq, imgs: list[np.ndarray], gap: int) -> list[str]:
+    pieces = [words(im, gap) for im in imgs]
+    flat = in_batches(pq.read, [w for ws in pieces for w in ws])
+    out, i = [], 0
+    for ws in pieces:
+        out.append(" ".join(flat[i:i + len(ws)])); i += len(ws)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dpi", type=int, default=600)
+    ap.add_argument("--target", type=int, default=200, help="dpi the lines are read at (benchmark: 200)")
     a = ap.parse_args()
     truth = {p["page"]: p for p in json.load(open(OUT / "truth.json"))["pages"]}
     import rung0
@@ -50,10 +82,12 @@ def main():
     from maxocr.engines.easyocr_rec import EasyOCRRec
     from maxocr.engines.parseq import Parseq
     eng = dict(alphabet=GENERAL_ALPHABET, casefold=False)
-    paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**eng), Parseq(**eng)
-    k = a.dpi / 200
+    # EasyOCR may output a space (without it, a gap between number groups came out as an invented dot)
+    paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**{**eng, "alphabet": GENERAL_ALPHABET + " "}), Parseq(**eng)
+    k = a.dpi / a.target
+    tag = "" if a.target == 200 else f"_{a.target}dpi"
     results = []
-    readings = open(OUT / "scan_readings.jsonl", "w")
+    readings = open(OUT / f"scan_readings{tag}.jsonl", "w")
     for f in sorted([g for g in glob.glob(str(OUT / "scan_p*.png")) if re.fullmatch(r"scan_p\d+\.png", Path(g).name)], key=lambda s: int(re.findall(r"\d+", Path(s).name)[0])):
         n = int(re.findall(r"\d+", Path(f).name)[0])
         t = truth[n]
@@ -106,6 +140,8 @@ def main():
             band = band[:, max(0, cols[0] - 10): cols[-1] + 10]
             small = cv2.resize(band, (int(band.shape[1] / k), int(band.shape[0] / k)), interpolation=cv2.INTER_AREA)
             crops_by[kind].append(otsu(np.pad(small, 6, constant_values=255).astype(np.float32)))
+            (OUT / f"crops{tag}").mkdir(exist_ok=True)
+            cv2.imwrite(str(OUT / f"crops{tag}" / f"p{n}_{kind}_{j}.png"), crops_by[kind][-1])
         if n == 1:
             for kind, cs in crops_by.items():
                 cv2.imwrite(str(OUT / f"debug_{kind}_0.png"), cs[0]); cv2.imwrite(str(OUT / f"debug_{kind}_last.png"), cs[-1])
@@ -113,7 +149,7 @@ def main():
         for kind in ("paragraphs", "codes", "numbers"):
             lines, crops = t[kind], crops_by[kind]
             preds = {"paddle": [paddle.text(im) for im in crops], "easyocr": in_batches(easy.texts, crops),
-                     "parseq": in_batches(pq.read, crops), "tesseract": read_tesseract_dict(crops, fold=False)}
+                     "parseq": read_by_words(pq, crops, gap=max(3, round(a.target / 60))), "tesseract": read_tesseract_dict(crops, fold=False)}
             for e, ps in preds.items():
                 for j, (tl, pl) in enumerate(zip(lines, ps)):
                     readings.write(json.dumps({"page": n, "font": t["font"], "text": kind, "engine": e, "line": j,
@@ -123,14 +159,14 @@ def main():
             results.append(row)
             print(json.dumps(row), flush=True)
     df = pd.DataFrame(results)
-    df.to_csv(OUT / "scan_scores.csv", index=False)
+    df.to_csv(OUT / f"scan_scores{tag}.csv", index=False)
     piv = df.pivot(index="font", columns="text", values="mean")[["paragraphs", "codes", "numbers"]]
     piv["all"] = piv.mean(axis=1)
     piv = piv.sort_values("all")
     md = ["# Print-and-scan test", "", "Character error %, lower is better; four engines.", "",
           "| Font | Paragraphs | Codes | Numbers | All |", "|---|---:|---:|---:|---:|"]
     md += [f"| {f} | {r.paragraphs:.2f} | {r.codes:.2f} | {r.numbers:.2f} | {r['all']:.2f} |" for f, r in piv.iterrows()]
-    (OUT / "scan_scores.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    (OUT / f"scan_scores{tag}.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print(piv.round(2).to_string())
 
 
