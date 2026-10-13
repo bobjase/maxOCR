@@ -904,3 +904,7 @@ James: "i prefer the old notch". a, b, d, u get their old notch back, drawn clea
 ### Full checks of the cleaned outlines (2026-10-12)
 
 James: "are all chars cleaned up? should we run a comparison now for blurry? for grocery story...?" Punctuation looked at large: clean. Full checks of `clean_v7b.ttf` vs v0.9 (`scratch/v7b_checks.sh`; `text_eval_story_v7b.csv`, `confusions_pc_v7b*`, `vlm_clean_v7b*`), character error %: story s=0.5 4.78 -> 4.73, clean 2.00 -> 2.14 (EasyOCR 2.39 -> 2.79; the curve version alone was 2.65, so this is the curves, not the redraws); codes 8.89 -> 8.84; VLM prose 0.305 -> 0.248, codes 0.379 -> 0.568 (9 vs 6 errors), prose+codes 0.31 -> 0.28; VLM shuffled words 1.60 -> 1.99 (mostly 8 pt: 96 vs 62 errors; substitutions 0.13 -> 0.27%, spread thinly over t i e h o l n). Sheet with numbers https://claude.ai/artifact/A7PhUMS84ChJTWVy4LrASS (`scratch/v7b_checks.png`).
+
+### v0.91 adopted (2026-10-12)
+
+James: "Clean it is." Exported as version 0.91 (`scratch/export_v091.sh`; v0.9 in `out/fonts/intermediate/*-v09.ttf`): v0.9 with every outline cleaned (`~/maxocr-work/keep/clean_v7b.ttf`). Numbered 0.91, not 0.10: font versions are decimals (head.fontRevision), so 0.10 would read as older than 0.9. Specimen page updated (https://claude.ai/artifact/TrVjxydoADdpD2kbuTHU9N, `out/golden/v091_charset.png`, `scratch/specimen_v091.py`).
