@@ -78,18 +78,19 @@ In the tables below, the best value in each column has a green background. The s
 
 ![Numbers: character error by font and print condition](docs/table_numbers.png)
 
-What the tables show:
+What the tables show, compared with the best other font in each condition. With 100 lines per cell, differences
+under about one point are within the test's noise (see "How it was measured").
 
-- **Numbers:** MaxOCR has the fewest errors in every condition, and usually by a wide margin.
-- **Clean, blurry, JPEG and ink-bleed print:** MaxOCR leads for every kind of text.
-- **Where another font edges ahead:**
-  - smudged paragraphs: Courier Prime, 3.3 vs 3.6;
-  - low-resolution paragraphs and codes: Courier Prime, by 0.1–0.2;
-  - noisy codes: Bookman Old Style, 9.7 vs 9.9;
-  - heavily damaged paragraphs: Courier New, 27.9 vs 29.9.
+| Text | MaxOCR clearly ahead (by more than 1 point) | MaxOCR slightly ahead (under 1 point) | Another font ahead |
+|---|---|---|---|
+| Paragraphs | noisy, ink bleed | clean, blurry, JPEG, damaged | low-res and smudged (Courier Prime, by 0.1 and 0.4), heavy (Courier New, by 2.0) |
+| Codes | blurry, JPEG, ink bleed, smudged, damaged, heavy | clean | noisy (Bookman Old Style, by 0.3), low-res (Courier Prime, by 0.1) |
+| Numbers | noisy, low-res, smudged, damaged, heavy | clean, blurry, JPEG, ink bleed | none |
 
-  The first three are under half a point, within the test's noise (see below). Courier New's 2-point lead on heavily
-  damaged paragraphs may be real.
+- MaxOCR's clearest advantage is on damaged print, especially for codes and numbers, which have no surrounding
+  words to help an engine guess.
+- On clean print every good font does well, and MaxOCR's lead is small.
+- Courier New's 2-point lead on heavily damaged paragraphs is the only place another font is clearly better.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
 
 ## Letters that run together
