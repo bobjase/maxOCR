@@ -957,3 +957,7 @@ Standard bench, v0.94 -> test bed (`text_eval_story_testbed1.csv`, `confusions_p
 James: "Keep all four". Exported as version 0.95 (`scratch/export_v095.sh`; v0.94 in `out/fonts/intermediate/*-v094.ttf`): v0.94 + EB Garamond C (normal width), Sorts Mill Goudy O (1.15x), Sanchez g, Literata t (`~/maxocr-work/keep/MaxOCR-Text-v095.ttf`; all four OFL). Specimen updated with the test bed's measured numbers (codes 9.0, story 4.8 / 2.4, VLM 0.33; `out/golden/v095_charset.png`).
 James: "Last one is J". Our J is the typewriter J (slab top, monoline hook). Screen of the 58 serif/slab faces' J inside v0.95 (`scratch/screen_J.py`, `screen95_u004A.csv`, focus J j I 1 T U) running.
 J screen (`screen95_u004A.csv`), overall error / J / j read right: now 10.79 / 84.6 / 87.3; Old Standard 10.59 / 84.3 / 88.1; Domine 10.64 / 89.3 / 87.6; Besley 10.75 / 87.1 / 87.6; Charis SIL 10.88; Literata 10.94 / 87.6; Gelasio 11.05. Sheet `scratch/screen95_J.png`.
+
+### v0.96 adopted (2026-10-13)
+
+James: "Domine it is". Exported as version 0.96 (`scratch/export_v096.sh`; v0.95 in `out/fonts/intermediate/*-v095.ttf`): v0.95 + Domine J (OFL; quick test 10.64 vs 10.79, J read right 89.3 vs 84.6) (`~/maxocr-work/keep/MaxOCR-Text-v096.ttf`).
