@@ -4,7 +4,8 @@ curves stay the letter's own curves (James, 2026-10-13: W and U thickened by oth
 Spec (JSON): {"U": [{"move": [17, 23], "scale_x": [237, 0.918]}, {"move": [24, 36], "dx": -30},
                     {"set": 117, "to": [515, 494]}, {"delete": [118, 119]}], ...}
   move [a, b]  points a..b (inclusive): shifted by dx, dy, and/or squeezed horizontally about x0 by k (scale_x)
-  set i        point i placed at "to"
+  set i        point i placed at "to" ("on"/"off": true makes it an on-/off-curve point)
+  advance      added to the glyph's advance width
   delete [..]  points removed (applied last)
 
     python scripts/point_edit.py SRC.ttf DST.ttf SPEC.json
@@ -35,6 +36,10 @@ def edit(f: TTFont, ch: str, ops) -> None:
                 pts[i] = [x + op.get("dx", 0), y + op.get("dy", 0)]
         elif "set" in op:
             pts[op["set"]] = list(op["to"])
+            if op.get("on"):
+                flags[op["set"]] |= 1
+            if op.get("off"):
+                flags[op["set"]] &= ~1
         elif "delete" in op:
             gone |= set(op["delete"])
     keep = [i for i in range(len(pts)) if i not in gone]
@@ -48,7 +53,7 @@ def edit(f: TTFont, ch: str, ops) -> None:
     g.endPtsOfContours = new_ends
     g.numberOfContours = len(new_ends)
     g.recalcBounds(glyf)
-    f["hmtx"][name] = (f["hmtx"][name][0], g.xMin)
+    f["hmtx"][name] = (f["hmtx"][name][0] + sum(op.get("advance", 0) for op in ops), g.xMin)
 
 
 def main():
