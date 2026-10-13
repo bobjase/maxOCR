@@ -1,0 +1,292 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1042" height="760" viewBox="0 0 1042 760">
+<style>svg{--bg:#ffffff;--ink:#1f2328;--muted:#59636e;--rule:#d1d9e0;--head-rule:#9198a1;--best:#c6e8c6;--maxrow:#fbf1ea;--bar:#9a968e;--accent:#b5461f;--axis:#cfcac0;--grid:#ebe7df;}@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--ink:#e6edf3;--muted:#9198a1;--rule:#3d444d;--head-rule:#59636e;--best:#1f4d2c;--maxrow:#2a1f17;--bar:#6e7681;--accent:#f0883e;--axis:#3d444d;--grid:#21262d;}}text{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;}</style>
+<rect width="1042" height="760" rx="6" fill="var(--bg)"/>
+<text x="24" y="42" font-size="14" font-weight="600" fill="var(--muted)">Font</text>
+<text x="260" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Clean</text>
+<text x="344" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Blurry</text>
+<text x="428" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Noisy</text>
+<text x="512" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Low-res</text>
+<text x="596" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">JPEG</text>
+<text x="680" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Ink bleed</text>
+<text x="764" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Smudged</text>
+<text x="848" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Damaged</text>
+<text x="932" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Heavy</text>
+<text x="1016" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Average</text>
+<line x1="16" y1="55" x2="1026" y2="55" stroke="var(--head-rule)" stroke-width="1.5"/>
+<rect x="16" y="56" width="1010" height="30" fill="var(--maxrow)"/>
+<text x="24" y="76" font-size="15" fill="var(--ink)" font-weight="700">MaxOCR</text>
+<rect x="194" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="260" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">4.7</text>
+<rect x="278" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="344" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">7.0</text>
+<rect x="362" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="428" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">9.5</text>
+<rect x="446" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="512" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">14.8</text>
+<rect x="530" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="596" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">4.9</text>
+<rect x="614" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="680" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">6.0</text>
+<rect x="698" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="764" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">7.0</text>
+<rect x="782" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="848" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">10.3</text>
+<rect x="866" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="932" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">43.8</text>
+<rect x="950" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="1016" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">12.0</text>
+<line x1="16" y1="85.5" x2="1026" y2="85.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="106" font-size="15" fill="var(--ink)">Courier New</text>
+<text x="260" y="106" font-size="15" fill="var(--ink)" text-anchor="end">6.9</text>
+<text x="344" y="106" font-size="15" fill="var(--ink)" text-anchor="end">9.3</text>
+<text x="428" y="106" font-size="15" fill="var(--ink)" text-anchor="end">13.0</text>
+<text x="512" y="106" font-size="15" fill="var(--ink)" text-anchor="end">16.5</text>
+<text x="596" y="106" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
+<text x="680" y="106" font-size="15" fill="var(--ink)" text-anchor="end">9.2</text>
+<text x="764" y="106" font-size="15" fill="var(--ink)" text-anchor="end">8.2</text>
+<text x="848" y="106" font-size="15" fill="var(--ink)" text-anchor="end">14.3</text>
+<text x="932" y="106" font-size="15" fill="var(--ink)" text-anchor="end">44.2</text>
+<text x="1016" y="106" font-size="15" fill="var(--ink)" text-anchor="end">14.4</text>
+<line x1="16" y1="115.5" x2="1026" y2="115.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="136" font-size="15" fill="var(--ink)">Bookman Old Style</text>
+<text x="260" y="136" font-size="15" fill="var(--ink)" text-anchor="end">5.1</text>
+<text x="344" y="136" font-size="15" fill="var(--ink)" text-anchor="end">9.2</text>
+<text x="428" y="136" font-size="15" fill="var(--ink)" text-anchor="end">10.1</text>
+<text x="512" y="136" font-size="15" fill="var(--ink)" text-anchor="end">15.9</text>
+<text x="596" y="136" font-size="15" fill="var(--ink)" text-anchor="end">6.1</text>
+<text x="680" y="136" font-size="15" fill="var(--ink)" text-anchor="end">12.2</text>
+<text x="764" y="136" font-size="15" fill="var(--ink)" text-anchor="end">8.2</text>
+<text x="848" y="136" font-size="15" fill="var(--ink)" text-anchor="end">16.1</text>
+<text x="932" y="136" font-size="15" fill="var(--ink)" text-anchor="end">55.0</text>
+<text x="1016" y="136" font-size="15" fill="var(--ink)" text-anchor="end">15.3</text>
+<line x1="16" y1="145.5" x2="1026" y2="145.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="166" font-size="15" fill="var(--ink)">Sitka Text</text>
+<text x="260" y="166" font-size="15" fill="var(--ink)" text-anchor="end">6.6</text>
+<text x="344" y="166" font-size="15" fill="var(--ink)" text-anchor="end">9.4</text>
+<text x="428" y="166" font-size="15" fill="var(--ink)" text-anchor="end">11.1</text>
+<text x="512" y="166" font-size="15" fill="var(--ink)" text-anchor="end">17.0</text>
+<text x="596" y="166" font-size="15" fill="var(--ink)" text-anchor="end">7.4</text>
+<text x="680" y="166" font-size="15" fill="var(--ink)" text-anchor="end">10.9</text>
+<text x="764" y="166" font-size="15" fill="var(--ink)" text-anchor="end">10.3</text>
+<text x="848" y="166" font-size="15" fill="var(--ink)" text-anchor="end">15.1</text>
+<text x="932" y="166" font-size="15" fill="var(--ink)" text-anchor="end">53.6</text>
+<text x="1016" y="166" font-size="15" fill="var(--ink)" text-anchor="end">15.7</text>
+<line x1="16" y1="175.5" x2="1026" y2="175.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="196" font-size="15" fill="var(--ink)">Courier Prime</text>
+<text x="260" y="196" font-size="15" fill="var(--ink)" text-anchor="end">7.0</text>
+<text x="344" y="196" font-size="15" fill="var(--ink)" text-anchor="end">10.8</text>
+<text x="428" y="196" font-size="15" fill="var(--ink)" text-anchor="end">11.7</text>
+<text x="512" y="196" font-size="15" fill="var(--ink)" text-anchor="end">15.6</text>
+<text x="596" y="196" font-size="15" fill="var(--ink)" text-anchor="end">7.7</text>
+<text x="680" y="196" font-size="15" fill="var(--ink)" text-anchor="end">13.7</text>
+<text x="764" y="196" font-size="15" fill="var(--ink)" text-anchor="end">10.1</text>
+<text x="848" y="196" font-size="15" fill="var(--ink)" text-anchor="end">17.4</text>
+<text x="932" y="196" font-size="15" fill="var(--ink)" text-anchor="end">51.5</text>
+<text x="1016" y="196" font-size="15" fill="var(--ink)" text-anchor="end">16.2</text>
+<line x1="16" y1="205.5" x2="1026" y2="205.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="226" font-size="15" fill="var(--ink)">Source Code Pro</text>
+<text x="260" y="226" font-size="15" fill="var(--ink)" text-anchor="end">8.2</text>
+<text x="344" y="226" font-size="15" fill="var(--ink)" text-anchor="end">13.8</text>
+<text x="428" y="226" font-size="15" fill="var(--ink)" text-anchor="end">13.5</text>
+<text x="512" y="226" font-size="15" fill="var(--ink)" text-anchor="end">18.7</text>
+<text x="596" y="226" font-size="15" fill="var(--ink)" text-anchor="end">8.5</text>
+<text x="680" y="226" font-size="15" fill="var(--ink)" text-anchor="end">12.9</text>
+<text x="764" y="226" font-size="15" fill="var(--ink)" text-anchor="end">12.1</text>
+<text x="848" y="226" font-size="15" fill="var(--ink)" text-anchor="end">17.2</text>
+<text x="932" y="226" font-size="15" fill="var(--ink)" text-anchor="end">49.5</text>
+<text x="1016" y="226" font-size="15" fill="var(--ink)" text-anchor="end">17.2</text>
+<line x1="16" y1="235.5" x2="1026" y2="235.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="256" font-size="15" fill="var(--ink)">Verdana</text>
+<text x="260" y="256" font-size="15" fill="var(--ink)" text-anchor="end">7.4</text>
+<text x="344" y="256" font-size="15" fill="var(--ink)" text-anchor="end">14.0</text>
+<text x="428" y="256" font-size="15" fill="var(--ink)" text-anchor="end">12.9</text>
+<text x="512" y="256" font-size="15" fill="var(--ink)" text-anchor="end">17.6</text>
+<text x="596" y="256" font-size="15" fill="var(--ink)" text-anchor="end">8.4</text>
+<text x="680" y="256" font-size="15" fill="var(--ink)" text-anchor="end">12.9</text>
+<text x="764" y="256" font-size="15" fill="var(--ink)" text-anchor="end">11.5</text>
+<text x="848" y="256" font-size="15" fill="var(--ink)" text-anchor="end">18.0</text>
+<text x="932" y="256" font-size="15" fill="var(--ink)" text-anchor="end">54.7</text>
+<text x="1016" y="256" font-size="15" fill="var(--ink)" text-anchor="end">17.5</text>
+<line x1="16" y1="265.5" x2="1026" y2="265.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="286" font-size="15" fill="var(--ink)">Segoe UI</text>
+<text x="260" y="286" font-size="15" fill="var(--ink)" text-anchor="end">6.8</text>
+<text x="344" y="286" font-size="15" fill="var(--ink)" text-anchor="end">14.1</text>
+<text x="428" y="286" font-size="15" fill="var(--ink)" text-anchor="end">12.9</text>
+<text x="512" y="286" font-size="15" fill="var(--ink)" text-anchor="end">19.8</text>
+<text x="596" y="286" font-size="15" fill="var(--ink)" text-anchor="end">7.4</text>
+<text x="680" y="286" font-size="15" fill="var(--ink)" text-anchor="end">12.0</text>
+<text x="764" y="286" font-size="15" fill="var(--ink)" text-anchor="end">12.7</text>
+<text x="848" y="286" font-size="15" fill="var(--ink)" text-anchor="end">19.8</text>
+<text x="932" y="286" font-size="15" fill="var(--ink)" text-anchor="end">59.6</text>
+<text x="1016" y="286" font-size="15" fill="var(--ink)" text-anchor="end">18.3</text>
+<line x1="16" y1="295.5" x2="1026" y2="295.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="316" font-size="15" fill="var(--ink)">DejaVu Sans</text>
+<text x="260" y="316" font-size="15" fill="var(--ink)" text-anchor="end">8.3</text>
+<text x="344" y="316" font-size="15" fill="var(--ink)" text-anchor="end">14.2</text>
+<text x="428" y="316" font-size="15" fill="var(--ink)" text-anchor="end">13.3</text>
+<text x="512" y="316" font-size="15" fill="var(--ink)" text-anchor="end">20.5</text>
+<text x="596" y="316" font-size="15" fill="var(--ink)" text-anchor="end">8.9</text>
+<text x="680" y="316" font-size="15" fill="var(--ink)" text-anchor="end">14.7</text>
+<text x="764" y="316" font-size="15" fill="var(--ink)" text-anchor="end">12.9</text>
+<text x="848" y="316" font-size="15" fill="var(--ink)" text-anchor="end">19.6</text>
+<text x="932" y="316" font-size="15" fill="var(--ink)" text-anchor="end">55.8</text>
+<text x="1016" y="316" font-size="15" fill="var(--ink)" text-anchor="end">18.7</text>
+<line x1="16" y1="325.5" x2="1026" y2="325.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="346" font-size="15" fill="var(--ink)">Inter</text>
+<text x="260" y="346" font-size="15" fill="var(--ink)" text-anchor="end">8.2</text>
+<text x="344" y="346" font-size="15" fill="var(--ink)" text-anchor="end">14.6</text>
+<text x="428" y="346" font-size="15" fill="var(--ink)" text-anchor="end">14.0</text>
+<text x="512" y="346" font-size="15" fill="var(--ink)" text-anchor="end">17.4</text>
+<text x="596" y="346" font-size="15" fill="var(--ink)" text-anchor="end">8.9</text>
+<text x="680" y="346" font-size="15" fill="var(--ink)" text-anchor="end">13.6</text>
+<text x="764" y="346" font-size="15" fill="var(--ink)" text-anchor="end">13.8</text>
+<text x="848" y="346" font-size="15" fill="var(--ink)" text-anchor="end">20.7</text>
+<text x="932" y="346" font-size="15" fill="var(--ink)" text-anchor="end">59.1</text>
+<text x="1016" y="346" font-size="15" fill="var(--ink)" text-anchor="end">18.9</text>
+<line x1="16" y1="355.5" x2="1026" y2="355.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="376" font-size="15" fill="var(--ink)">Times New Roman</text>
+<text x="260" y="376" font-size="15" fill="var(--ink)" text-anchor="end">6.4</text>
+<text x="344" y="376" font-size="15" fill="var(--ink)" text-anchor="end">12.8</text>
+<text x="428" y="376" font-size="15" fill="var(--ink)" text-anchor="end">13.1</text>
+<text x="512" y="376" font-size="15" fill="var(--ink)" text-anchor="end">24.2</text>
+<text x="596" y="376" font-size="15" fill="var(--ink)" text-anchor="end">9.3</text>
+<text x="680" y="376" font-size="15" fill="var(--ink)" text-anchor="end">13.3</text>
+<text x="764" y="376" font-size="15" fill="var(--ink)" text-anchor="end">12.6</text>
+<text x="848" y="376" font-size="15" fill="var(--ink)" text-anchor="end">18.8</text>
+<text x="932" y="376" font-size="15" fill="var(--ink)" text-anchor="end">62.1</text>
+<text x="1016" y="376" font-size="15" fill="var(--ink)" text-anchor="end">19.2</text>
+<line x1="16" y1="385.5" x2="1026" y2="385.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="406" font-size="15" fill="var(--ink)">Noto Sans</text>
+<text x="260" y="406" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
+<text x="344" y="406" font-size="15" fill="var(--ink)" text-anchor="end">14.6</text>
+<text x="428" y="406" font-size="15" fill="var(--ink)" text-anchor="end">13.7</text>
+<text x="512" y="406" font-size="15" fill="var(--ink)" text-anchor="end">21.4</text>
+<text x="596" y="406" font-size="15" fill="var(--ink)" text-anchor="end">8.6</text>
+<text x="680" y="406" font-size="15" fill="var(--ink)" text-anchor="end">14.8</text>
+<text x="764" y="406" font-size="15" fill="var(--ink)" text-anchor="end">12.7</text>
+<text x="848" y="406" font-size="15" fill="var(--ink)" text-anchor="end">19.9</text>
+<text x="932" y="406" font-size="15" fill="var(--ink)" text-anchor="end">58.8</text>
+<text x="1016" y="406" font-size="15" fill="var(--ink)" text-anchor="end">19.2</text>
+<line x1="16" y1="415.5" x2="1026" y2="415.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="436" font-size="15" fill="var(--ink)">Georgia</text>
+<text x="260" y="436" font-size="15" fill="var(--ink)" text-anchor="end">6.9</text>
+<text x="344" y="436" font-size="15" fill="var(--ink)" text-anchor="end">11.2</text>
+<text x="428" y="436" font-size="15" fill="var(--ink)" text-anchor="end">12.3</text>
+<text x="512" y="436" font-size="15" fill="var(--ink)" text-anchor="end">21.8</text>
+<text x="596" y="436" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
+<text x="680" y="436" font-size="15" fill="var(--ink)" text-anchor="end">15.2</text>
+<text x="764" y="436" font-size="15" fill="var(--ink)" text-anchor="end">13.3</text>
+<text x="848" y="436" font-size="15" fill="var(--ink)" text-anchor="end">19.6</text>
+<text x="932" y="436" font-size="15" fill="var(--ink)" text-anchor="end">64.7</text>
+<text x="1016" y="436" font-size="15" fill="var(--ink)" text-anchor="end">19.2</text>
+<line x1="16" y1="445.5" x2="1026" y2="445.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="466" font-size="15" fill="var(--ink)">Open Sans</text>
+<text x="260" y="466" font-size="15" fill="var(--ink)" text-anchor="end">8.4</text>
+<text x="344" y="466" font-size="15" fill="var(--ink)" text-anchor="end">14.5</text>
+<text x="428" y="466" font-size="15" fill="var(--ink)" text-anchor="end">14.8</text>
+<text x="512" y="466" font-size="15" fill="var(--ink)" text-anchor="end">21.8</text>
+<text x="596" y="466" font-size="15" fill="var(--ink)" text-anchor="end">8.8</text>
+<text x="680" y="466" font-size="15" fill="var(--ink)" text-anchor="end">13.7</text>
+<text x="764" y="466" font-size="15" fill="var(--ink)" text-anchor="end">12.4</text>
+<text x="848" y="466" font-size="15" fill="var(--ink)" text-anchor="end">20.8</text>
+<text x="932" y="466" font-size="15" fill="var(--ink)" text-anchor="end">58.0</text>
+<text x="1016" y="466" font-size="15" fill="var(--ink)" text-anchor="end">19.2</text>
+<line x1="16" y1="475.5" x2="1026" y2="475.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="496" font-size="15" fill="var(--ink)">Calibri</text>
+<text x="260" y="496" font-size="15" fill="var(--ink)" text-anchor="end">8.3</text>
+<text x="344" y="496" font-size="15" fill="var(--ink)" text-anchor="end">14.0</text>
+<text x="428" y="496" font-size="15" fill="var(--ink)" text-anchor="end">13.8</text>
+<text x="512" y="496" font-size="15" fill="var(--ink)" text-anchor="end">19.2</text>
+<text x="596" y="496" font-size="15" fill="var(--ink)" text-anchor="end">9.2</text>
+<text x="680" y="496" font-size="15" fill="var(--ink)" text-anchor="end">13.2</text>
+<text x="764" y="496" font-size="15" fill="var(--ink)" text-anchor="end">14.6</text>
+<text x="848" y="496" font-size="15" fill="var(--ink)" text-anchor="end">21.4</text>
+<text x="932" y="496" font-size="15" fill="var(--ink)" text-anchor="end">61.8</text>
+<text x="1016" y="496" font-size="15" fill="var(--ink)" text-anchor="end">19.5</text>
+<line x1="16" y1="505.5" x2="1026" y2="505.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="526" font-size="15" fill="var(--ink)">Roboto</text>
+<text x="260" y="526" font-size="15" fill="var(--ink)" text-anchor="end">7.7</text>
+<text x="344" y="526" font-size="15" fill="var(--ink)" text-anchor="end">14.8</text>
+<text x="428" y="526" font-size="15" fill="var(--ink)" text-anchor="end">13.3</text>
+<text x="512" y="526" font-size="15" fill="var(--ink)" text-anchor="end">19.5</text>
+<text x="596" y="526" font-size="15" fill="var(--ink)" text-anchor="end">8.3</text>
+<text x="680" y="526" font-size="15" fill="var(--ink)" text-anchor="end">16.7</text>
+<text x="764" y="526" font-size="15" fill="var(--ink)" text-anchor="end">14.3</text>
+<text x="848" y="526" font-size="15" fill="var(--ink)" text-anchor="end">21.1</text>
+<text x="932" y="526" font-size="15" fill="var(--ink)" text-anchor="end">61.1</text>
+<text x="1016" y="526" font-size="15" fill="var(--ink)" text-anchor="end">19.7</text>
+<line x1="16" y1="535.5" x2="1026" y2="535.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="556" font-size="15" fill="var(--ink)">Consolas</text>
+<text x="260" y="556" font-size="15" fill="var(--ink)" text-anchor="end">9.5</text>
+<text x="344" y="556" font-size="15" fill="var(--ink)" text-anchor="end">16.9</text>
+<text x="428" y="556" font-size="15" fill="var(--ink)" text-anchor="end">14.7</text>
+<text x="512" y="556" font-size="15" fill="var(--ink)" text-anchor="end">21.8</text>
+<text x="596" y="556" font-size="15" fill="var(--ink)" text-anchor="end">10.6</text>
+<text x="680" y="556" font-size="15" fill="var(--ink)" text-anchor="end">16.0</text>
+<text x="764" y="556" font-size="15" fill="var(--ink)" text-anchor="end">14.5</text>
+<text x="848" y="556" font-size="15" fill="var(--ink)" text-anchor="end">20.1</text>
+<text x="932" y="556" font-size="15" fill="var(--ink)" text-anchor="end">55.1</text>
+<text x="1016" y="556" font-size="15" fill="var(--ink)" text-anchor="end">19.9</text>
+<line x1="16" y1="565.5" x2="1026" y2="565.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="586" font-size="15" fill="var(--ink)">Arial</text>
+<text x="260" y="586" font-size="15" fill="var(--ink)" text-anchor="end">7.1</text>
+<text x="344" y="586" font-size="15" fill="var(--ink)" text-anchor="end">18.4</text>
+<text x="428" y="586" font-size="15" fill="var(--ink)" text-anchor="end">13.3</text>
+<text x="512" y="586" font-size="15" fill="var(--ink)" text-anchor="end">18.7</text>
+<text x="596" y="586" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
+<text x="680" y="586" font-size="15" fill="var(--ink)" text-anchor="end">18.7</text>
+<text x="764" y="586" font-size="15" fill="var(--ink)" text-anchor="end">13.7</text>
+<text x="848" y="586" font-size="15" fill="var(--ink)" text-anchor="end">24.2</text>
+<text x="932" y="586" font-size="15" fill="var(--ink)" text-anchor="end">64.0</text>
+<text x="1016" y="586" font-size="15" fill="var(--ink)" text-anchor="end">20.7</text>
+<line x1="16" y1="595.5" x2="1026" y2="595.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="616" font-size="15" fill="var(--ink)">Ubuntu Mono</text>
+<text x="260" y="616" font-size="15" fill="var(--ink)" text-anchor="end">10.0</text>
+<text x="344" y="616" font-size="15" fill="var(--ink)" text-anchor="end">20.3</text>
+<text x="428" y="616" font-size="15" fill="var(--ink)" text-anchor="end">16.2</text>
+<text x="512" y="616" font-size="15" fill="var(--ink)" text-anchor="end">21.3</text>
+<text x="596" y="616" font-size="15" fill="var(--ink)" text-anchor="end">10.9</text>
+<text x="680" y="616" font-size="15" fill="var(--ink)" text-anchor="end">16.0</text>
+<text x="764" y="616" font-size="15" fill="var(--ink)" text-anchor="end">13.7</text>
+<text x="848" y="616" font-size="15" fill="var(--ink)" text-anchor="end">21.8</text>
+<text x="932" y="616" font-size="15" fill="var(--ink)" text-anchor="end">58.0</text>
+<text x="1016" y="616" font-size="15" fill="var(--ink)" text-anchor="end">20.9</text>
+<line x1="16" y1="625.5" x2="1026" y2="625.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="646" font-size="15" fill="var(--ink)">Helvetica Neue</text>
+<text x="260" y="646" font-size="15" fill="var(--ink)" text-anchor="end">7.8</text>
+<text x="344" y="646" font-size="15" fill="var(--ink)" text-anchor="end">19.3</text>
+<text x="428" y="646" font-size="15" fill="var(--ink)" text-anchor="end">14.1</text>
+<text x="512" y="646" font-size="15" fill="var(--ink)" text-anchor="end">19.3</text>
+<text x="596" y="646" font-size="15" fill="var(--ink)" text-anchor="end">8.4</text>
+<text x="680" y="646" font-size="15" fill="var(--ink)" text-anchor="end">18.5</text>
+<text x="764" y="646" font-size="15" fill="var(--ink)" text-anchor="end">14.5</text>
+<text x="848" y="646" font-size="15" fill="var(--ink)" text-anchor="end">25.0</text>
+<text x="932" y="646" font-size="15" fill="var(--ink)" text-anchor="end">64.7</text>
+<text x="1016" y="646" font-size="15" fill="var(--ink)" text-anchor="end">21.3</text>
+<line x1="16" y1="655.5" x2="1026" y2="655.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="676" font-size="15" fill="var(--ink)">Helvetica</text>
+<text x="260" y="676" font-size="15" fill="var(--ink)" text-anchor="end">7.2</text>
+<text x="344" y="676" font-size="15" fill="var(--ink)" text-anchor="end">18.9</text>
+<text x="428" y="676" font-size="15" fill="var(--ink)" text-anchor="end">14.4</text>
+<text x="512" y="676" font-size="15" fill="var(--ink)" text-anchor="end">20.4</text>
+<text x="596" y="676" font-size="15" fill="var(--ink)" text-anchor="end">8.6</text>
+<text x="680" y="676" font-size="15" fill="var(--ink)" text-anchor="end">20.6</text>
+<text x="764" y="676" font-size="15" fill="var(--ink)" text-anchor="end">15.3</text>
+<text x="848" y="676" font-size="15" fill="var(--ink)" text-anchor="end">25.4</text>
+<text x="932" y="676" font-size="15" fill="var(--ink)" text-anchor="end">65.9</text>
+<text x="1016" y="676" font-size="15" fill="var(--ink)" text-anchor="end">21.9</text>
+<line x1="16" y1="685.5" x2="1026" y2="685.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="24" y="706" font-size="15" fill="var(--ink)">OCR-A Extended</text>
+<text x="260" y="706" font-size="15" fill="var(--ink)" text-anchor="end">15.2</text>
+<text x="344" y="706" font-size="15" fill="var(--ink)" text-anchor="end">25.1</text>
+<text x="428" y="706" font-size="15" fill="var(--ink)" text-anchor="end">23.3</text>
+<text x="512" y="706" font-size="15" fill="var(--ink)" text-anchor="end">25.4</text>
+<text x="596" y="706" font-size="15" fill="var(--ink)" text-anchor="end">17.6</text>
+<text x="680" y="706" font-size="15" fill="var(--ink)" text-anchor="end">22.2</text>
+<text x="764" y="706" font-size="15" fill="var(--ink)" text-anchor="end">20.5</text>
+<text x="848" y="706" font-size="15" fill="var(--ink)" text-anchor="end">27.3</text>
+<text x="932" y="706" font-size="15" fill="var(--ink)" text-anchor="end">55.0</text>
+<text x="1016" y="706" font-size="15" fill="var(--ink)" text-anchor="end">25.7</text>
+<line x1="16" y1="715.5" x2="1026" y2="715.5" stroke="var(--rule)" stroke-width="1"/>
+<text x="16" y="744" font-size="13" fill="var(--muted)">Character error %, lower is better. Green: best in the column.</text>
+</svg>

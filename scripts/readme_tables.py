@@ -1,10 +1,29 @@
-"""Rebuild the README's benchmark chart (docs/benchmark.png), table pictures (docs/table_*.png: best value in each
-column on a green background, readable in light and dark mode) and the numbers as CSV (docs/benchmark_summary.csv,
-docs/benchmark_results.csv) from out/report/readme_bench.csv."""
+"""Rebuild the README's benchmark chart (docs/benchmark.svg), tables (docs/table_*.svg: best value in each column on
+a green background) and the numbers as CSV (docs/benchmark_summary.csv, docs/benchmark_results.csv) from
+out/report/readme_bench.csv. SVG (James, 2026-10-13): sharp at any zoom, and each picture switches to dark colours
+when the reader's system is in dark mode (its own background either way, so it stays readable if GitHub's theme and
+the system's differ). Text uses the reader's fonts (GitHub's system font stack), numbers right-aligned."""
+import re
+from html import escape
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
+
+FONTS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
+# light and dark values of every colour the pictures use
+PALETTE = {"bg": ("#ffffff", "#0d1117"), "ink": ("#1f2328", "#e6edf3"), "muted": ("#59636e", "#9198a1"),
+           "rule": ("#d1d9e0", "#3d444d"), "head-rule": ("#9198a1", "#59636e"), "best": ("#c6e8c6", "#1f4d2c"),
+           "maxrow": ("#fbf1ea", "#2a1f17"), "bar": ("#9a968e", "#6e7681"), "accent": ("#b5461f", "#f0883e"),
+           "axis": ("#cfcac0", "#3d444d"), "grid": ("#ebe7df", "#21262d")}
+
+
+def style_block() -> str:
+    light = "".join(f"--{k}:{v[0]};" for k, v in PALETTE.items())
+    dark = "".join(f"--{k}:{v[1]};" for k, v in PALETTE.items())
+    return (f"<style>svg{{{light}}}@media (prefers-color-scheme: dark){{svg{{{dark}}}}}"
+            f"text{{font-family:{FONTS};}}</style>")
 
 CONDS = ["clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy"]
 HEADS = ["Clean", "Blurry", "Noisy", "Low-res", "JPEG", "Ink bleed", "Smudged", "Damaged", "Heavy", "Average"]
@@ -14,6 +33,7 @@ avg["all"] = avg.mean(1)
 avg = avg.sort_values("all")
 avg.round(2).to_csv("docs/benchmark_summary.csv")
 
+plt.rcParams["svg.fonttype"] = "none"          # text stays text (drawn in the reader's fonts)
 fig, axes = plt.subplots(1, 3, figsize=(15, max(6.2, 0.36 * len(avg) + 1.2)))
 ink, muted, accent = "#1d1c1a", "#9a968e", "#b5461f"
 for ax, kind, title in zip(axes, ["paragraphs", "codes", "numbers"], ["Paragraphs", "Codes", "Numbers"]):
@@ -35,55 +55,58 @@ fig.suptitle(f"Character error %, averaged over {len(CONDS)} print conditions (l
 fig.text(0.01, 0.01, "Four OCR engines (PaddleOCR, EasyOCR, PARSeq, Tesseract); 8 pt at 200 dpi, equal capital height; "
          "300 lines per kind of text per condition.", fontsize=9, color="#6b675f")
 fig.tight_layout(rect=(0, 0.04, 1, 0.94))
-fig.savefig("docs/benchmark.png", dpi=110, facecolor="white")
+fig.savefig("docs/benchmark.svg", facecolor="white")
+svg = open("docs/benchmark.svg", encoding="utf-8").read()
+for hexcol, var in (("#ffffff", "bg"), ("#1d1c1a", "ink"), ("#9a968e", "bar"), ("#b5461f", "accent"),
+                    ("#cfcac0", "axis"), ("#6b675f", "muted"), ("#ebe7df", "grid")):
+    svg = re.sub(re.escape(hexcol), f"var(--{var})", svg, flags=re.I)
+svg = re.sub(r"font-family:[^;\"]*", f"font-family:{FONTS}", svg)
+svg = re.sub(r"(<svg[^>]*>)", lambda m: m.group(1) + style_block(), svg, count=1)
+open("docs/benchmark.svg", "w", encoding="utf-8", newline="\n").write(svg)
 
-from PIL import Image, ImageDraw, ImageFont
-
-BOLD = ImageFont.truetype("C:/Windows/Fonts/segoeuib.ttf", 21)
-REG = ImageFont.truetype("C:/Windows/Fonts/segoeui.ttf", 21)
-HEAD = ImageFont.truetype("C:/Windows/Fonts/segoeuib.ttf", 19)
-BEST_BG, MAX_BG, RULE, INK, MUTED = (198, 232, 198), (250, 241, 235), (226, 222, 214), (29, 28, 26), (95, 91, 84)
-
-
-def table_png(path: str, cols: list[str], rows: list[tuple[str, list[float]]], note: str):
-    """A table picture: best (lowest) value in each column on a green background, the MaxOCR row tinted."""
+def table_svg(path: str, cols: list[str], rows: list[tuple[str, list[float]]], note: str):
+    """A table: best (lowest) value in each column on a green background, the MaxOCR row tinted, numbers right-aligned."""
     best = [min(r[1][j] for r in rows) for j in range(len(cols))]
-    fw, cw, rh = 230, 104, 40
-    W, H = 30 + fw + cw * len(cols) + 30, 30 + 54 + rh * len(rows) + 50
-    img = Image.new("RGB", (W, H), "white"); d = ImageDraw.Draw(img)
-    y = 30
-    d.text((30, y + 14), "Font", font=HEAD, fill=MUTED)
+    m, fw, cw, rh, hh = 16, 170, 84, 30, 40
+    W, H = m + fw + cw * len(cols) + m, m + hh + rh * len(rows) + 44
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', style_block(),
+           f'<rect width="{W}" height="{H}" rx="6" fill="var(--bg)"/>',
+           f'<text x="{m + 8}" y="{m + 26}" font-size="14" font-weight="600" fill="var(--muted)">Font</text>']
     for j, c in enumerate(cols):
-        x = 30 + fw + cw * j
-        d.text((x + cw - 12 - d.textlength(c, font=HEAD), y + 14), c, font=HEAD, fill=MUTED)
-    y += 54
-    d.line([(30, y - 2), (W - 30, y - 2)], fill=(180, 175, 166), width=2)
+        x = m + fw + cw * (j + 1) - 10
+        out.append(f'<text x="{x}" y="{m + 26}" font-size="14" font-weight="600" fill="var(--muted)" '
+                   f'text-anchor="end">{escape(c)}</text>')
+    y = m + hh
+    out.append(f'<line x1="{m}" y1="{y - 1}" x2="{W - m}" y2="{y - 1}" stroke="var(--head-rule)" stroke-width="1.5"/>')
     for name, vals in rows:
         if name == "MaxOCR":
-            d.rectangle((30, y, W - 30, y + rh - 1), fill=MAX_BG)
-        d.text((40, y + 7), name, font=BOLD if name == "MaxOCR" else REG, fill=INK)
+            out.append(f'<rect x="{m}" y="{y}" width="{W - 2 * m}" height="{rh}" fill="var(--maxrow)"/>')
+        weight = ' font-weight="700"' if name == "MaxOCR" else ""
+        out.append(f'<text x="{m + 8}" y="{y + 20}" font-size="15" fill="var(--ink)"{weight}>{escape(name)}</text>')
         for j, v in enumerate(vals):
-            x = 30 + fw + cw * j
+            x = m + fw + cw * j
             is_best = abs(v - best[j]) < 1e-9
             if is_best:
-                d.rectangle((x + 8, y + 3, x + cw - 4, y + rh - 4), fill=BEST_BG)
-            t = f"{v:.1f}"
-            d.text((x + cw - 12 - d.textlength(t, font=BOLD), y + 7), t, font=BOLD if (is_best or name == "MaxOCR") else REG, fill=INK)
+                out.append(f'<rect x="{x + 8}" y="{y + 3}" width="{cw - 10}" height="{rh - 6}" rx="3" fill="var(--best)"/>')
+            bold = ' font-weight="700"' if (is_best or name == "MaxOCR") else ""
+            out.append(f'<text x="{x + cw - 10}" y="{y + 20}" font-size="15" fill="var(--ink)" text-anchor="end"'
+                       f'{bold}>{v:.1f}</text>')
         y += rh
-        d.line([(30, y - 1), (W - 30, y - 1)], fill=RULE, width=1)
-    d.text((30, y + 14), note, font=ImageFont.truetype("C:/Windows/Fonts/segoeui.ttf", 18), fill=MUTED)
-    img.save(path)
+        out.append(f'<line x1="{m}" y1="{y - 0.5}" x2="{W - m}" y2="{y - 0.5}" stroke="var(--rule)" stroke-width="1"/>')
+    out.append(f'<text x="{m}" y="{y + 28}" font-size="13" fill="var(--muted)">{escape(note)}</text>')
+    out.append("</svg>")
+    open(path, "w", encoding="utf-8", newline="\n").write("\n".join(out) + "\n")
 
 
 NOTE = "Character error %, lower is better. Green: best in the column."
-table_png("docs/table_summary.png", ["Paragraphs", "Codes", "Numbers", "All three"],
+table_svg("docs/table_summary.svg", ["Paragraphs", "Codes", "Numbers", "All three"],
           [(f, [r.paragraphs, r.codes, r.numbers, r["all"]]) for f, r in avg.iterrows()], NOTE)
 notbest = []
 for kind in ("paragraphs", "codes", "numbers"):
     p = d[d.text == kind].pivot(index="font", columns="condition", values="mean")[CONDS]
     p["avg"] = p.mean(1)
     p = p.sort_values("avg")
-    table_png(f"docs/table_{kind}.png", HEADS[:-1] + ["Average"], [(f, list(r.values)) for f, r in p.iterrows()], NOTE)
+    table_svg(f"docs/table_{kind}.svg", HEADS[:-1] + ["Average"], [(f, list(r.values)) for f, r in p.iterrows()], NOTE)
     others = p.drop("MaxOCR")
     notbest += [(kind, c, others[c].idxmin(), round(others[c].min(), 2), round(p.loc["MaxOCR", c], 2))
                 for c in CONDS if others[c].min() < p.loc["MaxOCR", c]]

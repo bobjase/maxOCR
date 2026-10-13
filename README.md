@@ -22,9 +22,9 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 Character error rate (the share of characters an OCR engine gets wrong), averaged over nine print conditions from
 crisp to badly damaged. Lower is better.
 
-![Average character error by font](docs/benchmark.png)
+![Average character error by font](docs/benchmark.svg)
 
-![Average character error by font and kind of text](docs/table_summary.png)
+![Average character error by font and kind of text](docs/table_summary.svg)
 
 Across all three kinds of text, MaxOCR makes **22% fewer errors than the next best font** (Courier New) and **about
 half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 4.5% against 7.4% for the
@@ -103,15 +103,15 @@ In the tables below, the best value in each column has a green background. The s
 
 **Paragraphs**
 
-![Paragraphs: character error by font and print condition](docs/table_paragraphs.png)
+![Paragraphs: character error by font and print condition](docs/table_paragraphs.svg)
 
 **Codes**
 
-![Codes: character error by font and print condition](docs/table_codes.png)
+![Codes: character error by font and print condition](docs/table_codes.svg)
 
 **Numbers**
 
-![Numbers: character error by font and print condition](docs/table_numbers.png)
+![Numbers: character error by font and print condition](docs/table_numbers.svg)
 
 What the tables show: how many fewer errors MaxOCR makes than **the best other font** in each condition. A negative
 number means that font made fewer errors than MaxOCR.
