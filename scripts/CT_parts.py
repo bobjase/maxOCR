@@ -121,3 +121,17 @@ right = transformed(eser, (1, 0, 0, 1, W - sx1, 0))                         # fl
 left = transformed(eser, (-1, 0, 0, 1, sx1, 0))                             # mirrored, flush with the left end
 T3 = pathops.op(pathops.op(T2, right, pathops.PathOp.UNION), left, pathops.PathOp.UNION)
 save("T_serif", "T", T3, tx0, tadv - tx1)
+
+# --- T with our R's foot (James: "Use the base of the R as the base of your T") ---
+R = glyph_path(f0, "R")
+r0, r1 = stem_span(clip(R, (-BIG, -BIG, 300, BIG)), 300)   # the stem only (the leg is further right)
+rw = r1 - r0
+foot = clip(R, (r0 - 90, -BIG, r1 + 90, 92))                            # R's stem foot with its brackets
+foot = transformed(foot, (1, 0, 0, 1, xm - (r0 + r1) / 2, 0))
+T4 = rounded_rect(0, top - bar_t, W, top, 0.3 * bar_t)
+T4 = pathops.op(T4, rect(xm - rw / 2, 80, xm + rw / 2, top - bar_t + 1), pathops.PathOp.UNION)
+T4 = pathops.op(T4, foot, pathops.PathOp.UNION)
+for x, sxn in ((xm - rw / 2, -1), (xm + rw / 2, 1)):
+    T4 = pathops.op(T4, fillet(x, top - bar_t, br, sxn, -1), pathops.PathOp.UNION)
+T4 = pathops.op(pathops.op(T4, right, pathops.PathOp.UNION), left, pathops.PathOp.UNION)
+save("T_R", "T", T4, tx0, tadv - tx1)
