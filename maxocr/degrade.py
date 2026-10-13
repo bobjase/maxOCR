@@ -110,9 +110,14 @@ def _crop(img, side, frac):
 
 
 def degrade(font: str, inst: Instance, s: float, size_pt: float = 8.0, dpi: int = 200,
-            binarize: bool = True) -> np.ndarray:
-    """Render and degrade. binarize=True is suite (a), False is suite (b) (R10)."""
+            binarize: bool = True, px_scale: float = 1.0) -> np.ndarray:
+    """Render and degrade. binarize=True is suite (a), False is suite (b) (R10). px_scale: the damage's pixel
+    sizes (ink spread, blur, adaptive-threshold block) are defined at 200 dpi; at 300 dpi pass 1.5 so the
+    damage is physically the same, only captured sharper."""
     p = params(inst, s)
+    p["ink_spread_px"] *= px_scale
+    p["blur_sigma"] *= px_scale
+    p["threshold"]["block"] = 2 * int(p["threshold"]["block"] * px_scale / 2) + 1
     rng = np.random.default_rng(inst.seed)
     img = render(font, inst.text, size_pt + p["size_jitter_pt"], dpi, origin_px=p["origin_px"])
     img = np.pad(img, 6, constant_values=255).astype(np.float32)  # room for warp/rotation

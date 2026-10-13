@@ -32,7 +32,8 @@ for k in KINDS:
         cell = d[(d.text == k) & (d.condition == c)].set_index("font")
         o = cell.drop("MaxOCR")
         best = o["mean"].idxmin()
-        lead = 100 * (1 - cell.loc["MaxOCR", "mean"] / o.loc[best, "mean"])
+        mx, ob = cell.loc["MaxOCR", "mean"], o.loc[best, "mean"]
+        lead = 0.0 if mx == ob else (-100.0 if ob == 0 else 100 * (1 - mx / ob))   # both perfect: a tie
         row[c] = round(lead)
         if lead < 0:
             behind.append((k, c, best, o.loc[best, "mean"], cell.loc["MaxOCR", "mean"]))

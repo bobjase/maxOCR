@@ -8,7 +8,7 @@ being the lines used before):
               (wrapped at 22 characters; beyond its 198 lines, wrapped again at 26)
   codes       random mixed-case letters and digits, 6-12 characters (like order numbers, serials, passwords)
   numbers     digits only, in groups separated by spaces (like UPCs, card and phone numbers)
-Conditions (8 pt at 200 dpi, every font at the same capital height; one damage at a time, then combined):
+Conditions (8 pt at 300 dpi since v0.98's re-run (200 before); pixel sizes below are at 200 dpi, scaled 1.5x, every font at the same capital height; one damage at a time, then combined):
   clean       crisp print
   blurry      out-of-focus scan or photo (Gaussian blur, sigma 1.2 px)
   noisy       speckled scan (Gaussian noise, std 25 grey levels, plus 1% salt-and-pepper)
@@ -66,6 +66,8 @@ FONTS = {
     "Helvetica": USER_FONTS + "HelveticaLTStd-Roman.otf",
     "Helvetica Neue": USER_FONTS + "HelveticaNeueLTStd-Roman.otf",
 }
+DPI = 300               # the standard scan resolution (James); damage sizes below are defined at 200 dpi
+PX = DPI / 200          # and scaled by this, so every condition is physically the same as before
 CONDITIONS = ("clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy")
 
 
@@ -113,6 +115,44 @@ def in_batches(read, imgs: list, n: int = 100) -> list:
     return out
 
 
+def words(line: np.ndarray) -> list[np.ndarray]:
+    """A line image cut into words (PARSeq reads one word at a time, as in a real OCR pipeline: it is trained on at
+    most 25 characters and squeezes every image to 32x128). A cut is made only at a real word space: a gap clearly
+    wider than the gaps between letters (at least twice the typical one and a fifth of the line's height). A code
+    has none and stays whole; a period, comma or narrow letter is never cut off on its own (a piece narrower than
+    a third of the line's height joins its neighbour)."""
+    ink = line < 128
+    cols = np.where(ink.any(0))[0]
+    if len(cols) < 2:
+        return [line]
+    rows = np.where(ink.any(1))[0]
+    h = rows[-1] - rows[0] + 1
+    gaps = np.diff(cols) - 1
+    letter = np.median(gaps[gaps > 0]) if (gaps > 0).any() else 0
+    cut_at = max(2 * letter, 0.2 * h)
+    pieces, start = [], cols[0]
+    for a, b, g in zip(cols[:-1], cols[1:], gaps):
+        if g > cut_at:
+            pieces.append([start, a + 1]); start = b
+    pieces.append([start, cols[-1] + 1])
+    merged = []
+    for p in pieces:
+        if merged and (p[1] - p[0] < h / 3 or merged[-1][1] - merged[-1][0] < h / 3):
+            merged[-1][1] = p[1]
+        else:
+            merged.append(p)
+    return [np.pad(line[:, max(0, x0 - 4): x1 + 4], ((0, 0), (4, 4)), constant_values=255) for x0, x1 in merged]
+
+
+def read_by_words(pq, imgs: list[np.ndarray]) -> list[str]:
+    pieces = [words(im) for im in imgs]
+    flat = in_batches(pq.read, [w for ws in pieces for w in ws])
+    out, i = [], 0
+    for ws in pieces:
+        out.append(" ".join(flat[i:i + len(ws)])); i += len(ws)
+    return out
+
+
 def otsu(img: np.ndarray) -> np.ndarray:
     img = np.clip(np.round(img), 0, 255).astype(np.uint8)
     _, out = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -122,11 +162,11 @@ def otsu(img: np.ndarray) -> np.ndarray:
 def image(font: str, text: str, size: float, cond: str, k: int) -> np.ndarray:
     if cond in ("damaged", "heavy"):
         inst = make_instance(k, text, 4242)
-        return degrade(font, inst, 0.5 if cond == "damaged" else 1.0, size)
-    g = clean(font, text, size, 200, binarize=False).astype(np.float32)
+        return degrade(font, inst, 0.5 if cond == "damaged" else 1.0, size, dpi=DPI, px_scale=PX)
+    g = clean(font, text, size, DPI, binarize=False).astype(np.float32)
     rng = np.random.default_rng([4242, k])
     if cond == "blurry":
-        g = cv2.GaussianBlur(g, (0, 0), 1.2)
+        g = cv2.GaussianBlur(g, (0, 0), 1.2 * PX)
     elif cond == "noisy":
         g = g + rng.normal(0, 25, g.shape)
         m = rng.random(g.shape)
@@ -134,15 +174,17 @@ def image(font: str, text: str, size: float, cond: str, k: int) -> np.ndarray:
         g[m > 0.995] = 255
     elif cond == "low-res":
         h, w = g.shape
-        small = cv2.resize(g, (max(1, w // 2), max(1, h // 2)), interpolation=cv2.INTER_AREA)
+        f = int(round(2 * PX))                         # down to 100 dpi, as before
+        small = cv2.resize(g, (max(1, w // f), max(1, h // f)), interpolation=cv2.INTER_AREA)
         g = cv2.resize(small, (w, h), interpolation=cv2.INTER_NEAREST)
     elif cond == "jpeg":
         ok, enc = cv2.imencode(".jpg", np.clip(g, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 15])
         g = cv2.imdecode(enc, cv2.IMREAD_GRAYSCALE).astype(np.float32)
     elif cond == "ink bleed":
-        g = cv2.erode(g, np.ones((3, 3), np.uint8))      # ink is dark: eroding the paper spreads the ink
+        from maxocr.degrade import _ink_spread
+        g = _ink_spread(g, 1.0 * PX, False)            # ink 1 px (at 200 dpi) heavier on every side
     elif cond == "smudged":
-        g = smear(g, float(rng.uniform(-30, 30)), seed=k)
+        g = smear(g, float(rng.uniform(-30, 30)), scale=PX, seed=k)
     return otsu(g)
 
 
@@ -157,7 +199,8 @@ def main():
     from maxocr.engines.easyocr_rec import EasyOCRRec
     from maxocr.engines.parseq import Parseq
     eng = dict(alphabet=GENERAL_ALPHABET, casefold=False)
-    paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**eng), Parseq(**eng)
+    # EasyOCR may output a space (without it, gaps came out as invented dots)
+    paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**{**eng, "alphabet": GENERAL_ALPHABET + " "}), Parseq(**eng)
     out = ROOT / "out" / "report" / a.out
     rows = pd.read_csv(out).to_dict("records") if out.exists() else []
     done = {(r["font"], r["text"], r["condition"]) for r in rows}
@@ -169,7 +212,7 @@ def main():
                     continue
                 imgs = [image(path, t, size, cond, k) for k, t in enumerate(lines)]
                 preds = {"paddle": [paddle.text(im) for im in imgs], "easyocr": in_batches(easy.texts, imgs),
-                         "parseq": in_batches(pq.read, imgs), "tesseract": read_tesseract_dict(imgs, fold=False)}
+                         "parseq": read_by_words(pq, imgs), "tesseract": read_tesseract_dict(imgs, fold=False)}
                 row = {"font": name, "text": kind, "condition": cond}
                 for e, p in preds.items():
                     row[e] = round(char_err(lines, p), 2)
