@@ -78,7 +78,24 @@ def main():
         crops_by = {kind: [] for kind in ("paragraphs", "codes", "numbers")}
         for kind, j, b_pt in expect:
             yb = int(shift + b_pt * px * scale)                  # the line's baseline on the scan
-            band = img[yb - int(9 * px): yb + int(3.5 * px)]
+            # a window a full line tall around the expected line, then only this line's own ink rows: the run with
+            # the most ink (x-height band) plus anything touching it (capitals, ascenders, descenders of g y p),
+            # without slivers of the lines above and below (an earlier, tighter crop cut the tails off g and y)
+            win = img[yb - int(11 * px): yb + int(7 * px)]
+            rowink = cv2.morphologyEx((win < 128).astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)).sum(1)
+            on = rowink > 0
+            # the line itself sits at the middle of its x-height, about 1 pt above its real baseline, which is about
+            # 3.5 pt below the layout estimate (measured on the first scans): pick the ink run nearest to there
+            target = int((11 + 2.5) * px)
+            ink_rows = np.where(on)[0]
+            core = int(ink_rows[np.argmin(np.abs(ink_rows - target))])
+            r0 = core
+            while r0 > 0 and on[r0 - 1]:
+                r0 -= 1
+            r1 = core
+            while r1 < len(on) - 1 and on[r1 + 1]:
+                r1 += 1
+            band = win[max(0, r0 - 6): r1 + 7]
             ink = cv2.morphologyEx((band < 128).astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
             colsum = ink.sum(0)
             cols = np.where(colsum > 0)[0]
