@@ -70,6 +70,12 @@ The eight print conditions:
 | Damaged | Several kinds at once, mildly: blur, ink spread, tilt, perspective, uneven light, noise, JPEG |
 | Heavy | The same combination, severely |
 
+Here is each condition applied to its own name, exactly as the engines receive it: 8 pt text at 200 dpi, enlarged
+3× so the pixels are visible. Blurry text looks bolder because, as in most OCR pipelines, every image is converted
+to black and white before it is read.
+
+![Each print condition applied to its own name](docs/damage.png)
+
 The best value in each column is bold.
 
 **Paragraphs**
