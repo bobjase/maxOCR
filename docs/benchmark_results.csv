@@ -1,28 +1,4 @@
 font,text,condition,paddle,easyocr,parseq,tesseract,mean
-MaxOCR,paragraphs,clean,0.18,3.27,5.27,0.18,2.22
-MaxOCR,codes,clean,0.0,8.57,3.83,5.19,4.4
-MaxOCR,numbers,clean,0.0,2.56,0.21,0.0,0.69
-MaxOCR,paragraphs,blurry,0.18,3.64,4.42,0.55,2.2
-MaxOCR,codes,blurry,0.0,13.87,4.74,6.76,6.34
-MaxOCR,numbers,blurry,0.0,4.27,0.32,0.0,1.15
-MaxOCR,paragraphs,noisy,0.18,9.03,6.12,2.06,4.35
-MaxOCR,codes,noisy,0.0,20.86,6.88,12.06,9.95
-MaxOCR,numbers,noisy,0.0,15.47,1.71,0.85,4.51
-MaxOCR,paragraphs,low-res,0.42,9.64,8.67,1.52,5.06
-MaxOCR,codes,low-res,1.58,22.1,9.7,27.4,15.19
-MaxOCR,numbers,low-res,0.0,2.88,0.21,7.15,2.56
-MaxOCR,paragraphs,jpeg,0.12,2.79,5.58,0.36,2.21
-MaxOCR,codes,jpeg,0.0,9.58,3.83,5.64,4.76
-MaxOCR,numbers,jpeg,0.0,3.31,0.21,0.21,0.93
-MaxOCR,paragraphs,ink bleed,0.12,3.45,3.94,0.24,1.94
-MaxOCR,codes,ink bleed,0.11,11.61,4.85,5.3,5.47
-MaxOCR,numbers,ink bleed,0.0,3.84,0.53,0.0,1.09
-MaxOCR,paragraphs,damaged,0.42,13.39,6.18,5.33,6.33
-MaxOCR,codes,damaged,1.13,19.28,7.55,14.09,10.51
-MaxOCR,numbers,damaged,0.21,8.75,0.64,5.12,3.68
-MaxOCR,paragraphs,heavy,17.09,58.73,22.3,21.27,29.85
-MaxOCR,codes,heavy,21.87,64.83,26.61,42.5,38.95
-MaxOCR,numbers,heavy,8.32,36.71,10.25,19.42,18.68
 Arial,paragraphs,clean,0.06,6.06,8.3,0.55,3.74
 Arial,codes,clean,1.24,11.95,4.62,7.22,6.26
 Arial,numbers,clean,0.0,12.91,0.53,0.21,3.41
@@ -311,9 +287,6 @@ Courier Prime,numbers,damaged,0.53,21.13,3.74,7.04,8.11
 Courier Prime,paragraphs,heavy,13.15,58.85,19.82,21.76,28.39
 Courier Prime,codes,heavy,30.78,74.07,35.51,51.75,48.03
 Courier Prime,numbers,heavy,10.57,59.55,14.19,24.97,27.32
-MaxOCR,paragraphs,smudged,0.42,5.88,7.33,0.97,3.65
-MaxOCR,codes,smudged,0.23,9.24,6.31,7.22,5.75
-MaxOCR,numbers,smudged,0.0,3.31,0.64,0.32,1.07
 Arial,paragraphs,smudged,1.15,17.76,10.79,2.97,8.17
 Arial,codes,smudged,2.37,21.08,8.34,16.57,12.09
 Arial,numbers,smudged,0.0,16.44,0.32,1.81,4.64
@@ -350,3 +323,30 @@ OCR-A Extended,numbers,smudged,0.21,18.04,5.55,28.18,13.0
 Courier Prime,paragraphs,smudged,0.42,3.94,8.3,0.42,3.27
 Courier Prime,codes,smudged,1.8,18.94,7.78,11.5,10.01
 Courier Prime,numbers,smudged,0.0,5.23,1.71,2.03,2.24
+MaxOCR,paragraphs,clean,0.18,3.03,4.97,0.18,2.09
+MaxOCR,codes,clean,0.0,8.57,3.83,5.19,4.4
+MaxOCR,numbers,clean,0.0,2.56,0.21,0.0,0.69
+MaxOCR,paragraphs,blurry,0.18,3.7,4.18,0.55,2.15
+MaxOCR,codes,blurry,0.0,13.87,4.85,6.99,6.43
+MaxOCR,numbers,blurry,0.0,4.27,0.32,0.0,1.15
+MaxOCR,paragraphs,noisy,0.18,8.97,6.3,1.82,4.32
+MaxOCR,codes,noisy,0.0,20.86,6.99,12.06,9.98
+MaxOCR,numbers,noisy,0.0,15.47,1.71,0.85,4.51
+MaxOCR,paragraphs,low-res,0.48,8.42,8.97,1.94,4.95
+MaxOCR,codes,low-res,1.58,23.11,9.58,27.28,15.39
+MaxOCR,numbers,low-res,0.0,2.88,0.21,7.15,2.56
+MaxOCR,paragraphs,jpeg,0.18,2.73,5.15,0.3,2.09
+MaxOCR,codes,jpeg,0.0,9.47,3.72,5.3,4.62
+MaxOCR,numbers,jpeg,0.0,3.31,0.21,0.21,0.93
+MaxOCR,paragraphs,ink bleed,0.12,3.45,3.88,0.24,1.92
+MaxOCR,codes,ink bleed,0.11,11.84,4.96,5.19,5.53
+MaxOCR,numbers,ink bleed,0.0,3.84,0.53,0.0,1.09
+MaxOCR,paragraphs,smudged,0.24,4.91,7.03,0.67,3.21
+MaxOCR,codes,smudged,0.23,9.36,5.98,7.22,5.7
+MaxOCR,numbers,smudged,0.0,3.31,0.64,0.32,1.07
+MaxOCR,paragraphs,damaged,0.24,13.21,6.3,5.27,6.25
+MaxOCR,codes,damaged,0.9,19.84,7.55,13.98,10.57
+MaxOCR,numbers,damaged,0.21,8.75,0.64,5.12,3.68
+MaxOCR,paragraphs,heavy,16.18,56.48,22.85,19.64,28.79
+MaxOCR,codes,heavy,21.98,64.94,26.94,42.16,39.0
+MaxOCR,numbers,heavy,8.32,36.71,10.25,19.42,18.68

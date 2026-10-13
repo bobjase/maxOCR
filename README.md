@@ -26,7 +26,7 @@ crisp to badly damaged. Lower is better.
 
 ![Average character error by font and kind of text](docs/table_summary.png)
 
-Across all three kinds of text, MaxOCR makes **22% fewer errors than the next best font** (Courier New) and **about
+Across all three kinds of text, MaxOCR makes **23% fewer errors than the next best font** (Courier New) and **about
 half as many as Arial or Times New Roman**. The gap is largest on **numbers**: 3.8% against 6.5% for the next best
 font.
 
@@ -111,20 +111,20 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 24% | 20% | 23% | −3% | 20% | 50% | −12% | 11% | −7% |
-| Codes | 16% | 27% | −3% | −1% | 20% | 38% | 24% | 20% | 3% |
+| Paragraphs | 28% | 22% | 24% | −1% | 25% | 51% | 2% | 13% | −3% |
+| Codes | 16% | 26% | −3% | −2% | 22% | 38% | 25% | 20% | 3% |
 | Numbers | 34% | 45% | 29% | 38% | 29% | 41% | 51% | 39% | 20% |
 
-- **Clean print.** MaxOCR makes 24% fewer errors than the best other font on paragraphs (Georgia), 16% fewer on codes
+- **Clean print.** MaxOCR makes 28% fewer errors than the best other font on paragraphs (Georgia), 16% fewer on codes
   (Bookman Old Style) and 34% fewer on numbers (Courier Prime). Against the everyday fonts it's 34–68% fewer than the
   average of Arial, Times New Roman and Calibri.
 - **Numbers.** MaxOCR leads in all nine conditions, with 20–51% fewer errors than the best other font.
-- **Damage.** The largest leads are under ink bleed (38–50%) and on blurry and smudged codes and numbers.
+- **Damage.** The largest leads are under ink bleed (38–51%) and on blurry and smudged codes and numbers.
 - **Where another font is ahead.**
-  - Paragraphs: Courier Prime on low-res and smudged print, and Courier New on heavy damage.
+  - Paragraphs: Courier Prime on low-res print, and Courier New on heavy damage.
   - Codes: Bookman Old Style on noisy print, and Courier Prime on low-res print.
-  - Apart from smudged paragraphs (12%), these gaps are small (1–7%).
-- **Engine agreement.** In 19 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+  - All four gaps are small (1–3%).
+- **Engine agreement.** In 20 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
   other font. That includes every cell for numbers.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
 
