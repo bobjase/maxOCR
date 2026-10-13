@@ -14,7 +14,7 @@ avg["all"] = avg.mean(1)
 avg = avg.sort_values("all")
 avg.round(2).to_csv("docs/benchmark_summary.csv")
 
-fig, axes = plt.subplots(1, 3, figsize=(15, 6.2))
+fig, axes = plt.subplots(1, 3, figsize=(15, max(6.2, 0.36 * len(avg) + 1.2)))
 ink, muted, accent = "#1d1c1a", "#9a968e", "#b5461f"
 for ax, kind, title in zip(axes, ["paragraphs", "codes", "numbers"], ["Paragraphs", "Codes", "Numbers"]):
     s = avg[kind].sort_values(ascending=False)
@@ -33,7 +33,7 @@ for ax, kind, title in zip(axes, ["paragraphs", "codes", "numbers"], ["Paragraph
 fig.suptitle(f"Character error %, averaged over {len(CONDS)} print conditions (lower is better)", x=0.01, ha="left",
              fontsize=14, color=ink)
 fig.text(0.01, 0.01, "Four OCR engines (PaddleOCR, EasyOCR, PARSeq, Tesseract); 8 pt at 200 dpi, equal capital height; "
-         "100 lines per kind of text per condition.", fontsize=9, color="#6b675f")
+         "300 lines per kind of text per condition.", fontsize=9, color="#6b675f")
 fig.tight_layout(rect=(0, 0.04, 1, 0.94))
 fig.savefig("docs/benchmark.png", dpi=110, facecolor="white")
 

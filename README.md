@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.97.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
+**Version 0.98.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
 
 ## Which file to use
 
@@ -26,14 +26,20 @@ crisp to badly damaged. Lower is better.
 
 ![Average character error by font and kind of text](docs/table_summary.png)
 
-Across all three kinds of text, MaxOCR makes **23% fewer errors than the next best font** (Courier New) and **about
-half as many as Arial or Times New Roman**. The gap is largest on **numbers**: 3.8% against 6.5% for the next best
-font.
+Across all three kinds of text, MaxOCR makes **22% fewer errors than the next best font** (Courier New) and **about
+half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 4.5% against 7.4% for the
+next best font.
 
-The comparison set is the fonts people use most (Arial, Times New Roman, Calibri, Segoe UI, Verdana, Georgia,
-Consolas, Courier New), the leaders of a 413-font survey we ran at the start of the project (Bookman Old Style,
-Sitka Text), the classic OCR font (OCR-A Extended), and Courier Prime, the open-licence font with the most readable
-punctuation of the 450 we tested.
+The comparison set:
+
+- **Windows:** Arial, Times New Roman, Calibri, Segoe UI, Verdana, Georgia, Consolas, Courier New. Arial, Times New
+  Roman, Georgia, Verdana and Courier New also come with every Mac.
+- **Apple:** Helvetica and Helvetica Neue. Apple's San Francisco and New York are not included: their licence allows
+  them only for designing apps for Apple devices.
+- **Phones, Linux and the web:** Roboto, Open Sans, Noto Sans, DejaVu Sans, Inter, Ubuntu Mono, Source Code Pro.
+- **The best we found:** the leaders of a 413-font survey we ran at the start of the project (Bookman Old Style,
+  Sitka Text), the classic OCR font (OCR-A Extended), and Courier Prime, the open-licence font with the most readable
+  punctuation of the 450 we tested.
 
 ### By kind of text and kind of damage
 
@@ -47,7 +53,8 @@ The three kinds of text:
 <summary>The grocery story (the paragraphs test text)</summary>
 
 Written for the test: everyday prose mixed with prices, codes, receipt lines and every ASCII punctuation mark. The
-test splits it into lines of up to 22 characters.
+test splits it into lines of up to 22 characters (198 lines), then again into lines of up to 26 for the rest of
+its 300 lines.
 
 ```text
 The Saturday List
@@ -111,32 +118,31 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 28% | 22% | 24% | −1% | 25% | 51% | 2% | 13% | −3% |
-| Codes | 16% | 26% | −3% | −2% | 22% | 38% | 25% | 20% | 3% |
-| Numbers | 34% | 45% | 29% | 38% | 29% | 41% | 51% | 39% | 20% |
+| Paragraphs | 20% | 26% | 18% | 0% | 25% | 45% | 6% | 19% | −3% |
+| Codes | 7% | 25% | 6% | 5% | 20% | 35% | 15% | 28% | 1% |
+| Numbers | 32% | 61% | 29% | 27% | 36% | 53% | 52% | 33% | 15% |
 
-- **Clean print.** MaxOCR makes 28% fewer errors than the best other font on paragraphs (Georgia), 16% fewer on codes
-  (Bookman Old Style) and 34% fewer on numbers (Courier Prime). Against the everyday fonts it's 34–68% fewer than the
-  average of Arial, Times New Roman and Calibri.
-- **Numbers.** MaxOCR leads in all nine conditions, with 20–51% fewer errors than the best other font.
-- **Damage.** The largest leads are under ink bleed (38–51%) and on blurry and smudged codes and numbers.
-- **Where another font is ahead.**
-  - Paragraphs: Courier Prime on low-res print, and Courier New on heavy damage.
-  - Codes: Bookman Old Style on noisy print, and Courier Prime on low-res print.
-  - All four gaps are small (1–3%).
-- **Engine agreement.** In 20 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
-  other font. That includes every cell for numbers.
+- **Clean print.** MaxOCR makes 20% fewer errors than the best other font on paragraphs (Sitka Text), 7% fewer on
+  codes (Bookman Old Style) and 32% fewer on numbers (Courier Prime). Against the everyday fonts it's 35–68% fewer
+  than the average of Arial, Times New Roman and Calibri.
+- **Numbers.** MaxOCR leads in all nine conditions, with 15–61% fewer errors than the best other font.
+- **Damage.** The largest leads are under ink bleed (35–53%) and on blurry and smudged numbers (61% and 52%).
+- **Where another font is ahead.** Only on paragraphs under heavy damage: Courier New makes 3% fewer errors (34.6%
+  against 35.8%), and Courier Prime is level with MaxOCR. On low-res paragraphs MaxOCR and Courier Prime tie (5.8%).
+- **Engine agreement.** In 17 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+  other font. That includes 8 of the 9 cells for numbers.
+- **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
 
 ## Letters that run together
 
 OCR engines often read two narrow letters as one wide one. Each pair was printed inside codes, blurred and read by
-the same four engines (version 0.97).
+the same four engines (version 0.98).
 
 | Pair read as one letter | MaxOCR |
 |---|---:|
 | vv as w | 0.0% |
-| VV as W | 0.4% |
+| VV as W | 0.1% |
 | rn as m | 0.4% |
 | cl as d | 0.0% |
 | ri as n | 0.0% |
@@ -147,7 +153,7 @@ None of the single letters was ever read as the pair.
 ## AI readers
 
 A vision-language model (Qwen2.5-VL) reads clean text in almost any font nearly perfectly. In our measurements on clean
-text and codes, MaxOCR's character error was 0.33% and Courier New's 0.24%. The difference is a handful of characters, within
+text and codes (version 0.95), MaxOCR's character error was 0.33% and Courier New's 0.24%. The difference is a handful of characters, within
 the test's noise. MaxOCR's advantage is with conventional OCR engines and damaged print.
 
 ## How it was measured
@@ -158,7 +164,7 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 - **Scoring.** Character error from an alignment of the engine's output with the true text, ignoring spaces.
 - **Printing.** 8 pt at 200 dpi. Every font is set at the same capital height, so fonts with large letters get no
   advantage. Every image is converted to black and white (Otsu), as most OCR pipelines do.
-- **Sample size.** 100 lines per kind of text per condition, the same lines for every font, read by each of the four
+- **Sample size.** 300 lines per kind of text per condition, the same lines for every font, read by each of the four
   engines. A lead that all four engines agree on is unlikely to be chance; where they split, treat the result as
   close to a tie.
 - **Simulated damage.** All damage is simulated. A print-and-scan test on paper is still to come.
@@ -176,6 +182,9 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 3. **Cleanup.** Every outline was redrawn by hand to remove the lumps and notches the blending left behind.
 4. **Final letters.** C, O, g, t and J were chosen from 58 open-licence serif faces for the most normal look that
    still scored well.
+5. **Capitals for low-resolution scans.** At low resolution the hairlines of C, K, O, U, V, W, X, Y and Z
+   disappeared, and engines read those capitals as lowercase. Their thin strokes were thickened by hand (straight
+   edges moved parallel, curves and serifs kept), and the W was redrawn from straight strokes.
 
 `DECISIONS.md` records every step, measurement and choice.
 

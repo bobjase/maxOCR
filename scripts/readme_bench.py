@@ -1,8 +1,11 @@
-"""Benchmark for the README (James, 2026-10-13): MaxOCR against the fonts people use most and the best fonts we
-found, on three kinds of text and eight print conditions, read by four OCR engines.
+"""Benchmark for the README (James, 2026-10-13): MaxOCR against the fonts people use most (Windows; Android, Linux
+and the web: Roboto, Open Sans, Noto Sans, DejaVu Sans, Inter, Ubuntu Mono, Source Code Pro; Apple: Helvetica, Helvetica Neue) and the best fonts
+we found, on three kinds of text and nine print conditions, read by four OCR engines.
 
-Text (case-sensitive, scored by character error with spaces ignored):
+Text (case-sensitive, scored by character error with spaces ignored; 300 lines per kind since v0.98, the first 100
+being the lines used before):
   paragraphs  lines of the grocery story (maxocr/grocery_story.txt): words, prices, codes, all 32 ASCII marks
+              (wrapped at 22 characters; beyond its 198 lines, wrapped again at 26)
   codes       random mixed-case letters and digits, 6-12 characters (like order numbers, serials, passwords)
   numbers     digits only, in groups separated by spaces (like UPCs, card and phone numbers)
 Conditions (8 pt at 200 dpi, every font at the same capital height; one damage at a time, then combined):
@@ -18,7 +21,7 @@ Conditions (8 pt at 200 dpi, every font at the same capital height; one damage a
   heavy       the same combination, severe (severity 1.0)
 Engines: PaddleOCR, EasyOCR, PARSeq, Tesseract (with its dictionaries). Every image is binarised (Otsu).
 
-    python scripts/readme_bench.py [--n 100] [--out readme_bench.csv]
+    python scripts/readme_bench.py [--n 300] [--out readme_bench.csv]
 """
 import argparse
 import json
@@ -39,6 +42,7 @@ from maxocr.prose import story_lines  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 WIN = "/mnt/c/Windows/Fonts/"
+USER_FONTS = "/mnt/c/Users/james.JAMESWORK2025/AppData/Local/Microsoft/Windows/Fonts/"
 FONTS = {
     "MaxOCR": str(ROOT / "out" / "fonts" / "MaxOCR.ttf"),
     # the fonts people use most
@@ -48,6 +52,19 @@ FONTS = {
     # the best we found: survey leaders, the classic OCR font, the best open-licence face for punctuation
     "Bookman Old Style": WIN + "BOOKOS.TTF", "Sitka Text": WIN + "SitkaVF.ttf", "OCR-A Extended": WIN + "OCRAEXT.TTF",
     "Courier Prime": str(ROOT / "vendor" / "ofl" / "courierprime" / "CourierPrime-Regular.ttf"),
+    # phones, Linux and the web (open licences; Apple's own fonts may only be used on Apple devices)
+    "Roboto": str(ROOT / "vendor" / "ofl" / "roboto" / "Roboto[wdth,wght].ttf"),
+    "Open Sans": str(ROOT / "vendor" / "ofl" / "opensans" / "OpenSans[wdth,wght].ttf"),
+    "Noto Sans": str(ROOT / "vendor" / "ofl" / "notosans" / "NotoSans[wdth,wght].ttf"),
+    "DejaVu Sans": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "Inter": str(ROOT / "vendor" / "ofl" / "inter" / "Inter[opsz,wght].ttf"),
+    "Ubuntu Mono": USER_FONTS + "UbuntuMono[wght].ttf",                      # Ubuntu Font Licence; default weight 400
+    # its variable font defaults to ExtraLight (200): the Regular (400) instance, made with fontTools' instancer
+    "Source Code Pro": str(ROOT / "vendor" / "ofl" / "sourcecodepro" / "SourceCodePro-Regular-400.ttf"),
+    # Apple: Helvetica and Helvetica Neue (James's licensed copies, installed for his Windows user); San Francisco and
+    # New York are licensed only for mock-ups of apps for Apple devices, so they are not measured
+    "Helvetica": USER_FONTS + "HelveticaLTStd-Roman.otf",
+    "Helvetica Neue": USER_FONTS + "HelveticaNeueLTStd-Roman.otf",
 }
 CONDITIONS = ("clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy")
 
@@ -61,6 +78,8 @@ def texts(n: int) -> dict[str, list[str]]:
         groups = [str(rng.integers(0, 10 ** k)).zfill(int(k)) for k in rng.integers(2, 6, rng.integers(2, 4))]
         numbers.append(" ".join(groups))
     story = story_lines(22)
+    if n > len(story):          # more lines than the story has at 22: add it wrapped at 26 (new line breaks)
+        story = story + story_lines(26)
     step = max(1, len(story) // n)
     return {"paragraphs": story[::step][:n], "codes": codes, "numbers": numbers}
 
@@ -84,6 +103,14 @@ def smear(g: np.ndarray, angle_deg: float, scale: float = 1.0, seed: int = 0) ->
     a = 0.65 * mask                        # part of the ink stays where it was
     out = (1 - a) * d + a * np.clip(1.3 * smeared, 0, 255)
     return 255.0 - out
+
+
+def in_batches(read, imgs: list, n: int = 100) -> list:
+    """Read images n at a time (one batch of 300 large images ran the GPU out of memory, 2026-10-13)."""
+    out = []
+    for i in range(0, len(imgs), n):
+        out += list(read(imgs[i:i + n]))
+    return out
 
 
 def otsu(img: np.ndarray) -> np.ndarray:
@@ -121,7 +148,7 @@ def image(font: str, text: str, size: float, cond: str, k: int) -> np.ndarray:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=100, help="lines per kind of text")
+    ap.add_argument("--n", type=int, default=300, help="lines per kind of text")
     ap.add_argument("--out", default="readme_bench.csv")
     ap.add_argument("--fonts", help="comma-separated subset of the font names")
     a = ap.parse_args()
@@ -141,8 +168,8 @@ def main():
                 if (name, kind, cond) in done:
                     continue
                 imgs = [image(path, t, size, cond, k) for k, t in enumerate(lines)]
-                preds = {"paddle": [paddle.text(im) for im in imgs], "easyocr": easy.texts(imgs), "parseq": pq.read(imgs),
-                         "tesseract": read_tesseract_dict(imgs, fold=False)}
+                preds = {"paddle": [paddle.text(im) for im in imgs], "easyocr": in_batches(easy.texts, imgs),
+                         "parseq": in_batches(pq.read, imgs), "tesseract": read_tesseract_dict(imgs, fold=False)}
                 row = {"font": name, "text": kind, "condition": cond}
                 for e, p in preds.items():
                     row[e] = round(char_err(lines, p), 2)
