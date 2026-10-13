@@ -949,3 +949,4 @@ Screen results (`screen94_u00XX.csv`, quick test inside v0.94; overall error / l
 - g (now 9.35 / 95.2): Sanchez 9.57 / 93.0 (single-storey slab g), Zilla Slab 10.16 / 90.8; two-storey g's cost about 1 point or more (Frank Ruhl Libre 10.29 / 84.6, Rokkitt, Sorts Mill Goudy, IBM Plex Serif 10.5-10.7).
 - t (now 11.83 / 95.3): Literata 11.49 / 93.3, Noticia Text 11.85 / 93.3, Manuale 11.96, Rasa / Yrsa 11.99.
 Page https://claude.ai/artifact/A5os6GuDaDjLQwSpSNNKMi (`scratch/screen94_{C,O,g,t}.png`, fonts `out/golden/screen94/`).
+James: "take your recommendations and put them into a test bed and run it against our standard test bench". Test bed `~/maxocr-work/keep/MaxOCR-Text-testbed1.ttf` = v0.94 + EB Garamond C (normal width), Sorts Mill Goudy O (1.15x), Sanchez g, Literata t (`scratch/build_testbed.sh`; look `scratch/testbed1_look.png`). Standard bench running (`scratch/testbed1_checks.sh`: story s=0.5 and clean, codes, VLM; v0.94 codes measured fresh).
