@@ -6,13 +6,13 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.98.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
+**Version 0.99.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
 
 ## Which file to use
 
 | File | Use it for |
 |---|---|
-| `MaxOCR.ttf` | **Start here.** Everyday text, codes and numbers. Adds a little space where letters meet digits (applied automatically in apps that support kerning). |
+| `MaxOCR.ttf` | **Start here.** Everyday text, codes and numbers. Adapts to what it is printing: a little extra space where letters meet digits and between the digits of numbers, and slightly smaller lowercase letters inside codes like `KRZgx2w`, so capitals and small letters are easier to tell apart. Applied automatically by apps that support OpenType features (browsers, design and most layout apps; in Word, turn on contextual alternates). |
 | `MaxOCR-Text.ttf` | The same letters with plain spacing everywhere (no extra space between letters and digits). |
 | `MaxOCR-Small.ttf` | Print smaller than about 7 pt (wider letter spacing; cuts errors by about 12% at 6 pt). |
 | `MaxOCR-Machine.ttf` | Machine-only work where looks do not matter: capitals, digits and space only. |
@@ -26,8 +26,8 @@ crisp to badly damaged. Lower is better.
 
 ![Average character error by font and kind of text](docs/table_summary.svg)
 
-Across all three kinds of text, MaxOCR makes **22% fewer errors than the next best font** (Courier New) and **about
-half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 4.5% against 7.4% for the
+Across all three kinds of text, MaxOCR makes **26% fewer errors than the next best font** (Courier New) and **about
+half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 2.9% against 4.4% for the
 next best font.
 
 The comparison set:
@@ -92,7 +92,7 @@ The nine print conditions:
 | Damaged | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, mild |
 | Heavy | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, severe |
 
-Here is each condition applied to its own name. The left column is actual size, the 8 pt text as scanned at 200 dpi,
+Here is each condition applied to its own name. The left column is actual size, the 8 pt text as scanned at 300 dpi,
 exactly what the engines receive. The right column is the same damage enlarged 3× so you can see it. Both are
 shown in grey; the engines get them after a final black-and-white step, as in most OCR pipelines.
 
@@ -118,32 +118,53 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 20% | 26% | 18% | 0% | 25% | 45% | 6% | 19% | −3% |
-| Codes | 7% | 25% | 6% | 5% | 20% | 35% | 15% | 28% | 1% |
-| Numbers | 32% | 61% | 29% | 27% | 36% | 53% | 52% | 33% | 15% |
+| Paragraphs | 37% | 26% | 20% | 8% | 43% | −11% | 6% | −3% | −13% |
+| Codes | 13% | 30% | 11% | 14% | 12% | 29% | 21% | 5% | 1% |
+| Numbers | 0% | 100% | 19% | −9% | ≈0 | ≈0 | ≈0 | 19% | 30% |
 
-- **Clean print.** MaxOCR makes 20% fewer errors than the best other font on paragraphs (Sitka Text), 7% fewer on
-  codes (Bookman Old Style) and 32% fewer on numbers (Courier Prime). Against the everyday fonts it's 35–68% fewer
-  than the average of Arial, Times New Roman and Calibri.
-- **Numbers.** MaxOCR leads in all nine conditions, with 15–61% fewer errors than the best other font.
-- **Damage.** The largest leads are under ink bleed (35–53%) and on blurry and smudged numbers (61% and 52%).
-- **Where another font is ahead.** Only on paragraphs under heavy damage: Courier New makes 3% fewer errors (34.6%
-  against 35.8%), and Courier Prime is level with MaxOCR. On low-res paragraphs MaxOCR and Courier Prime tie (5.8%).
-- **Engine agreement.** In 17 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
-  other font. That includes 8 of the 9 cells for numbers.
+≈0 and the 0% for clean numbers: every good font reads these almost perfectly (0.00–0.4% errors), so the
+percentages there mean nothing.
+
+- **Clean print.** MaxOCR makes 37% fewer errors than the best other font on paragraphs (Georgia) and 13% fewer on
+  codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
+  37–55% fewer than the average of Arial, Times New Roman and Calibri.
+- **Codes.** MaxOCR leads in all nine conditions.
+- **Where another font is ahead.**
+  - Paragraphs under heavy damage: Courier Prime makes 13% fewer errors (28.4% against 32.2%); under ink bleed,
+    Courier New (1.15% against 1.28%); damaged, Source Code Pro (4.14% against 4.25%). These wide or monospaced
+    fonts keep letters apart when the ink spreads.
+  - Numbers at low resolution: Calibri (3.5% against 3.8%).
+- **Engine agreement.** In 10 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+  other font.
 - **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
+
+## Real print-and-scan test
+
+The same text printed on an office laser printer and scanned at 600 dpi (one printer, one scanner, five fonts, about
+1,700 characters per font), then read by the same four engines at 300 dpi.
+
+| Font | Paragraphs | Codes | Numbers | All |
+|---|---:|---:|---:|---:|
+| **MaxOCR** | **0.33** | **2.1** | **0.0** | **0.8** |
+| Times New Roman | 0.43 | 3.5 | 0.0 | 1.3 |
+| Courier Prime | 0.43 | 4.6 | 0.0 | 1.7 |
+| Arial | 0.47 | 5.2 | 0.0 | 1.9 |
+| Courier New | 2.3 | 4.4 | 0.0 | 2.2 |
+
+Character error %, lower is better (version 0.98). On real paper MaxOCR made the fewest errors overall and on codes,
+about 40% fewer than the next font. The sample is small, so treat small differences as ties.
 
 ## Letters that run together
 
 OCR engines often read two narrow letters as one wide one. Each pair was printed inside codes, blurred and read by
-the same four engines (version 0.98).
+the same four engines (version 0.99).
 
 | Pair read as one letter | MaxOCR |
 |---|---:|
 | vv as w | 0.0% |
 | VV as W | 0.1% |
-| rn as m | 0.4% |
+| rn as m | 0.2% |
 | cl as d | 0.0% |
 | ri as n | 0.0% |
 | in as m | 0.0% |
@@ -159,15 +180,20 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 ## How it was measured
 
 - **Engines.** PaddleOCR, EasyOCR, PARSeq and Tesseract (with its dictionaries on). Every number above is the
-  average of the four.
+  average of the four. Each is used the way it is meant to be used: PARSeq reads one word at a time (it reads at
+  most 25 characters; a real OCR pipeline finds the words first), and EasyOCR may output spaces. Earlier versions
+  of this README gave PARSeq whole lines and kept EasyOCR from writing spaces (it invented dots instead), which
+  made every font look worse and some much worse than others.
 - **Reading mode.** All engines read case-sensitively over letters, digits and punctuation.
 - **Scoring.** Character error from an alignment of the engine's output with the true text, ignoring spaces.
-- **Printing.** 8 pt at 200 dpi. Every font is set at the same capital height, so fonts with large letters get no
+- **Printing.** 8 pt at 300 dpi (the standard scanning resolution; at 200 dpi Tesseract's letters were too small
+  for it and it started inventing letters). Fonts are rendered with their OpenType features on, as browsers and
+  design apps do. Every font is set at the same capital height, so fonts with large letters get no
   advantage. Every image is converted to black and white (Otsu), as most OCR pipelines do.
 - **Sample size.** 300 lines per kind of text per condition, the same lines for every font, read by each of the four
   engines. A lead that all four engines agree on is unlikely to be chance; where they split, treat the result as
   close to a tie.
-- **Simulated damage.** All damage is simulated. A print-and-scan test on paper is still to come.
+- **Simulated damage.** The damage in the tables is simulated; see the print-and-scan test above for real paper.
 - **Reproducing.** Install the project environment with `pixi install` (under WSL on Windows; the comparison fonts
   are read from `C:\Windows\Fonts`). Then run `pixi run python scripts/readme_bench.py`; results go to
   `out/report/readme_bench.csv`.
@@ -185,6 +211,9 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 5. **Capitals for low-resolution scans.** At low resolution the hairlines of C, K, O, U, V, W, X, Y and Z
    disappeared, and engines read those capitals as lowercase. Their thin strokes were thickened by hand (straight
    edges moved parallel, curves and serifs kept), and the W was redrawn from straight strokes.
+6. **Codes and numbers.** Inside codes the lowercase letters are slightly smaller (74% of the capital height
+   instead of 78%), so engines can tell W from w and O from o without context; numbers get a little extra space
+   between digits; and the digits have more even strokes, so they survive thinned or broken print.
 
 `DECISIONS.md` records every step, measurement and choice.
 

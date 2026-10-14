@@ -21,7 +21,7 @@ W = 40 + aw + 60 + bw + 40
 H = 70 + len(rows) * rh + 10
 img = Image.new("RGB", (W, H), "white"); dr = ImageDraw.Draw(img)
 xa, xb = 40, 40 + aw + 60
-dr.text((xa, 20), "ACTUAL SIZE (8 pt, 200 dpi scan)", font=H2, fill=(110, 110, 110))
+dr.text((xa, 20), "ACTUAL SIZE (8 pt, 300 dpi scan)", font=H2, fill=(110, 110, 110))
 dr.text((xb, 20), "ENLARGED 3x", font=H2, fill=(110, 110, 110))
 for k, (name, desc, a, b) in enumerate(rows):
     y = 62 + k * rh
