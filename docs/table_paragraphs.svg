@@ -40,7 +40,8 @@
 <text x="512" y="106" font-size="15" fill="var(--ink)" text-anchor="end">3.6</text>
 <text x="596" y="106" font-size="15" fill="var(--ink)" text-anchor="end">0.6</text>
 <text x="680" y="106" font-size="15" fill="var(--ink)" text-anchor="end">4.0</text>
-<text x="764" y="106" font-size="15" fill="var(--ink)" text-anchor="end">0.7</text>
+<rect x="698" y="89" width="74" height="24" rx="3" fill="var(--best)"/>
+<text x="764" y="106" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.7</text>
 <text x="848" y="106" font-size="15" fill="var(--ink)" text-anchor="end">4.2</text>
 <rect x="866" y="89" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="932" y="106" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">28.4</text>

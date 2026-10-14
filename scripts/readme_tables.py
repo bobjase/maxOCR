@@ -66,7 +66,7 @@ open("docs/benchmark.svg", "w", encoding="utf-8", newline="\n").write(svg)
 
 def table_svg(path: str, cols: list[str], rows: list[tuple[str, list[float]]], note: str):
     """A table: best (lowest) value in each column on a green background, the MaxOCR row tinted, numbers right-aligned."""
-    best = [min(r[1][j] for r in rows) for j in range(len(cols))]
+    best = [min(round(r[1][j], 1) for r in rows) for j in range(len(cols))]   # as shown: ties at one decimal all green
     m, fw, cw, rh, hh = 16, 170, 84, 30, 40
     W, H = m + fw + cw * len(cols) + m, m + hh + rh * len(rows) + 44
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', style_block(),
@@ -85,7 +85,7 @@ def table_svg(path: str, cols: list[str], rows: list[tuple[str, list[float]]], n
         out.append(f'<text x="{m + 8}" y="{y + 20}" font-size="15" fill="var(--ink)"{weight}>{escape(name)}</text>')
         for j, v in enumerate(vals):
             x = m + fw + cw * j
-            is_best = abs(v - best[j]) < 1e-9
+            is_best = round(v, 1) == best[j]
             if is_best:
                 out.append(f'<rect x="{x + 8}" y="{y + 3}" width="{cw - 10}" height="{rh - 6}" rx="3" fill="var(--best)"/>')
             bold = ' font-weight="700"' if (is_best or name == "MaxOCR") else ""
