@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
+**Version 0.99.1.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
 
 ## Which file to use
 
@@ -26,7 +26,7 @@ crisp to badly damaged. Lower is better.
 
 ![Average character error by font and kind of text](docs/table_summary.svg)
 
-Across all three kinds of text, MaxOCR makes **26% fewer errors than the next best font** (Courier New) and **about
+Across all three kinds of text, MaxOCR makes **27% fewer errors than the next best font** (Courier New) and **about
 half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 2.9% against 4.4% for the
 next best font.
 
@@ -118,23 +118,23 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 37% | 26% | 20% | 8% | 43% | −11% | 6% | −3% | −13% |
-| Codes | 13% | 30% | 11% | 14% | 12% | 29% | 21% | 5% | 1% |
+| Paragraphs | 33% | 32% | 21% | 13% | 45% | −14% | −3% | 3% | −10% |
+| Codes | 14% | 31% | 6% | 16% | 13% | 29% | 22% | 6% | 1% |
 | Numbers | 0% | 100% | 19% | −9% | ≈0 | ≈0 | ≈0 | 19% | 30% |
 
 ≈0 and the 0% for clean numbers: every good font reads these almost perfectly (0.00–0.4% errors), so the
 percentages there mean nothing.
 
-- **Clean print.** MaxOCR makes 37% fewer errors than the best other font on paragraphs (Georgia) and 13% fewer on
+- **Clean print.** MaxOCR makes 33% fewer errors than the best other font on paragraphs (Georgia) and 14% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
-  37–55% fewer than the average of Arial, Times New Roman and Calibri.
+  38–52% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
-  - Paragraphs under heavy damage: Courier Prime makes 13% fewer errors (28.4% against 32.2%); under ink bleed,
-    Courier New (1.15% against 1.28%); damaged, Source Code Pro (4.14% against 4.25%). These wide or monospaced
-    fonts keep letters apart when the ink spreads.
+  - Paragraphs under heavy damage: Courier Prime makes 10% fewer errors (28.4% against 31.2%); under ink bleed,
+    Courier New (1.15% against 1.31%); smudged, Courier Prime (0.70% against 0.72%, a tie in practice). These wide
+    or monospaced fonts keep letters apart when the ink spreads.
   - Numbers at low resolution: Calibri (3.5% against 3.8%).
-- **Engine agreement.** In 10 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+- **Engine agreement.** In 11 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
   other font.
 - **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.

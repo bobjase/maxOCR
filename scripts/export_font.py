@@ -22,7 +22,7 @@ def export(src: str, dst: str, family: str, version: str = "0.1") -> None:
     for nid, s in names.items():
         nt.setName(s, nid, 3, 1, 0x409)
         nt.setName(s, nid, 1, 0, 0)
-    f["head"].fontRevision = float(version)
+    f["head"].fontRevision = float("".join(version.rsplit(".", 1)) if version.count(".") > 1 else version)   # 0.99.1 -> 0.991
     f["OS/2"].achVendID = "NONE"
     f.save(dst)
     # Read back: every required record present on the Windows platform.
