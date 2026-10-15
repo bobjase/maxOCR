@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.1.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
+**Version 0.99.2.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
 
 ## Which file to use
 
@@ -214,6 +214,9 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 6. **Codes and numbers.** Inside codes the lowercase letters are slightly smaller (74% of the capital height
    instead of 78%), so engines can tell W from w and O from o without context; numbers get a little extra space
    between digits; and the digits have more even strokes, so they survive thinned or broken print.
+7. **The 3 for ink bleed.** When ink spreads, our old 3 clumped and Tesseract returned nothing for whole lines of
+   numbers. The 3s of 80 open-licence fonts were each fitted into MaxOCR's 3 and tested; the 3 from Noto Sans
+   (Google, SIL Open Font License) cut errors on ink-bleed numbers from 0.39% to 0.10%.
 
 `DECISIONS.md` records every step, measurement and choice.
 
