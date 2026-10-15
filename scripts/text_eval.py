@@ -50,8 +50,11 @@ def read_tesseract_dict(imgs, fold: bool = True):
     from tesserocr import OEM, PSM, PyTessBaseAPI
     from PIL import Image
     from maxocr.engines.tesseract import TESSDATA_BEST
+    import os
     out = []
-    with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=PSM.SINGLE_LINE) as api:
+    # MAXOCR_TESS_PSM=13: "raw line", which skips Tesseract's layout step (it blanked readable ink-bleed lines)
+    psm = int(os.environ.get("MAXOCR_TESS_PSM", PSM.SINGLE_LINE))
+    with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=psm) as api:
         for im in imgs:
             api.SetImage(Image.fromarray(im))
             t = api.GetUTF8Text().strip()
