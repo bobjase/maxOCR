@@ -50,13 +50,15 @@ def fitted(donor: TTFont, ch: str, box, area):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--char", required=True)
-    ap.add_argument("--kind", default="paragraphs")
+    ap.add_argument("--kind", default="paragraphs", help="comma-separated kinds of text")
+    ap.add_argument("--n", type=int, default=300, help="lines per kind")
     ap.add_argument("--conds", default="ink bleed,clean")
     ap.add_argument("--engines", default="all")
     ap.add_argument("--donors", help="comma-separated vendor/ofl folder names (default: all)")
+    ap.add_argument("--build-only", action="store_true", help="only build the fonts (rebuild on the current MaxOCR)")
     a = ap.parse_args()
     from maxocr.fonts import matched_size
-    if a.engines == "all":
+    if a.engines == "all" and not a.build_only:
         import rung0
         from maxocr.corpus import GENERAL_ALPHABET
         from maxocr.engines.easyocr_rec import EasyOCRRec
@@ -72,7 +74,8 @@ def main():
 
     W = os.path.expanduser(f"~/maxocr-work/hunt_{ord(a.char):x}/")
     os.makedirs(W, exist_ok=True)
-    lines = texts(300)[a.kind]
+    sets = texts(a.n)
+    kinds = a.kind.split(",")
     base = TTFont(SRC)
     ours = to_shape(glyph_path(base, a.char))
     dirs = sorted(glob.glob("vendor/ofl/*"))
@@ -90,14 +93,20 @@ def main():
             f.save(W + name + "t.ttf")
             subprocess.run([sys.executable, "scripts/smart_features.py", W + name + "t.ttf", W + name + ".ttf"],
                            check=True, capture_output=True)
+            if a.build_only:
+                print("built", name, flush=True)
+                continue
             P = W + name + ".ttf"
             size = matched_size(P, 8.0)
             row = {"font": name}
-            for cond in a.conds.split(","):
-                preds = read([image(P, t, size, cond, k) for k, t in enumerate(lines)])
-                for e, ps in preds.items():
-                    row[f"{cond}/{e}"] = round(char_err(lines, ps), 2)
-                row[cond] = round(float(np.mean([char_err(lines, ps) for ps in preds.values()])), 2)
+            for kind in kinds:
+                lines = sets[kind][:a.n]
+                for cond in a.conds.split(","):
+                    preds = read([image(P, t, size, cond, k) for k, t in enumerate(lines)])
+                    key = cond if len(kinds) == 1 else f"{kind}/{cond}"
+                    for e, ps in preds.items():
+                        row[f"{key}/{e}"] = round(char_err(lines, ps), 2)
+                    row[key] = round(float(np.mean([char_err(lines, ps) for ps in preds.values()])), 2)
             print(json.dumps(row), flush=True)
         except Exception as e:
             print("skip", name, type(e).__name__, e, flush=True)
