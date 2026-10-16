@@ -18,23 +18,23 @@
 <rect x="194" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.3</text>
 <rect x="278" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="344" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.7</text>
+<text x="344" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.6</text>
 <rect x="362" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="428" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">2.5</text>
+<text x="428" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">2.4</text>
 <rect x="446" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="512" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">2.6</text>
+<text x="512" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">2.5</text>
 <rect x="530" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.3</text>
 <rect x="614" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="680" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">1.1</text>
+<text x="680" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">1.0</text>
 <rect x="698" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="764" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.7</text>
 <rect x="782" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="848" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">4.0</text>
+<text x="848" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">3.8</text>
 <rect x="866" y="59" width="74" height="24" rx="3" fill="var(--second)"/>
-<text x="932" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">30.1</text>
+<text x="932" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">29.7</text>
 <rect x="950" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="1016" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">4.7</text>
+<text x="1016" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">4.6</text>
 <line x1="16" y1="85.5" x2="1026" y2="85.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="106" font-size="15" fill="var(--ink)">Courier Prime</text>
 <rect x="194" y="89" width="74" height="24" rx="3" fill="var(--second)"/>
@@ -60,7 +60,6 @@
 <rect x="446" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="512" y="136" font-size="15" fill="var(--ink)" text-anchor="end">2.9</text>
 <text x="596" y="136" font-size="15" fill="var(--ink)" text-anchor="end">0.9</text>
-<rect x="614" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="680" y="136" font-size="15" fill="var(--ink)" text-anchor="end">3.2</text>
 <text x="764" y="136" font-size="15" fill="var(--ink)" text-anchor="end">0.9</text>
 <rect x="782" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
@@ -74,8 +73,8 @@
 <text x="428" y="166" font-size="15" fill="var(--ink)" text-anchor="end">4.7</text>
 <text x="512" y="166" font-size="15" fill="var(--ink)" text-anchor="end">3.5</text>
 <text x="596" y="166" font-size="15" fill="var(--ink)" text-anchor="end">0.7</text>
-<rect x="614" y="149" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="680" y="166" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">1.1</text>
+<rect x="614" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
+<text x="680" y="166" font-size="15" fill="var(--ink)" text-anchor="end">1.1</text>
 <rect x="698" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="166" font-size="15" fill="var(--ink)" text-anchor="end">0.8</text>
 <text x="848" y="166" font-size="15" fill="var(--ink)" text-anchor="end">9.1</text>
@@ -91,7 +90,6 @@
 <text x="680" y="196" font-size="15" fill="var(--ink)" text-anchor="end">3.8</text>
 <text x="764" y="196" font-size="15" fill="var(--ink)" text-anchor="end">1.2</text>
 <text x="848" y="196" font-size="15" fill="var(--ink)" text-anchor="end">4.3</text>
-<rect x="866" y="179" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="932" y="196" font-size="15" fill="var(--ink)" text-anchor="end">30.1</text>
 <text x="1016" y="196" font-size="15" fill="var(--ink)" text-anchor="end">5.9</text>
 <line x1="16" y1="205.5" x2="1026" y2="205.5" stroke="var(--rule)" stroke-width="1"/>
