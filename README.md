@@ -10,12 +10,14 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ## Which file to use
 
+The fonts are in the [fonts](fonts) folder.
+
 | File | Use it for |
 |---|---|
-| `MaxOCR.ttf` | **Start here.** Everyday text, codes and numbers. Adapts to what it is printing: a little extra space where letters meet digits and between the digits of numbers, and slightly smaller lowercase letters inside codes like `KRZgx2w`, so capitals and small letters are easier to tell apart. Applied automatically by apps that support OpenType features (browsers, design and most layout apps; in Word, turn on contextual alternates). |
-| `MaxOCR-Text.ttf` | The same letters with plain spacing everywhere (no extra space between letters and digits). |
-| `MaxOCR-Small.ttf` | Print smaller than about 7 pt (wider letter spacing; cuts errors by about 12% at 6 pt). |
-| `MaxOCR-Machine.ttf` | Machine-only work where looks do not matter: capitals, digits and space only. |
+| [`MaxOCR.ttf`](fonts/MaxOCR.ttf) | **Start here.** Everyday text, codes and numbers. Adapts to what it is printing: a little extra space where letters meet digits and between the digits of numbers, and slightly smaller lowercase letters inside codes like `KRZgx2w`, so capitals and small letters are easier to tell apart. Applied automatically by apps that support OpenType features (browsers, design and most layout apps; in Word, turn on contextual alternates). |
+| [`MaxOCR-Text.ttf`](fonts/MaxOCR-Text.ttf) | The same letters with plain spacing everywhere (no extra space between letters and digits). |
+| [`MaxOCR-Small.ttf`](fonts/MaxOCR-Small.ttf) | Print smaller than about 7 pt (wider letter spacing; cuts errors by about 12% at 6 pt). |
+| [`MaxOCR-Machine.ttf`](fonts/MaxOCR-Machine.ttf) | Machine-only work where looks do not matter: capitals, digits and space only. |
 
 ## How it compares
 
