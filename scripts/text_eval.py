@@ -51,14 +51,27 @@ def read_tesseract_dict(imgs, fold: bool = True):
     from PIL import Image
     from maxocr.engines.tesseract import TESSDATA_BEST
     import os
-    out = []
+    from concurrent.futures import ThreadPoolExecutor
     # MAXOCR_TESS_PSM=13: "raw line", which skips Tesseract's layout step (it blanked readable ink-bleed lines)
     psm = int(os.environ.get("MAXOCR_TESS_PSM", PSM.SINGLE_LINE))
-    with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=psm) as api:
-        for im in imgs:
-            api.SetImage(Image.fromarray(im))
-            t = api.GetUTF8Text().strip()
-            out.append(t.upper() if fold else t)
+    # several Tesseract instances in threads (tesserocr releases the GIL while recognising; each thread has its own
+    # API object, Tesseract itself limited to one core each): same readings, several times faster
+    os.environ.setdefault("OMP_THREAD_LIMIT", "1")
+    k = max(1, min(int(os.environ.get("MAXOCR_TESS_THREADS", "8")), len(imgs)))
+    chunks = [list(range(i, len(imgs), k)) for i in range(k)]
+
+    def run(idx):
+        res = []
+        with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=psm) as api:
+            for i in idx:
+                api.SetImage(Image.fromarray(imgs[i]))
+                res.append((i, api.GetUTF8Text().strip()))
+        return res
+    out = [""] * len(imgs)
+    with ThreadPoolExecutor(k) as ex:
+        for res in ex.map(run, chunks):
+            for i, t in res:
+                out[i] = t.upper() if fold else t
     return out
 
 

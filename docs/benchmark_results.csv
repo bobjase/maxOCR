@@ -566,30 +566,30 @@ Helvetica Neue,numbers,damaged,1.0,8.93,2.38,8.21,5.13
 Helvetica Neue,paragraphs,heavy,31.01,76.58,36.79,40.96,46.34
 Helvetica Neue,codes,heavy,39.87,82.37,42.13,70.47,58.71
 Helvetica Neue,numbers,heavy,28.57,65.18,25.96,57.98,44.42
-MaxOCR,paragraphs,clean,0.06,0.49,0.36,0.39,0.33
-MaxOCR,codes,clean,0.07,5.91,2.48,4.62,3.27
+MaxOCR,paragraphs,clean,0.06,0.49,0.38,0.39,0.33
+MaxOCR,codes,clean,0.07,5.95,2.44,4.73,3.3
 MaxOCR,numbers,clean,0.0,0.0,0.0,0.0,0.0
 MaxOCR,paragraphs,blurry,0.11,1.71,0.24,0.36,0.6
-MaxOCR,codes,blurry,0.37,10.01,2.85,5.32,4.64
+MaxOCR,codes,blurry,0.37,9.98,2.85,5.21,4.6
 MaxOCR,numbers,blurry,0.0,0.0,0.0,0.04,0.01
-MaxOCR,paragraphs,noisy,0.06,2.99,5.59,1.11,2.44
-MaxOCR,codes,noisy,0.07,10.98,4.88,6.36,5.57
+MaxOCR,paragraphs,noisy,0.06,3.01,5.64,1.05,2.44
+MaxOCR,codes,noisy,0.07,11.05,4.8,6.21,5.53
 MaxOCR,numbers,noisy,0.0,5.9,0.31,0.19,1.6
-MaxOCR,paragraphs,low-res,0.64,4.27,2.61,2.65,2.54
-MaxOCR,codes,low-res,1.88,17.7,5.28,29.9,13.69
+MaxOCR,paragraphs,low-res,0.62,4.12,2.78,2.61,2.53
+MaxOCR,codes,low-res,1.85,17.7,5.28,30.01,13.71
 MaxOCR,numbers,low-res,0.0,2.88,0.23,12.54,3.91
-MaxOCR,paragraphs,jpeg,0.06,0.43,0.38,0.39,0.32
-MaxOCR,codes,jpeg,0.04,5.73,2.51,5.25,3.38
+MaxOCR,paragraphs,jpeg,0.06,0.43,0.32,0.39,0.3
+MaxOCR,codes,jpeg,0.04,5.76,2.51,5.25,3.39
 MaxOCR,numbers,jpeg,0.0,0.0,0.0,0.04,0.01
-MaxOCR,paragraphs,ink bleed,0.15,2.52,0.56,0.87,1.02
-MaxOCR,codes,ink bleed,0.18,11.53,3.44,5.4,5.14
+MaxOCR,paragraphs,ink bleed,0.15,2.46,0.53,0.88,1.0
+MaxOCR,codes,ink bleed,0.18,11.46,3.29,5.43,5.09
 MaxOCR,numbers,ink bleed,0.0,0.12,0.0,0.27,0.1
-MaxOCR,paragraphs,smudged,0.15,1.22,0.62,0.92,0.73
-MaxOCR,codes,smudged,0.18,6.73,3.77,5.62,4.08
+MaxOCR,paragraphs,smudged,0.13,1.15,0.64,0.85,0.69
+MaxOCR,codes,smudged,0.18,6.73,3.7,5.76,4.09
 MaxOCR,numbers,smudged,0.0,0.0,0.08,0.0,0.02
-MaxOCR,paragraphs,damaged,0.9,7.26,1.73,5.47,3.84
-MaxOCR,codes,damaged,3.99,14.82,6.47,16.15,10.36
+MaxOCR,paragraphs,damaged,0.87,6.79,1.79,5.27,3.68
+MaxOCR,codes,damaged,3.99,14.45,6.47,15.93,10.21
 MaxOCR,numbers,damaged,0.31,2.34,0.31,4.22,1.79
-MaxOCR,paragraphs,heavy,20.05,49.76,22.46,26.35,29.66
-MaxOCR,codes,heavy,24.91,59.76,26.76,42.42,38.46
+MaxOCR,paragraphs,heavy,19.86,49.31,22.25,26.33,29.44
+MaxOCR,codes,heavy,24.72,59.16,26.57,42.09,38.13
 MaxOCR,numbers,heavy,12.46,26.5,11.23,22.89,18.27
