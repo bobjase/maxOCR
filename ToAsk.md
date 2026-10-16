@@ -22,3 +22,5 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
    check on paper would be the real proof.
 3. **Screen order.** Characters are screened against the font as it was when the sweep started (v0.99.4); accepted
    swaps are combined and re-tested in batches, not one at a time.
+4. **Near misses.** The s from Carlito improved the overall average by 0.016 (threshold 0.02), so it was not kept.
+   Worth a second look if you think the threshold is too strict.
