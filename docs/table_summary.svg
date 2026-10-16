@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="538" height="760" viewBox="0 0 538 760">
-<style>svg{--bg:#ffffff;--ink:#1f2328;--muted:#59636e;--rule:#d1d9e0;--head-rule:#9198a1;--best:#c6e8c6;--maxrow:#fbf1ea;--bar:#9a968e;--accent:#b5461f;--axis:#cfcac0;--grid:#ebe7df;}@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--ink:#e6edf3;--muted:#9198a1;--rule:#3d444d;--head-rule:#59636e;--best:#1f4d2c;--maxrow:#2a1f17;--bar:#6e7681;--accent:#f0883e;--axis:#3d444d;--grid:#21262d;}}text{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;}</style>
+<style>svg{--bg:#ffffff;--ink:#1f2328;--muted:#59636e;--rule:#d1d9e0;--head-rule:#9198a1;--best:#c6e8c6;--second:#d6e6f7;--maxrow:#fbf1ea;--bar:#9a968e;--accent:#b5461f;--axis:#cfcac0;--grid:#ebe7df;}@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--ink:#e6edf3;--muted:#9198a1;--rule:#3d444d;--head-rule:#59636e;--best:#1f4d2c;--second:#1c3350;--maxrow:#2a1f17;--bar:#6e7681;--accent:#f0883e;--axis:#3d444d;--grid:#21262d;}}text{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;}</style>
 <rect width="538" height="760" rx="6" fill="var(--bg)"/>
 <text x="24" y="42" font-size="14" font-weight="600" fill="var(--muted)">Font</text>
 <text x="260" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Paragraphs</text>
@@ -20,25 +20,31 @@
 <line x1="16" y1="85.5" x2="522" y2="85.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="106" font-size="15" fill="var(--ink)">Courier New</text>
 <text x="260" y="106" font-size="15" fill="var(--ink)" text-anchor="end">5.8</text>
+<rect x="278" y="89" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="106" font-size="15" fill="var(--ink)" text-anchor="end">12.4</text>
 <text x="428" y="106" font-size="15" fill="var(--ink)" text-anchor="end">5.7</text>
+<rect x="446" y="89" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="512" y="106" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
 <line x1="16" y1="115.5" x2="522" y2="115.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="136" font-size="15" fill="var(--ink)">Courier Prime</text>
+<rect x="194" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="260" y="136" font-size="15" fill="var(--ink)" text-anchor="end">5.2</text>
 <text x="344" y="136" font-size="15" fill="var(--ink)" text-anchor="end">13.8</text>
 <text x="428" y="136" font-size="15" fill="var(--ink)" text-anchor="end">5.0</text>
+<rect x="446" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="512" y="136" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
 <line x1="16" y1="145.5" x2="522" y2="145.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="166" font-size="15" fill="var(--ink)">Sitka Text</text>
 <text x="260" y="166" font-size="15" fill="var(--ink)" text-anchor="end">6.0</text>
 <text x="344" y="166" font-size="15" fill="var(--ink)" text-anchor="end">13.4</text>
 <text x="428" y="166" font-size="15" fill="var(--ink)" text-anchor="end">4.6</text>
+<rect x="446" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="512" y="166" font-size="15" fill="var(--ink)" text-anchor="end">8.0</text>
 <line x1="16" y1="175.5" x2="522" y2="175.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="196" font-size="15" fill="var(--ink)">Verdana</text>
 <text x="260" y="196" font-size="15" fill="var(--ink)" text-anchor="end">6.4</text>
 <text x="344" y="196" font-size="15" fill="var(--ink)" text-anchor="end">13.6</text>
+<rect x="362" y="179" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="428" y="196" font-size="15" fill="var(--ink)" text-anchor="end">4.4</text>
 <text x="512" y="196" font-size="15" fill="var(--ink)" text-anchor="end">8.1</text>
 <line x1="16" y1="205.5" x2="522" y2="205.5" stroke="var(--rule)" stroke-width="1"/>
@@ -144,5 +150,5 @@
 <text x="428" y="706" font-size="15" fill="var(--ink)" text-anchor="end">13.6</text>
 <text x="512" y="706" font-size="15" fill="var(--ink)" text-anchor="end">14.8</text>
 <line x1="16" y1="715.5" x2="522" y2="715.5" stroke="var(--rule)" stroke-width="1"/>
-<text x="16" y="744" font-size="13" fill="var(--muted)">Character error %, lower is better. Green: best in the column.</text>
+<text x="16" y="744" font-size="13" fill="var(--muted)">Character error %, lower is better. Green: best in the column; blue: second best. Equal values are ties.</text>
 </svg>

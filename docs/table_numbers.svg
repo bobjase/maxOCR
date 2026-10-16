@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1042" height="760" viewBox="0 0 1042 760">
-<style>svg{--bg:#ffffff;--ink:#1f2328;--muted:#59636e;--rule:#d1d9e0;--head-rule:#9198a1;--best:#c6e8c6;--maxrow:#fbf1ea;--bar:#9a968e;--accent:#b5461f;--axis:#cfcac0;--grid:#ebe7df;}@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--ink:#e6edf3;--muted:#9198a1;--rule:#3d444d;--head-rule:#59636e;--best:#1f4d2c;--maxrow:#2a1f17;--bar:#6e7681;--accent:#f0883e;--axis:#3d444d;--grid:#21262d;}}text{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;}</style>
+<style>svg{--bg:#ffffff;--ink:#1f2328;--muted:#59636e;--rule:#d1d9e0;--head-rule:#9198a1;--best:#c6e8c6;--second:#d6e6f7;--maxrow:#fbf1ea;--bar:#9a968e;--accent:#b5461f;--axis:#cfcac0;--grid:#ebe7df;}@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--ink:#e6edf3;--muted:#9198a1;--rule:#3d444d;--head-rule:#59636e;--best:#1f4d2c;--second:#1c3350;--maxrow:#2a1f17;--bar:#6e7681;--accent:#f0883e;--axis:#3d444d;--grid:#21262d;}}text{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;}</style>
 <rect width="1042" height="760" rx="6" fill="var(--bg)"/>
 <text x="24" y="42" font-size="14" font-weight="600" fill="var(--muted)">Font</text>
 <text x="260" y="42" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">Clean</text>
@@ -21,9 +21,11 @@
 <text x="344" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
 <rect x="362" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="428" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">1.6</text>
+<rect x="446" y="59" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="512" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">3.9</text>
 <rect x="530" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="614" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="680" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.1</text>
 <rect x="698" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="764" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
@@ -44,9 +46,11 @@
 <rect x="530" y="89" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="106" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
 <text x="680" y="106" font-size="15" fill="var(--ink)" text-anchor="end">0.6</text>
+<rect x="698" y="89" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="106" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="848" y="106" font-size="15" fill="var(--ink)" text-anchor="end">2.5</text>
 <text x="932" y="106" font-size="15" fill="var(--ink)" text-anchor="end">28.9</text>
+<rect x="950" y="89" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="1016" y="106" font-size="15" fill="var(--ink)" text-anchor="end">4.4</text>
 <line x1="16" y1="115.5" x2="1026" y2="115.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="136" font-size="15" fill="var(--ink)">DejaVu Sans</text>
@@ -58,21 +62,25 @@
 <rect x="530" y="119" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="136" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
 <text x="680" y="136" font-size="15" fill="var(--ink)" text-anchor="end">1.5</text>
+<rect x="698" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="136" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
+<rect x="782" y="119" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="848" y="136" font-size="15" fill="var(--ink)" text-anchor="end">2.3</text>
 <text x="932" y="136" font-size="15" fill="var(--ink)" text-anchor="end">29.4</text>
 <text x="1016" y="136" font-size="15" fill="var(--ink)" text-anchor="end">4.6</text>
 <line x1="16" y1="145.5" x2="1026" y2="145.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="166" font-size="15" fill="var(--ink)">Sitka Text</text>
-<rect x="194" y="149" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="260" y="166" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.1</text>
-<rect x="278" y="149" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="344" y="166" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.1</text>
+<rect x="194" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
+<text x="260" y="166" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
+<rect x="278" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
+<text x="344" y="166" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
+<rect x="362" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="428" y="166" font-size="15" fill="var(--ink)" text-anchor="end">1.9</text>
 <text x="512" y="166" font-size="15" fill="var(--ink)" text-anchor="end">5.0</text>
 <rect x="530" y="149" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="166" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
 <text x="680" y="166" font-size="15" fill="var(--ink)" text-anchor="end">0.6</text>
+<rect x="698" y="149" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="166" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="848" y="166" font-size="15" fill="var(--ink)" text-anchor="end">4.1</text>
 <text x="932" y="166" font-size="15" fill="var(--ink)" text-anchor="end">30.0</text>
@@ -81,25 +89,30 @@
 <text x="24" y="196" font-size="15" fill="var(--ink)">Courier Prime</text>
 <rect x="194" y="179" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="196" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="179" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="196" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="196" font-size="15" fill="var(--ink)" text-anchor="end">7.3</text>
 <text x="512" y="196" font-size="15" fill="var(--ink)" text-anchor="end">4.7</text>
 <rect x="530" y="179" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="196" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
 <text x="680" y="196" font-size="15" fill="var(--ink)" text-anchor="end">2.7</text>
+<rect x="698" y="179" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="196" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="848" y="196" font-size="15" fill="var(--ink)" text-anchor="end">3.5</text>
+<rect x="866" y="179" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="932" y="196" font-size="15" fill="var(--ink)" text-anchor="end">26.3</text>
 <text x="1016" y="196" font-size="15" fill="var(--ink)" text-anchor="end">5.0</text>
 <line x1="16" y1="205.5" x2="1026" y2="205.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="226" font-size="15" fill="var(--ink)">Bookman Old Style</text>
 <rect x="194" y="209" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="226" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="209" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="226" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="226" font-size="15" fill="var(--ink)" text-anchor="end">3.7</text>
 <text x="512" y="226" font-size="15" fill="var(--ink)" text-anchor="end">5.2</text>
 <rect x="530" y="209" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="226" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="614" y="209" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="680" y="226" font-size="15" fill="var(--ink)" text-anchor="end">0.4</text>
 <rect x="698" y="209" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="764" y="226" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
@@ -110,11 +123,14 @@
 <text x="24" y="256" font-size="15" fill="var(--ink)">Noto Sans</text>
 <rect x="194" y="239" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="256" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="239" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="256" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="256" font-size="15" fill="var(--ink)" text-anchor="end">3.4</text>
 <text x="512" y="256" font-size="15" fill="var(--ink)" text-anchor="end">4.1</text>
+<rect x="530" y="239" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="596" y="256" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="680" y="256" font-size="15" fill="var(--ink)" text-anchor="end">1.9</text>
+<rect x="698" y="239" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="256" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="848" y="256" font-size="15" fill="var(--ink)" text-anchor="end">3.6</text>
 <text x="932" y="256" font-size="15" fill="var(--ink)" text-anchor="end">33.9</text>
@@ -123,6 +139,7 @@
 <text x="24" y="286" font-size="15" fill="var(--ink)">Open Sans</text>
 <rect x="194" y="269" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="286" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="269" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="286" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="286" font-size="15" fill="var(--ink)" text-anchor="end">3.5</text>
 <text x="512" y="286" font-size="15" fill="var(--ink)" text-anchor="end">4.2</text>
@@ -152,13 +169,15 @@
 <text x="24" y="346" font-size="15" fill="var(--ink)">Courier New</text>
 <rect x="194" y="329" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="346" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="329" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="346" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="346" font-size="15" fill="var(--ink)" text-anchor="end">9.5</text>
 <text x="512" y="346" font-size="15" fill="var(--ink)" text-anchor="end">6.0</text>
-<rect x="530" y="329" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="596" y="346" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.1</text>
+<rect x="530" y="329" width="74" height="24" rx="3" fill="var(--second)"/>
+<text x="596" y="346" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <rect x="614" y="329" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="680" y="346" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.1</text>
+<rect x="698" y="329" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="346" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="848" y="346" font-size="15" fill="var(--ink)" text-anchor="end">9.1</text>
 <text x="932" y="346" font-size="15" fill="var(--ink)" text-anchor="end">26.5</text>
@@ -167,6 +186,7 @@
 <text x="24" y="376" font-size="15" fill="var(--ink)">Segoe UI</text>
 <rect x="194" y="359" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="376" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="359" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="376" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="376" font-size="15" fill="var(--ink)" text-anchor="end">3.7</text>
 <text x="512" y="376" font-size="15" fill="var(--ink)" text-anchor="end">6.9</text>
@@ -181,6 +201,7 @@
 <text x="24" y="406" font-size="15" fill="var(--ink)">Roboto</text>
 <rect x="194" y="389" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="406" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="389" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="406" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="406" font-size="15" fill="var(--ink)" text-anchor="end">3.7</text>
 <text x="512" y="406" font-size="15" fill="var(--ink)" text-anchor="end">4.7</text>
@@ -193,6 +214,7 @@
 <text x="1016" y="406" font-size="15" fill="var(--ink)" text-anchor="end">6.0</text>
 <line x1="16" y1="415.5" x2="1026" y2="415.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="436" font-size="15" fill="var(--ink)">Consolas</text>
+<rect x="194" y="419" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="260" y="436" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="344" y="436" font-size="15" fill="var(--ink)" text-anchor="end">0.8</text>
 <text x="428" y="436" font-size="15" fill="var(--ink)" text-anchor="end">5.5</text>
@@ -210,6 +232,7 @@
 <text x="344" y="466" font-size="15" fill="var(--ink)" text-anchor="end">2.1</text>
 <text x="428" y="466" font-size="15" fill="var(--ink)" text-anchor="end">6.2</text>
 <text x="512" y="466" font-size="15" fill="var(--ink)" text-anchor="end">7.3</text>
+<rect x="530" y="449" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="596" y="466" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="680" y="466" font-size="15" fill="var(--ink)" text-anchor="end">5.0</text>
 <text x="764" y="466" font-size="15" fill="var(--ink)" text-anchor="end">0.4</text>
@@ -220,12 +243,14 @@
 <text x="24" y="496" font-size="15" fill="var(--ink)">Georgia</text>
 <rect x="194" y="479" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="496" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
+<rect x="278" y="479" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="344" y="496" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="428" y="496" font-size="15" fill="var(--ink)" text-anchor="end">2.4</text>
 <text x="512" y="496" font-size="15" fill="var(--ink)" text-anchor="end">6.9</text>
 <rect x="530" y="479" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="596" y="496" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.0</text>
 <text x="680" y="496" font-size="15" fill="var(--ink)" text-anchor="end">2.1</text>
+<rect x="698" y="479" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="764" y="496" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="848" y="496" font-size="15" fill="var(--ink)" text-anchor="end">7.8</text>
 <text x="932" y="496" font-size="15" fill="var(--ink)" text-anchor="end">40.7</text>
@@ -259,10 +284,12 @@
 <text x="1016" y="556" font-size="15" fill="var(--ink)" text-anchor="end">7.0</text>
 <line x1="16" y1="565.5" x2="1026" y2="565.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="586" font-size="15" fill="var(--ink)">Inter</text>
+<rect x="194" y="569" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="260" y="586" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="344" y="586" font-size="15" fill="var(--ink)" text-anchor="end">0.5</text>
 <text x="428" y="586" font-size="15" fill="var(--ink)" text-anchor="end">3.5</text>
 <text x="512" y="586" font-size="15" fill="var(--ink)" text-anchor="end">5.8</text>
+<rect x="530" y="569" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="596" y="586" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="680" y="586" font-size="15" fill="var(--ink)" text-anchor="end">6.6</text>
 <text x="764" y="586" font-size="15" fill="var(--ink)" text-anchor="end">0.8</text>
@@ -276,6 +303,7 @@
 <text x="344" y="616" font-size="15" fill="var(--ink)" text-anchor="end">0.7</text>
 <text x="428" y="616" font-size="15" fill="var(--ink)" text-anchor="end">3.8</text>
 <text x="512" y="616" font-size="15" fill="var(--ink)" text-anchor="end">6.1</text>
+<rect x="530" y="599" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="596" y="616" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="680" y="616" font-size="15" fill="var(--ink)" text-anchor="end">7.3</text>
 <text x="764" y="616" font-size="15" fill="var(--ink)" text-anchor="end">0.4</text>
@@ -288,6 +316,7 @@
 <text x="344" y="646" font-size="15" fill="var(--ink)" text-anchor="end">0.9</text>
 <text x="428" y="646" font-size="15" fill="var(--ink)" text-anchor="end">4.1</text>
 <text x="512" y="646" font-size="15" fill="var(--ink)" text-anchor="end">12.0</text>
+<rect x="530" y="629" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="596" y="646" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="680" y="646" font-size="15" fill="var(--ink)" text-anchor="end">6.5</text>
 <text x="764" y="646" font-size="15" fill="var(--ink)" text-anchor="end">0.8</text>
@@ -296,11 +325,12 @@
 <text x="1016" y="646" font-size="15" fill="var(--ink)" text-anchor="end">8.2</text>
 <line x1="16" y1="655.5" x2="1026" y2="655.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="676" font-size="15" fill="var(--ink)">Helvetica</text>
-<rect x="194" y="659" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="260" y="676" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">0.1</text>
+<rect x="194" y="659" width="74" height="24" rx="3" fill="var(--second)"/>
+<text x="260" y="676" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="344" y="676" font-size="15" fill="var(--ink)" text-anchor="end">1.3</text>
 <text x="428" y="676" font-size="15" fill="var(--ink)" text-anchor="end">3.6</text>
 <text x="512" y="676" font-size="15" fill="var(--ink)" text-anchor="end">19.3</text>
+<rect x="530" y="659" width="74" height="24" rx="3" fill="var(--second)"/>
 <text x="596" y="676" font-size="15" fill="var(--ink)" text-anchor="end">0.1</text>
 <text x="680" y="676" font-size="15" fill="var(--ink)" text-anchor="end">10.0</text>
 <text x="764" y="676" font-size="15" fill="var(--ink)" text-anchor="end">0.5</text>
@@ -320,5 +350,5 @@
 <text x="932" y="706" font-size="15" fill="var(--ink)" text-anchor="end">39.1</text>
 <text x="1016" y="706" font-size="15" fill="var(--ink)" text-anchor="end">13.6</text>
 <line x1="16" y1="715.5" x2="1026" y2="715.5" stroke="var(--rule)" stroke-width="1"/>
-<text x="16" y="744" font-size="13" fill="var(--muted)">Character error %, lower is better. Green: best in the column.</text>
+<text x="16" y="744" font-size="13" fill="var(--muted)">Character error %, lower is better. Green: best in the column; blue: second best. Equal values are ties.</text>
 </svg>

@@ -33,11 +33,13 @@ for k in KINDS:
         o = cell.drop("MaxOCR")
         best = o["mean"].idxmin()
         mx, ob = cell.loc["MaxOCR", "mean"], o.loc[best, "mean"]
-        lead = 0.0 if mx == ob else (-100.0 if ob == 0 else 100 * (1 - mx / ob))   # both perfect: a tie
+        # equal at one decimal, as the tables show them, is a tie (James, 2026-10-16: under 0.1 points is noise;
+        # compared as printed strings, since numpy rounds 0.05 down to 0.0)
+        lead = 0.0 if f"{mx:.1f}" == f"{ob:.1f}" else (-100.0 if ob == 0 else 100 * (1 - mx / ob))
         row[c] = round(lead)
         if lead < 0:
             behind.append((k, c, best, o.loc[best, "mean"], cell.loc["MaxOCR", "mean"]))
-        if all(cell.loc["MaxOCR", e] <= o.loc[best, e] for e in ENGINES):
+        if all(float(f"{cell.loc['MaxOCR', e]:.1f}") <= float(f"{o.loc[best, e]:.1f}") for e in ENGINES):
             agree += 1
         if c == "clean":
             everyday = cell.loc[["Arial", "Times New Roman", "Calibri"], "mean"].mean()

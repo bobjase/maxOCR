@@ -98,7 +98,8 @@ shown in grey; the engines get them after a final black-and-white step, as in mo
 
 ![Each print condition applied to its own name](docs/damage.png)
 
-In the tables below, the best value in each column has a green background. The same numbers are in
+In the tables below, the best value in each column has a green background and the second best a light blue one.
+Values that are equal as shown (to one decimal) count as ties: a difference under 0.1 points is noise. The same numbers are in
 [docs/benchmark_results.csv](docs/benchmark_results.csv).
 
 **Paragraphs**
@@ -118,24 +119,25 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 33% | 32% | 21% | 13% | 45% | −14% | −3% | 3% | −10% |
-| Codes | 14% | 31% | 6% | 16% | 13% | 29% | 22% | 6% | 1% |
-| Numbers | 0% | 100% | 19% | −9% | ≈0 | ≈0 | ≈0 | 19% | 30% |
+| Paragraphs | 37% | 17% | 20% | 11% | 46% | tie | tie | 4% | −6% |
+| Codes | 13% | 31% | 5% | 15% | 13% | 29% | 20% | 5% | 2% |
+| Numbers | tie | tie | 18% | −12% | tie | tie | tie | 24% | 30% |
 
-≈0 and the 0% for clean numbers: every good font reads these almost perfectly (0.00–0.4% errors), so the
-percentages there mean nothing.
+Tie: equal to one decimal. Clean, blurry, JPEG, ink-bleed and smudged numbers are read almost perfectly by
+every good font (under 0.1% errors for the best ones).
 
-- **Clean print.** MaxOCR makes 33% fewer errors than the best other font on paragraphs (Georgia) and 14% fewer on
+- **Clean print.** MaxOCR makes 37% fewer errors than the best other font on paragraphs (Georgia) and 13% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
-  38–52% fewer than the average of Arial, Times New Roman and Calibri.
+  37–55% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
-  - Paragraphs under heavy damage: Courier Prime makes 10% fewer errors (28.4% against 31.2%); under ink bleed,
-    Courier New (1.15% against 1.31%); smudged, Courier Prime (0.70% against 0.72%, a tie in practice). These wide
-    or monospaced fonts keep letters apart when the ink spreads.
-  - Numbers at low resolution: Calibri (3.5% against 3.8%).
-- **Engine agreement.** In 11 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
-  other font.
+  - Paragraphs under heavy damage: Courier Prime makes 6% fewer errors (28.4% against 30.1%). Monospaced fonts give
+    narrow letters such as l, t and the comma a full-width slot, so they stay apart when heavy damage blurs the line.
+  - Numbers at low resolution: Calibri (3.5% against 3.9%).
+- **Ties.** Ink-bleed paragraphs with Courier New (1.07% against 1.15%), smudged paragraphs with Courier Prime
+  (0.70% each), and the near-perfect numbers cells.
+- **Engine agreement.** In 13 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+  other font (ties included).
 - **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
 
