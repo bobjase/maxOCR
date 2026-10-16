@@ -24,3 +24,7 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
    swaps are combined and re-tested in batches, not one at a time.
 4. **Near misses.** The s from Carlito improved the overall average by 0.016 (threshold 0.02), so it was not kept.
    Worth a second look if you think the threshold is too strict.
+5. **Two-storey g.** The best g's in the screen (Unna, Newsreader) are two-storey (the "eyeglass" g), while ours is
+   one-storey. I'm testing Unna's g anyway; if it wins it changes the font's look more than other swaps. Kept only if
+   the gain is clear, and flagged here either way.
+6. **Broken donors.** Libre Bodoni's k fell apart when fitted to our weight (its hairlines vanish), so it was skipped.
