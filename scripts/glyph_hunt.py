@@ -76,7 +76,10 @@ def main():
     os.makedirs(W, exist_ok=True)
     sets = texts(a.n)
     kinds = a.kind.split(",")
-    base = TTFont(SRC)
+    # the font as it is now, read once: an export during a long screen must not change the base half-way
+    import io
+    src_bytes = open(SRC, "rb").read()
+    base = TTFont(io.BytesIO(src_bytes))
     ours = to_shape(glyph_path(base, a.char))
     dirs = sorted(glob.glob("vendor/ofl/*"))
     if a.donors:
@@ -84,7 +87,7 @@ def main():
     for d in ["(ours)"] + dirs:
         name = os.path.basename(d)
         try:
-            f = TTFont(SRC)
+            f = TTFont(io.BytesIO(src_bytes))
             if d != "(ours)":
                 p = regular(d)
                 if not p:
