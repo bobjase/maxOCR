@@ -52,3 +52,9 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
 13. **Hebrew look.** Cousine is monospaced, so its narrow letters (ז, ו-like shapes) sit in wide boxes and leave
     gaps; the צ from Frank Ruhl Libre has a serif flag the other letters lack. Both won on accuracy. A Hebrew reader
     should look at it.
+14. **Cyrillic look.** The non-Latin-shaped Cyrillic letters come mostly from Cousine, a monospaced sans, while the
+    look-alikes are our serif Latin letters, so a word like "Привет" mixes sans П and serif р. It tested best, but a
+    Cyrillic set drawn in our serif style might look more unified (the serif donors scored a little worse). Also
+    damaged Cyrillic is our weak spot (6.6 vs Verdana 3.6).
+15. **Next steps I did not take:** a second engine for Hebrew/Cyrillic (EasyOCR has a Cyrillic model; none here for
+    Hebrew), a letter sweep on Cyrillic capitals with a caps-heavy text, and a print-and-scan check of the new swaps.

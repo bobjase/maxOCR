@@ -6,8 +6,8 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.10.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
-alphabet (27 letters).
+**Version 0.99.11.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
+alphabet (27 letters) and the Russian Cyrillic alphabet (66 letters).
 
 ## Which file to use
 
@@ -165,6 +165,28 @@ best of 15 fonts with Hebrew:
 
 MaxOCR makes 11% fewer errors than the next font (Courier New) on average; Courier New is still ahead under heavy
 damage. One engine only, so treat this as a first result.
+
+## Cyrillic
+
+MaxOCR has the Russian alphabet (А–я, Ё ё). Letters that look the same as Latin ones (А В Е К М Н О Р С Т Х,
+а е о р с у х) are MaxOCR's own Latin letters; the rest come from open-licence fonts (most from Cousine; б and ь from
+Noto Sans, й from IBM Plex Serif), scaled to MaxOCR's size and weight and chosen by testing. Russian lines in the
+nine print conditions, read by Tesseract's Russian model; character error %, lower is better, best in bold; the
+eight best of 14 fonts with Cyrillic:
+
+| Font | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy | Average |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **MaxOCR** | 0.1 | 0.1 | **1.2** | **2.2** | 0.1 | 0.2 | 0.2 | 6.6 | **25.1** | **4.0** |
+| Verdana | **0.0** | 0.1 | 1.3 | 2.6 | **0.0** | 0.4 | 0.3 | **3.6** | 30.8 | 4.3 |
+| Source Code Pro | **0.0** | 0.2 | 4.3 | **2.2** | **0.0** | 0.5 | **0.1** | 4.4 | 28.6 | 4.5 |
+| Noto Sans | **0.0** | 0.1 | 1.3 | 2.6 | 0.1 | 0.6 | 0.2 | 4.4 | 32.4 | 4.6 |
+| Consolas | **0.0** | 0.1 | 4.1 | 2.6 | **0.0** | 1.7 | 0.6 | 3.9 | 30.5 | 4.8 |
+| Segoe UI | **0.0** | **0.0** | 1.3 | 3.2 | **0.0** | **0.1** | **0.1** | 5.2 | 34.3 | 4.9 |
+| Courier New | **0.0** | **0.0** | 2.0 | 2.6 | **0.0** | 0.2 | 0.3 | 10.8 | 30.9 | 5.2 |
+| Calibri | **0.0** | **0.0** | 1.3 | 4.2 | **0.0** | 4.0 | 0.5 | 4.1 | 33.0 | 5.2 |
+
+MaxOCR makes 8% fewer errors than the next font (Verdana) on average. One engine only, so treat this as a
+first result.
 
 ## Real print-and-scan test
 
