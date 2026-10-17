@@ -28,3 +28,5 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
    one-storey. I'm testing Unna's g anyway; if it wins it changes the font's look more than other swaps. Kept only if
    the gain is clear, and flagged here either way.
 6. **Broken donors.** Libre Bodoni's k fell apart when fitted to our weight (its hairlines vanish), so it was skipped.
+7. **Rare letters.** x, q, z (and likely j, X, Q, Z) are too rare in the test text for any swap to show a
+   difference. I left them unchanged. A test text rich in those letters would be needed to judge them.
