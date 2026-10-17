@@ -49,3 +49,6 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
     - **Test text:** Hebrew sentences I wrote, plus mixed Hebrew/number lines.
     - **Compared with:** Windows fonts that have Hebrew (Arial, Times New Roman, Courier New, Segoe UI, David, ...).
     Points to decide: is one engine enough? Should Hebrew follow MaxOCR's serif look or a plainer Hebrew style?
+13. **Hebrew look.** Cousine is monospaced, so its narrow letters (ז, ו-like shapes) sit in wide boxes and leave
+    gaps; the צ from Frank Ruhl Libre has a serif flag the other letters lack. Both won on accuracy. A Hebrew reader
+    should look at it.
