@@ -38,3 +38,14 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
    clear, and list it here so you can veto it.
 10. **The S from Literata** (in v0.99.8) looks a little heavier and wider than the other capitals in the specimen.
     It came in as part of a bundle of six small wins; worth a look.
+11. **Punctuation and rare marks.** Every punctuation mark screened within noise (gain <= 0.04): marks are rare in the
+    test text, so no swap can prove itself. Left unchanged.
+12. **Hebrew scope (started 2026-10-17).** MaxOCR has no Hebrew letters yet, so this is building, not swapping:
+    - **Readers:** of our four engines only Tesseract reads Hebrew (PaddleOCR's and EasyOCR's models here are
+      Latin, PARSeq is English). I downloaded Tesseract's official Hebrew model (tessdata_best `heb`). Hebrew results
+      therefore rest on one engine.
+    - **Letters:** the 22 letters plus 5 final forms, taken from OFL fonts that have Hebrew (Arimo, Cousine, Tinos,
+      Cardo, Frank Ruhl Libre, Open Sans), scaled to MaxOCR's size and weight, then swept letter by letter like Latin.
+    - **Test text:** Hebrew sentences I wrote, plus mixed Hebrew/number lines.
+    - **Compared with:** Windows fonts that have Hebrew (Arial, Times New Roman, Courier New, Segoe UI, David, ...).
+    Points to decide: is one engine enough? Should Hebrew follow MaxOCR's serif look or a plainer Hebrew style?
