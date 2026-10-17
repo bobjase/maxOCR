@@ -44,7 +44,13 @@ def fitted(donor: TTFont, ch: str, box, area):
             lo = m
         else:
             hi = m
-    return s.buffer((lo + hi) / 2, quad_segs=16).simplify(0.5)
+    s = s.buffer((lo + hi) / 2, quad_segs=16).simplify(0.5)
+    # back into the exact box: growing or shrinking moved the edges, and the benchmark sizes every font by its H's
+    # height (an H 8 units shorter printed the whole font 1% larger and faked a gain on codes)
+    b = s.bounds
+    s = affinity.translate(s, -b[0], -b[1])
+    s = affinity.scale(s, (box[2] - box[0]) / (b[2] - b[0]), (box[3] - box[1]) / (b[3] - b[1]), origin=(0, 0))
+    return affinity.translate(s, box[0], box[1])
 
 
 def main():
