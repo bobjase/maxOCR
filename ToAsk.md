@@ -33,3 +33,6 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
 8. **Size by H.** The benchmark gives every font the same capital height, measured on its H. A taller or shorter H
    changes the size of the whole font in the test, so H swaps must keep the exact height (now enforced). Worth knowing
    if we ever redraw the H by hand.
+9. **W and C were hand-fixed by you.** You spent care on the W (straight edges, round bottoms like the V) and the C
+   top. Donor W's and C's are being tested; if one wins it would replace your fixes. I'll only keep one if the gain is
+   clear, and list it here so you can veto it.
