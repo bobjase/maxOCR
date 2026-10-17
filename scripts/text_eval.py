@@ -46,7 +46,7 @@ def lines(mixed_case: bool = False) -> list[str]:
     return textwrap.wrap(" ".join(words), 22)   # PARSeq reads at most 25 characters
 
 
-def read_tesseract_dict(imgs, fold: bool = True):
+def read_tesseract_dict(imgs, fold: bool = True, lang: str = "eng"):
     from tesserocr import OEM, PSM, PyTessBaseAPI
     from PIL import Image
     from maxocr.engines.tesseract import TESSDATA_BEST
@@ -62,7 +62,7 @@ def read_tesseract_dict(imgs, fold: bool = True):
 
     def run(idx):
         res = []
-        with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang="eng", oem=OEM.LSTM_ONLY, psm=psm) as api:
+        with PyTessBaseAPI(path=str(TESSDATA_BEST) + "/", lang=lang, oem=OEM.LSTM_ONLY, psm=psm) as api:
             for i in idx:
                 api.SetImage(Image.fromarray(imgs[i]))
                 res.append((i, api.GetUTF8Text().strip()))
