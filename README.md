@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.7.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
+**Version 0.99.8.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks.
 
 ## Which file to use
 
@@ -121,19 +121,19 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 35% | 26% | 21% | 17% | 45% | 15% | tie | 16% | −3% |
-| Codes | 13% | 32% | 7% | 17% | 14% | 28% | 19% | 10% | 3% |
+| Paragraphs | 35% | 26% | 19% | 20% | 43% | 11% | tie | 18% | −1% |
+| Codes | 15% | 31% | 9% | 19% | 17% | 29% | 22% | 12% | 3% |
 | Numbers | tie | tie | 18% | −12% | tie | tie | tie | 24% | 30% |
 
 Tie: equal to one decimal. Clean, blurry, JPEG, ink-bleed and smudged numbers are read almost perfectly by
 every good font (under 0.1% errors for the best ones).
 
-- **Clean print.** MaxOCR makes 35% fewer errors than the best other font on paragraphs (Georgia) and 13% fewer on
+- **Clean print.** MaxOCR makes 35% fewer errors than the best other font on paragraphs (Georgia) and 15% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
-  37–53% fewer than the average of Arial, Times New Roman and Calibri.
+  38–53% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
-  - Paragraphs under heavy damage: Courier Prime makes 4% fewer errors (28.4% against 29.3%). Monospaced fonts give
+  - Paragraphs under heavy damage: Courier Prime makes 1% fewer errors (28.4% against 28.8%). Monospaced fonts give
     narrow letters such as l, t and the comma a full-width slot, so they stay apart when heavy damage blurs the line.
   - Numbers at low resolution: Calibri (3.5% against 3.9%).
 - **Ties.** Smudged paragraphs with Courier Prime (0.7% each) and the near-perfect numbers cells.
@@ -225,7 +225,9 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
    which keeps it apart from its neighbours under heavy damage.
 8. **Letter-by-letter sweep.** Every character is tried in the shapes of 80 open-licence fonts, fitted to MaxOCR's
    size and weight; a swap is kept only if the full benchmark improves and the letter still fits in. So far: the n
-   from Quattrocento, the h from Enriqueta and the H from Arvo (all SIL Open Font License).
+   from Quattrocento, the h from Enriqueta, the H and d from Arvo, the s from Carlito, the S from Literata, the T
+   from Sanchez, the D from Manuale and the G from Enriqueta (all SIL Open Font License). The last six each helped
+   only a little and were kept together.
 
 `DECISIONS.md` records every step, measurement and choice.
 

@@ -36,3 +36,5 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
 9. **W and C were hand-fixed by you.** You spent care on the W (straight edges, round bottoms like the V) and the C
    top. Donor W's and C's are being tested; if one wins it would replace your fixes. I'll only keep one if the gain is
    clear, and list it here so you can veto it.
+10. **The S from Literata** (in v0.99.8) looks a little heavier and wider than the other capitals in the specimen.
+    It came in as part of a bundle of six small wins; worth a look.

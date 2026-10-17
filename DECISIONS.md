@@ -1034,3 +1034,5 @@ Sweep round 2-3: s from Carlito 5.716 vs 5.732 (gain 0.016, under the 0.02 thres
 v0.99.6: the h from Enriqueta. Paragraphs / codes / numbers / all 4.51 / 9.76 / 2.86 / **5.71**; heavy paragraphs 29.29 (Courier Prime 28.41).
 Sweep rounds 4-7: g, k, E, T (best +0.005), S (Literata +0.016), N, I (+0.003) not kept. H candidates first showed a fake gain (weight matching made the H 8 units shorter; the benchmark sizes every font by its H, so the font printed 1% larger); `glyph_hunt.py` now puts the fitted glyph back into the exact box. Re-run: H from Arvo 5.680 (kept), Sanchez 5.684, Cambo worse.
 v0.99.7: the H from Arvo. Paragraphs / codes / numbers / all 4.50 / 9.69 / 2.86 / **5.68**, 29% fewer errors than Courier New; engine agreement 12 of 27.
+Sweep rounds 8-9: D, C, G, W, L, Y, P all within 0.016 alone. `combine_swaps.py` put six near misses in together (s Carlito, S Literata, d Arvo, T Sanchez, D Manuale, G Enriqueta; W and C left out as James's hand fixes): 5.680 -> 5.630, kept.
+v0.99.8: the six together. Paragraphs / codes / numbers / all 4.43 / 9.60 / 2.86 / **5.63**, 29% fewer errors than Courier New; heavy paragraphs 28.82 (Courier Prime 28.41).
