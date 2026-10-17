@@ -30,3 +30,6 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
 6. **Broken donors.** Libre Bodoni's k fell apart when fitted to our weight (its hairlines vanish), so it was skipped.
 7. **Rare letters.** x, q, z (and likely j, X, Q, Z) are too rare in the test text for any swap to show a
    difference. I left them unchanged. A test text rich in those letters would be needed to judge them.
+8. **Size by H.** The benchmark gives every font the same capital height, measured on its H. A taller or shorter H
+   changes the size of the whole font in the test, so H swaps must keep the exact height (now enforced). Worth knowing
+   if we ever redraw the H by hand.
