@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.11.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
+**Version 0.99.12.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
 alphabet (27 letters) and the Russian Cyrillic alphabet (66 letters).
 
 ## Which file to use
@@ -147,23 +147,24 @@ every good font (under 0.1% errors for the best ones).
 ## Hebrew
 
 MaxOCR has the Hebrew alphabet: the 22 letters and the 5 final forms. The letters come from open-licence fonts (most
-from Arimo; ר ד ז ה ל ם ב from Cousine; צ from Frank Ruhl Libre), scaled to MaxOCR's size and stroke weight, and each
-letter was chosen by testing. Hebrew lines in the same nine print conditions, read by Tesseract's Hebrew model (the
-only one of the four engines here that reads Hebrew); character error %, lower is better, best in bold; the eight
-best of 15 fonts with Hebrew:
+from Arimo; ר ז ל ם from Cousine; ב י ד from Varela Round; ת from Secular One; ה from IBM Plex Sans Hebrew; צ from
+Frank Ruhl Libre), scaled to MaxOCR's size and stroke weight, each letter chosen by testing. Hebrew lines in the same
+nine print conditions, read by Tesseract's Hebrew model (the only one of the four engines here that reads Hebrew);
+character error %, lower is better, best in bold; the eight best of 37 fonts with Hebrew (Windows, Google Fonts,
+the Linux Culmus set and DejaVu Sans):
 
 | Font | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy | Average |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **MaxOCR** | 0.1 | **0.1** | **1.4** | **4.2** | **0.1** | 0.3 | 0.7 | 6.3 | 31.0 | **4.9** |
-| Courier New | 0.1 | **0.1** | 4.0 | 5.8 | **0.1** | **0.1** | **0.4** | 11.8 | **27.6** | 5.6 |
+| **MaxOCR** | 0.1 | **0.1** | **1.3** | **3.9** | 0.1 | 0.2 | 0.9 | 6.4 | 29.1 | **4.7** |
+| Courier New | 0.1 | **0.1** | 4.0 | 5.8 | 0.1 | 0.1 | **0.4** | 11.8 | **27.6** | 5.6 |
 | Cousine | 1.3 | 1.1 | 5.0 | 5.9 | 1.8 | 1.1 | 2.3 | 6.7 | 27.9 | 5.9 |
+| DejaVu Sans | **0.0** | **0.1** | 2.3 | 7.3 | **0.0** | 0.6 | 1.8 | 6.9 | 35.6 | 6.1 |
+| David CLM | 0.7 | 0.9 | 2.6 | 6.0 | 0.5 | 1.3 | 3.1 | 6.9 | 34.7 | 6.3 |
+| Miriam Mono CLM | 0.3 | 0.5 | 4.1 | 8.3 | 0.4 | **0.0** | **0.4** | 12.2 | 30.5 | 6.3 |
 | Arimo | 0.5 | 1.0 | 1.6 | 8.8 | 0.3 | 3.6 | 2.0 | **5.9** | 34.8 | 6.5 |
-| Arial | **0.0** | 0.3 | 2.9 | 8.8 | 0.5 | 1.6 | 1.8 | 7.5 | 42.8 | 7.3 |
-| Segoe UI | 1.7 | 0.7 | 3.3 | 11.6 | 1.6 | 1.3 | 3.7 | 7.2 | 36.8 | 7.5 |
-| Tahoma | 0.8 | 0.9 | 2.6 | 9.7 | 0.6 | 1.9 | 4.4 | 7.6 | 41.1 | 7.7 |
-| Lucida Sans Unicode | 0.4 | 1.1 | 1.9 | 13.2 | 0.3 | 4.8 | 2.9 | 8.5 | 39.0 | 8.0 |
+| IBM Plex Sans Hebrew | 0.8 | 1.1 | 2.4 | 10.4 | 0.6 | 3.4 | 2.5 | 7.9 | 35.2 | 7.1 |
 
-MaxOCR makes 11% fewer errors than the next font (Courier New) on average; Courier New is still ahead under heavy
+MaxOCR makes 16% fewer errors than the next font (Courier New) on average; Courier New is still ahead under heavy
 damage. One engine only, so treat this as a first result.
 
 ## Cyrillic

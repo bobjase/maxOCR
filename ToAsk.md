@@ -58,3 +58,8 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
     damaged Cyrillic is our weak spot (6.6 vs Verdana 3.6).
 15. **Next steps I did not take:** a second engine for Hebrew/Cyrillic (EasyOCR has a Cyrillic model; none here for
     Hebrew), a letter sweep on Cyrillic capitals with a caps-heavy text, and a print-and-scan check of the new swaps.
+16. **Hebrew round 2 (Google + Linux fonts).** Now tested against 37 Hebrew fonts; MaxOCR stays first (4.68 vs
+    Courier New 5.55). The Linux Culmus fonts (David CLM, Miriam Mono CLM ...) are GPL with a font exception, not OFL,
+    so I only compared against them and never copied their letters. Hebrew now mixes letters from six fonts, but they
+    are close in style; the צ (Frank Ruhl Libre) is still the odd one out, and replacing it with David Libre's
+    tested worse.
