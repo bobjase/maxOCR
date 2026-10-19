@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.13.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
+**Version 0.99.14.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
 alphabet (27 letters) and the Russian Cyrillic alphabet (66 letters).
 
 ## Which file to use
@@ -29,7 +29,7 @@ crisp to badly damaged. Lower is better.
 
 ![Average character error by font and kind of text](docs/table_summary.svg)
 
-Across all three kinds of text, MaxOCR makes **30% fewer errors than the next best font** (Courier New) and **about
+Across all three kinds of text, MaxOCR makes **29% fewer errors than the next best font** (Courier New) and **about
 half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 2.9% against 4.4% for the
 next best font.
 
@@ -122,23 +122,23 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 35% | 28% | 19% | 22% | 41% | 10% | tie | 17% | −1% |
-| Codes | 17% | 31% | 7% | 18% | 18% | 30% | 22% | 14% | 4% |
+| Paragraphs | 35% | 28% | 19% | 18% | 43% | 10% | tie | 16% | −1% |
+| Codes | 16% | 31% | 8% | 15% | 18% | 29% | 21% | 11% | 4% |
 | Numbers | tie | tie | 16% | −9% | tie | tie | tie | 17% | 30% |
 
 Tie: equal to one decimal. Clean, blurry, JPEG, ink-bleed and smudged numbers are read almost perfectly by
 every good font (under 0.1% errors for the best ones).
 
-- **Clean print.** MaxOCR makes 35% fewer errors than the best other font on paragraphs (Georgia) and 17% fewer on
+- **Clean print.** MaxOCR makes 35% fewer errors than the best other font on paragraphs (Georgia) and 16% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
-  40–53% fewer than the average of Arial, Times New Roman and Calibri.
+  39–53% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
   - Paragraphs under heavy damage: Courier Prime makes 1% fewer errors (28.4% against 28.7%). Monospaced fonts give
     narrow letters such as l, t and the comma a full-width slot, so they stay apart when heavy damage blurs the line.
   - Numbers at low resolution: Calibri (3.5% against 3.8%).
 - **Ties.** Smudged paragraphs with Courier Prime (0.7% each) and the near-perfect numbers cells.
-- **Engine agreement.** In 14 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+- **Engine agreement.** In 13 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
   other font (ties included).
 - **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
@@ -271,8 +271,8 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
    which keeps it apart from its neighbours under heavy damage.
 8. **Letter-by-letter sweep.** Every character is tried in the shapes of 80 open-licence fonts, fitted to MaxOCR's
    size and weight; a swap is kept only if the full benchmark improves and the letter still fits in. So far: the n
-   from Quattrocento, the h from Enriqueta, the H and d from Arvo, the s from Carlito, the S from Literata (at 92%, to match the other capitals), the T
-   from Sanchez, the D from Manuale, the G from Enriqueta, the Y from Cardo, the P from Mate, the Q from Radley and the 1 from Aleo
+   from Quattrocento, the h from Enriqueta, the d from Arvo, the I from Source Code Pro, the s from Carlito, the S from Literata (at 92%, to match the other capitals), the T
+   from Faustina, the D from Manuale, the G from Enriqueta, the Y from Cardo, the P from Mate, the Q from Radley and the 1 from Aleo
    (all SIL Open Font License). Most of these helped only a little on their own and were kept in groups.
 
 `DECISIONS.md` records every step, measurement and choice.

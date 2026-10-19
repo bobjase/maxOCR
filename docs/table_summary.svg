@@ -12,11 +12,11 @@
 <rect x="194" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="260" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">4.4</text>
 <rect x="278" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="344" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">9.5</text>
+<text x="344" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">9.6</text>
 <rect x="362" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
 <text x="428" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">2.9</text>
 <rect x="446" y="59" width="74" height="24" rx="3" fill="var(--best)"/>
-<text x="512" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">5.6</text>
+<text x="512" y="76" font-size="15" fill="var(--ink)" text-anchor="end" font-weight="700">5.7</text>
 <line x1="16" y1="85.5" x2="522" y2="85.5" stroke="var(--rule)" stroke-width="1"/>
 <text x="24" y="106" font-size="15" fill="var(--ink)">Courier New</text>
 <text x="260" y="106" font-size="15" fill="var(--ink)" text-anchor="end">5.8</text>
