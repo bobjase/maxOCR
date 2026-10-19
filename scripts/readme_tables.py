@@ -88,7 +88,7 @@ def table_svg(path: str, cols: list[str], rows: list[tuple[str, list[float]]], n
     tinted, numbers right-aligned."""
     rank = [ranks([r[1][j] for r in rows]) for j in range(len(cols))]
     m, fw, cw, rh, hh = 16, 170, 84, 30, 40
-    W, H = m + fw + cw * len(cols) + m, m + hh + rh * len(rows) + 44
+    W, H = max(m + fw + cw * len(cols) + m, 7 * len(note) + 2 * m), m + hh + rh * len(rows) + 44   # room for the note
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', style_block(),
            f'<rect width="{W}" height="{H}" rx="6" fill="var(--bg)"/>',
            f'<text x="{m + 8}" y="{m + 26}" font-size="14" font-weight="600" fill="var(--muted)">Font</text>']
