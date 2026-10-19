@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.14.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
+**Version 0.99.15.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
 alphabet (27 letters) and the Russian Cyrillic alphabet (66 letters).
 
 ## Which file to use
@@ -122,16 +122,16 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 35% | 28% | 19% | 18% | 43% | 10% | tie | 16% | −1% |
-| Codes | 16% | 31% | 8% | 15% | 18% | 29% | 21% | 11% | 4% |
+| Paragraphs | 33% | 28% | 19% | 17% | 41% | 11% | tie | 16% | −1% |
+| Codes | 17% | 31% | 8% | 14% | 18% | 29% | 21% | 11% | 4% |
 | Numbers | tie | tie | 16% | −9% | tie | tie | tie | 17% | 30% |
 
 Tie: equal to one decimal. Clean, blurry, JPEG, ink-bleed and smudged numbers are read almost perfectly by
 every good font (under 0.1% errors for the best ones).
 
-- **Clean print.** MaxOCR makes 35% fewer errors than the best other font on paragraphs (Georgia) and 16% fewer on
+- **Clean print.** MaxOCR makes 33% fewer errors than the best other font on paragraphs (Georgia) and 17% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
-  39–53% fewer than the average of Arial, Times New Roman and Calibri.
+  40–52% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
   - Paragraphs under heavy damage: Courier Prime makes 1% fewer errors (28.4% against 28.6%). Monospaced fonts give
@@ -272,7 +272,7 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 8. **Letter-by-letter sweep.** Every character is tried in the shapes of 80 open-licence fonts, fitted to MaxOCR's
    size and weight; a swap is kept only if the full benchmark improves and the letter still fits in. Kept: the n from
    Quattrocento, the h from Enriqueta, the d from Arvo, the s from Carlito, the S from Literata (at 92%, to match the
-   other capitals), the D from Manuale, the G from Enriqueta, the Y from Cardo, the P from Mate, the Q from Radley and
+   other capitals), the D from Manuale, the G from Enriqueta (strokes thickened to match), the Y from Cardo, the P from Mate, the Q from Radley and
    the 1 from Aleo (all SIL Open Font License). Most helped only a little on their own and were kept in groups. The I
    (Source Code Pro) and T (Faustina) were then chosen for looks among the near-equal candidates.
 
