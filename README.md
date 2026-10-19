@@ -134,7 +134,7 @@ every good font (under 0.1% errors for the best ones).
   39–53% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
-  - Paragraphs under heavy damage: Courier Prime makes 1% fewer errors (28.4% against 28.7%). Monospaced fonts give
+  - Paragraphs under heavy damage: Courier Prime makes 1% fewer errors (28.4% against 28.6%). Monospaced fonts give
     narrow letters such as l, t and the comma a full-width slot, so they stay apart when heavy damage blurs the line.
   - Numbers at low resolution: Calibri (3.5% against 3.8%).
 - **Ties.** Smudged paragraphs with Courier Prime (0.7% each) and the near-perfect numbers cells.
