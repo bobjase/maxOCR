@@ -270,10 +270,11 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
    to 1.07%. Both fonts are under the SIL Open Font License. The o then got 40 units more space (half on each side),
    which keeps it apart from its neighbours under heavy damage.
 8. **Letter-by-letter sweep.** Every character is tried in the shapes of 80 open-licence fonts, fitted to MaxOCR's
-   size and weight; a swap is kept only if the full benchmark improves and the letter still fits in. So far: the n
-   from Quattrocento, the h from Enriqueta, the d from Arvo, the I from Source Code Pro, the s from Carlito, the S from Literata (at 92%, to match the other capitals), the T
-   from Faustina, the D from Manuale, the G from Enriqueta, the Y from Cardo, the P from Mate, the Q from Radley and the 1 from Aleo
-   (all SIL Open Font License). Most of these helped only a little on their own and were kept in groups.
+   size and weight; a swap is kept only if the full benchmark improves and the letter still fits in. Kept: the n from
+   Quattrocento, the h from Enriqueta, the d from Arvo, the s from Carlito, the S from Literata (at 92%, to match the
+   other capitals), the D from Manuale, the G from Enriqueta, the Y from Cardo, the P from Mate, the Q from Radley and
+   the 1 from Aleo (all SIL Open Font License). Most helped only a little on their own and were kept in groups. The I
+   (Source Code Pro) and T (Faustina) were then chosen for looks among the near-equal candidates.
 
 `DECISIONS.md` records every step, measurement and choice.
 
