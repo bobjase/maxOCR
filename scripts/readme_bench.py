@@ -185,7 +185,68 @@ def image(font: str, text: str, size: float, cond: str, k: int) -> np.ndarray:
         g = _ink_spread(g, 1.0 * PX, False)            # ink 1 px (at 200 dpi) heavier on every side
     elif cond == "smudged":
         g = smear(g, float(rng.uniform(-30, 30)), scale=PX, seed=k)
+    elif cond in EXTRA:
+        g = EXTRA[cond](g, rng)
     return otsu(g)
+
+
+# Real-world capture, added 2026-10-21 after an outside review ("thermal-printer receipts, dot-matrix ... photographed
+# at an angle on a crumpled receipt are harsher than modeled"). Each takes the clean grey line (0 ink, 255 paper, 300 dpi).
+def _thermal(g, rng):
+    """Thermal receipt printer: 203-dpi head (each dot on or off), faded and uneven heat across the line, one or two
+    dead heating elements (white streaks), grey paper."""
+    h, w = g.shape
+    f = DPI / 203
+    small = cv2.resize(g, (max(1, int(w / f)), max(1, int(h / f))), interpolation=cv2.INTER_AREA)
+    dots = (small < 128).astype(np.float32)
+    for _ in range(int(rng.integers(1, 3))):                     # dead elements: whole columns of the head (rows of text)
+        dots[int(rng.integers(0, dots.shape[0])), :] = 0
+    heat = 0.35 + 0.5 * (0.5 + 0.5 * np.sin(np.linspace(0, rng.uniform(2, 6), dots.shape[1]) + rng.uniform(0, 6)))
+    dots *= heat[None, :] * rng.uniform(0.45, 1.0, dots.shape)          # weak dots print too light to count
+    big = cv2.resize(dots, (w, h), interpolation=cv2.INTER_NEAREST)
+    big = cv2.GaussianBlur(big, (0, 0), 0.6)
+    return 238 - 220 * big + rng.normal(0, 6, g.shape)
+
+
+def _dot_matrix(g, rng):
+    """9-pin dot-matrix printer: each letter rebuilt from round dots on the head's grid (1/72 inch down, 1/120 across),
+    a worn ribbon (faint, uneven dots)."""
+    h, w = g.shape
+    py, px = DPI / 72, DPI / 120
+    out = np.full(g.shape, 255.0, np.float32)
+    r = 0.47 * py
+    wear = rng.uniform(0.55, 0.9)
+    for yc in np.arange(py / 2, h, py):
+        for xc in np.arange(px / 2, w, px):
+            y0, x0 = int(yc), int(xc)
+            if g[min(y0, h - 1), min(x0, w - 1)] < 128:
+                cv2.circle(out, (int(round(xc)), int(round(yc))), int(round(r)), float(255 * (1 - wear * rng.uniform(0.7, 1.0))), -1, lineType=cv2.LINE_AA)
+    return cv2.GaussianBlur(out, (0, 0), 0.7)
+
+
+def _phone(g, rng):
+    """Phone photo of a curled receipt: strong perspective, a page curl, shadow and uneven light, defocus and hand
+    shake, camera noise and JPEG."""
+    g = np.pad(g, 40, constant_values=255)
+    h, w = g.shape
+    src = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
+    j = lambda a: rng.uniform(-a, a)
+    dst = src + np.float32([[j(0.02 * w), j(0.12 * h)], [j(0.02 * w), j(0.12 * h)], [j(0.02 * w), j(0.12 * h)], [j(0.02 * w), j(0.12 * h)]])
+    g = cv2.warpPerspective(g, cv2.getPerspectiveTransform(src, dst), (w, h), borderValue=255)
+    xx = np.arange(w, dtype=np.float32); amp = rng.uniform(2, 5) * PX
+    mapy = (np.arange(h, dtype=np.float32)[:, None] + amp * np.sin(xx / w * np.pi * rng.uniform(1, 2.5))[None, :]).astype(np.float32)
+    g = cv2.remap(g, np.tile(xx, (h, 1)), mapy, cv2.INTER_LINEAR, borderValue=255)
+    light = 1 - rng.uniform(0.1, 0.3) * np.linspace(0, 1, w)[None, :] ** rng.uniform(0.5, 2)
+    g = 255 - (255 - g) * rng.uniform(0.75, 1.0)
+    g = g * light
+    g = cv2.GaussianBlur(g, (0, 0), rng.uniform(0.6, 1.4) * PX)
+    k = int(rng.integers(2, 5)); kern = np.zeros((k, k), np.float32); kern[k // 2, :] = 1 / k
+    g = cv2.filter2D(g, -1, kern) + rng.normal(0, 7, g.shape)
+    ok, enc = cv2.imencode(".jpg", np.clip(g, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 60])
+    return cv2.imdecode(enc, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+
+
+EXTRA = {"thermal": _thermal, "dot-matrix": _dot_matrix, "phone photo": _phone}
 
 
 def main():
@@ -193,6 +254,7 @@ def main():
     ap.add_argument("--n", type=int, default=300, help="lines per kind of text")
     ap.add_argument("--out", default="readme_bench.csv")
     ap.add_argument("--fonts", help="comma-separated subset of the font names")
+    ap.add_argument("--conds", help="comma-separated conditions (default: the nine README conditions; also thermal, dot-matrix, phone photo)")
     a = ap.parse_args()
     fonts = {k: v for k, v in FONTS.items() if not a.fonts or k in a.fonts.split(",")}
     sets = texts(a.n)
@@ -206,7 +268,7 @@ def main():
     done = {(r["font"], r["text"], r["condition"]) for r in rows}
     for name, path in fonts.items():
         size = matched_size(path, 8.0)
-        for cond in CONDITIONS:
+        for cond in (a.conds.split(",") if a.conds else CONDITIONS):
             for kind, lines in sets.items():
                 if (name, kind, cond) in done:
                     continue
