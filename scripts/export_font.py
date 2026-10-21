@@ -12,12 +12,19 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 
 
+COPYRIGHT = ("Copyright 2026 The MaxOCR Project Authors (https://github.com/bobjase/maxOCR), with glyphs from the "
+             "OFL fonts listed in CREDITS.md")
+LICENSE_DESC = ("This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available "
+                "with a FAQ at: https://openfontlicense.org")
+
+
 def export(src: str, dst: str, family: str, version: str = "0.1") -> None:
     f = TTFont(src)
     style = "Regular"
     ps = re.sub(r"[^A-Za-z0-9-]", "", family.replace(" ", "-"))[:29] + "-" + style
     full = f"{family} {style}"
-    names = {1: family, 2: style, 3: f"{version};MAXOCR;{ps}", 4: full, 5: f"Version {version}", 6: ps}
+    names = {0: COPYRIGHT, 1: family, 2: style, 3: f"{version};MAXOCR;{ps}", 4: full, 5: f"Version {version}", 6: ps,
+             11: "https://github.com/bobjase/maxOCR", 13: LICENSE_DESC, 14: "https://openfontlicense.org"}
     nt = f["name"]
     for nid, s in names.items():
         nt.setName(s, nid, 3, 1, 0x409)

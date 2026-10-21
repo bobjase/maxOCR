@@ -281,6 +281,7 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
 
 ## License
 
-MaxOCR is built only from fonts under the SIL Open Font License 1.1. It will be released under the same license with
-version 1.0, together with the license file and full credits for the source fonts. The fonts in the comparison were
-measured, never copied.
+MaxOCR is licensed under the [SIL Open Font License 1.1](LICENSE): free to use, embed, modify and share, including
+commercially; it may not be sold on its own. Its letters were built from other fonts under the same license; their
+names and copyright notices are in [CREDITS.md](CREDITS.md). The other fonts in the comparison were measured, never
+copied.
