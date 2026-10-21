@@ -171,7 +171,7 @@ detection) and Windows' built-in OCR, reading whole pages of 100 lines per kind 
 MaxOCR is first with all three: 26% fewer errors than the next font with Google, 14% with Windows, 6% with TrOCR
 (Courier Prime second each time). TrOCR's printed model writes only capitals, so it is scored ignoring case; that hides
 the capital/small-letter confusions (O/o, W/w) MaxOCR is designed against, so its lead there is understated. On
-paragraphs alone Google reads Courier Prime slightly better (2.05% against 2.14%, a tie as shown). Full results:
+paragraphs alone Google reads Courier Prime slightly better (2.05% against 2.14%). Full results:
 [docs/benchmark_extra.csv](docs/benchmark_extra.csv), [docs/benchmark_google.csv](docs/benchmark_google.csv),
 [docs/benchmark_windows.csv](docs/benchmark_windows.csv), [docs/benchmark_trocr.csv](docs/benchmark_trocr.csv).
 
