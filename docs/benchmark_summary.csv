@@ -1,23 +1,23 @@
 font,paragraphs,codes,numbers,all
-MaxOCR,4.47,9.6,2.88,5.65
-Courier New,5.8,12.41,5.71,7.97
-Courier Prime,5.24,13.79,4.97,8.0
-Sitka Text,6.03,13.41,4.64,8.03
-Verdana,6.42,13.57,4.42,8.14
-Source Code Pro,5.47,13.47,6.58,8.51
-Bookman Old Style,7.68,13.22,5.06,8.65
-DejaVu Sans,6.52,14.83,4.63,8.66
-Noto Sans,6.97,15.17,5.23,9.12
-Consolas,5.87,15.74,5.99,9.2
-Calibri,6.9,15.42,5.44,9.25
-Segoe UI,7.42,14.78,5.77,9.33
-Open Sans,7.09,15.82,5.34,9.41
-Roboto,8.33,15.24,5.98,9.85
-Ubuntu Mono,6.75,16.38,6.97,10.04
-Inter,7.64,15.45,7.09,10.06
-Georgia,8.82,17.0,6.69,10.84
-Times New Roman,10.44,16.06,6.71,11.07
-Arial,10.02,16.43,7.54,11.33
-Helvetica Neue,10.56,17.18,8.24,11.99
-Helvetica,10.87,17.51,9.74,12.71
-OCR-A Extended,9.0,21.84,13.59,14.81
+MaxOCR,4.22,9.8,2.61,5.54
+Courier Prime,4.76,13.67,4.21,7.55
+Courier New,5.39,12.69,5.01,7.7
+Sitka Text,5.48,13.45,4.2,7.71
+Verdana,6.03,13.86,3.89,7.93
+Bookman Old Style,7.1,13.03,4.45,8.19
+Source Code Pro,5.09,13.69,5.83,8.2
+DejaVu Sans,6.16,15.12,4.03,8.44
+Noto Sans,6.64,15.55,4.72,8.97
+Consolas,5.46,16.02,5.57,9.02
+Calibri,6.55,15.88,4.86,9.1
+Segoe UI,7.18,15.34,5.13,9.22
+Open Sans,6.85,16.35,4.8,9.33
+Roboto,7.93,15.71,5.39,9.68
+Inter,7.26,15.73,6.29,9.76
+Ubuntu Mono,6.46,16.8,6.41,9.89
+Georgia,8.39,16.9,6.27,10.52
+Arial,9.65,16.79,6.75,11.06
+Times New Roman,10.36,16.4,6.65,11.13
+Helvetica Neue,10.02,17.5,7.34,11.62
+Helvetica,10.35,17.83,8.54,12.24
+OCR-A Extended,8.6,22.31,13.62,14.84

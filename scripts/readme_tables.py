@@ -25,9 +25,24 @@ def style_block() -> str:
     return (f"<style>svg{{{light}}}@media (prefers-color-scheme: dark){{svg{{{dark}}}}}"
             f"text{{font-family:{FONTS};}}</style>")
 
-CONDS = ["clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy"]
-HEADS = ["Clean", "Blurry", "Noisy", "Low-res", "JPEG", "Ink bleed", "Smudged", "Damaged", "Heavy", "Average"]
-d = pd.read_csv("out/report/readme_bench.csv")
+CONDS = ["clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy", "thermal", "dot-matrix",
+         "phone photo"]
+HEADS = ["Clean", "Blurry", "Noisy", "Low-res", "JPEG", "Ink bleed", "Smudged", "Damaged", "Heavy", "Thermal", "Dot-matrix",
+         "Phone", "Average"]
+
+def load_bench(path="out/report/readme_bench.csv"):
+    """The nine README conditions plus the three real-world ones (thermal, 24-pin letter-quality dot-matrix, phone photo
+    straightened as a phone app would), all read by the same four engines (James, 2026-10-21: "shouldn't the new
+    deformations go into those tables?")."""
+    import os
+    d = pd.read_csv(path)
+    if os.path.exists("out/report/readme_bench_extra.csv"):
+        x = pd.read_csv("out/report/readme_bench_extra.csv")
+        x = x[x.condition.isin(["thermal", "dot-matrix lq", "phone photo"])].replace({"condition": {"dot-matrix lq": "dot-matrix"}})
+        d = pd.concat([d, x], ignore_index=True)
+    return d
+
+d = load_bench()
 avg = d.groupby(["font", "text"])["mean"].mean().unstack()[["paragraphs", "codes", "numbers"]]
 avg["all"] = avg.mean(1)
 avg = avg.sort_values("all")
@@ -128,7 +143,7 @@ for kind in ("paragraphs", "codes", "numbers"):
     p = d[d.text == kind].pivot(index="font", columns="condition", values="mean")[CONDS]
     p["avg"] = p.mean(1)
     p = p.sort_values("avg")
-    table_svg(f"docs/table_{kind}.svg", HEADS[:-1] + ["Average"], [(f, list(r.values)) for f, r in p.iterrows()], NOTE)
+    table_svg(f"docs/table_{kind}.svg", HEADS[:-1] + ["Average"], [(f, list(r.values)) for f, r in p.iterrows()], NOTE, cw=74)
     others = p.drop("MaxOCR")
     notbest += [(kind, c, others[c].idxmin(), round(others[c].min(), 2), round(p.loc["MaxOCR", c], 2))
                 for c in CONDS if not same(p.loc["MaxOCR", c], others[c].min()) and others[c].min() < p.loc["MaxOCR", c]]

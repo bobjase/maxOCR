@@ -22,15 +22,15 @@ The fonts are in the [fonts](fonts) folder.
 
 ## How it compares
 
-Character error rate (the share of characters an OCR engine gets wrong), averaged over nine print conditions from
-crisp to badly damaged. Lower is better.
+Character error rate (the share of characters an OCR engine gets wrong), averaged over twelve print conditions from
+crisp to badly damaged, including thermal receipts, dot-matrix print and phone photos. Lower is better.
 
 ![Average character error by font](docs/benchmark.svg)
 
 ![Average character error by font and kind of text](docs/table_summary.svg)
 
-Across all three kinds of text, MaxOCR makes **29% fewer errors than the next best font** (Courier New) and **about
-half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 2.9% against 4.4% for the
+Across all three kinds of text, MaxOCR makes **27% fewer errors than the next best font** (Courier Prime) and **about
+half as many as Arial, Times New Roman or Helvetica**. The gap is largest on **numbers**: 2.6% against 3.9% for the
 next best font.
 
 The comparison set:
@@ -81,7 +81,7 @@ Outside, the wind had picked up. Odile loaded the bags into the trunk: milk and 
 
 </details>
 
-The nine print conditions:
+The twelve print conditions:
 
 | Condition | What it simulates |
 |---|---|
@@ -94,12 +94,11 @@ The nine print conditions:
 | Smudged | A finger dragged through wet ink: the whole line smeared sideways, more in some places than others |
 | Damaged | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, mild |
 | Heavy | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, severe |
+| Thermal | A thermal receipt printer: 203-dpi head, faded and uneven heat, dead heating elements |
+| Dot-matrix | A 24-pin dot-matrix printer in letter-quality mode: overlapping pin dots, ribbon ink varying along the line |
+| Phone | A phone photo of a curled receipt (angle, curl, shadow, blur, camera noise), straightened and evened out as phone OCR apps do before reading |
 
-Three more real-world conditions are tested separately (see [Commercial readers and real-world
-capture](#commercial-readers-and-real-world-capture)): a thermal receipt printer, a 24-pin dot-matrix printer and a
-phone photo of a curled receipt.
-
-Here is each condition, including those three, applied to its own name. The left column is actual size, the 8 pt text as scanned at 300 dpi,
+Here is each condition applied to its own name. The left column is actual size, the 8 pt text as scanned at 300 dpi,
 exactly what the engines receive. The right column is the same damage enlarged 3× so you can see it. Both are
 shown in grey; the engines get them after a final black-and-white step, as in most OCR pipelines.
 
@@ -124,11 +123,11 @@ Values that are equal as shown (to one decimal) count as ties: a difference unde
 What the tables show: how many fewer errors MaxOCR makes than **the best other font** in each condition. A negative
 number means that font made fewer errors than MaxOCR.
 
-| Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 40% | 15% | 23% | 16% | 48% | 12% | 9% | 14% | −2% |
-| Codes | 20% | 31% | 9% | 15% | 19% | 30% | 21% | 11% | 4% |
-| Numbers | tie | tie | 16% | −9% | tie | tie | tie | 17% | 30% |
+| Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy | Thermal | Dot-matrix | Phone |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Paragraphs | 40% | 15% | 23% | 16% | 48% | 12% | 9% | 14% | −2% | −41% | 40% | −5% |
+| Codes | 20% | 31% | 9% | 15% | 19% | 30% | 21% | 11% | 4% | 4% | 24% | 9% |
+| Numbers | tie | tie | 16% | −9% | tie | tie | tie | 17% | 30% | 21% | tie | −18% |
 
 Tie: equal to one decimal. Clean, blurry, JPEG, ink-bleed and smudged numbers are read almost perfectly by
 every good font (under 0.1% errors for the best ones).
@@ -136,13 +135,16 @@ every good font (under 0.1% errors for the best ones).
 - **Clean print.** MaxOCR makes 40% fewer errors than the best other font on paragraphs (Georgia) and 20% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
   42–58% fewer than the average of Arial, Times New Roman and Calibri.
-- **Codes.** MaxOCR leads in all nine conditions.
+- **Codes.** MaxOCR leads in all twelve conditions.
 - **Where another font is ahead.**
   - Paragraphs under heavy damage: Courier Prime makes 2% fewer errors (28.4% against 29.0%). Monospaced fonts give
     narrow letters such as l, t and the comma a full-width slot, so they stay apart when heavy damage blurs the line.
-  - Numbers at low resolution: Calibri (3.5% against 3.8%).
+  - Paragraphs on thermal receipts: Courier Prime (2.0% against 2.8%), and phone photos: Courier Prime (6.8% against
+    7.2%), for the same reason.
+  - Numbers at low resolution: Calibri (3.5% against 3.8%); numbers in phone photos: Courier New and Courier Prime
+    (2.8% and 3.1% against 3.4%, MaxOCR third).
 - **Ties.** The near-perfect numbers cells.
-- **Engine agreement.** In 14 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+- **Engine agreement.** In 17 of the 36 cells, all four engines agree that MaxOCR does at least as well as the best
   other font (ties included).
 - **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
@@ -151,27 +153,26 @@ every good font (under 0.1% errors for the best ones).
 
 Added after an outside review asked about cloud OCR, modern transformer OCR and harsher real-world printing.
 
-**Three more print conditions**, read by the same four engines (300 lines each, all three kinds of text averaged):
-a thermal receipt printer (203-dpi head, faded and uneven heat, dead heating elements), a 24-pin dot-matrix printer in
-letter-quality mode (360 x 180 dpi grid, overlapping 0.2 mm pin dots, a second pass half a row down, ribbon ink
-varying along the line) and a phone photo of a curled receipt (strong perspective, page curl, shadow, blur, camera
-noise):
+**The three real-world conditions** (thermal, dot-matrix, phone photo) with the same four engines, averaged over
+the three kinds of text:
 
 ![Real-world conditions: character error by font](docs/table_extra.svg)
 
-MaxOCR is first in all three. (A first version simulated a 9-pin printer at 72 dpi, where MaxOCR came tenth; 9-pin
-printers print text in their own built-in fonts, so a TrueType font only reaches paper on 24-pin printers.)
+MaxOCR is first in all three. Two corrections along the way: a first dot-matrix version simulated a 9-pin printer at
+72 dpi (MaxOCR tenth), but 9-pin printers print text in their own built-in fonts, so a TrueType font only reaches
+paper on 24-pin printers; and a first phone-photo version gave the engines the tilted, curled line as captured, while
+phone OCR apps straighten the page first (every font scored about three times worse).
 
-**Three more engines**, on all twelve conditions (the nine above plus these three): Google Cloud Vision (document text
+**Three more engines**, on all twelve conditions: Google Cloud Vision (document text
 detection) and Windows' built-in OCR, reading whole pages of 100 lines per kind of text and condition, and TrOCR
 (Microsoft's transformer line reader, printed-text model, 300 lines each):
 
 ![More engines: character error by font](docs/table_commercial.svg)
 
-MaxOCR is first with all three: 26% fewer errors than the next font with Google, 14% with Windows, 6% with TrOCR
+MaxOCR is first with all three: 27% fewer errors than the next font with Google, 16% with Windows, 7% with TrOCR
 (Courier Prime second each time). TrOCR's printed model writes only capitals, so it is scored ignoring case; that hides
 the capital/small-letter confusions (O/o, W/w) MaxOCR is designed against, so its lead there is understated. On
-paragraphs alone Google reads Courier Prime slightly better (2.05% against 2.14%). Full results:
+paragraphs alone Windows and TrOCR read Courier Prime better (8.9% against 10.7%, 2.5% against 2.6%). Full results:
 [docs/benchmark_extra.csv](docs/benchmark_extra.csv), [docs/benchmark_google.csv](docs/benchmark_google.csv),
 [docs/benchmark_windows.csv](docs/benchmark_windows.csv), [docs/benchmark_trocr.csv](docs/benchmark_trocr.csv).
 

@@ -4,15 +4,18 @@
 import pandas as pd
 
 ENGINES = ["paddle", "easyocr", "parseq", "tesseract"]
-CONDS = ["clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy"]
+CONDS = ["clean", "blurry", "noisy", "low-res", "jpeg", "ink bleed", "smudged", "damaged", "heavy", "thermal", "dot-matrix",
+         "phone photo"]
 KINDS = ["paragraphs", "codes", "numbers"]
 
 import sys
-d = pd.read_csv(sys.argv[1] if len(sys.argv) > 1 else "out/report/readme_bench.csv")
+sys.path.insert(0, "scripts")
+from readme_tables_data import load_bench  # noqa: E402
+d = load_bench(sys.argv[1] if len(sys.argv) > 1 else "out/report/readme_bench.csv")
 avg = d.groupby(["font", "text"])["mean"].mean().unstack()
 avg["all"] = d.groupby("font")["mean"].mean()
 avg = avg.sort_values("all")
-print("Averages over the nine conditions:\n", avg.round(2).to_string(), "\n")
+print("Averages over the twelve conditions:\n", avg.round(2).to_string(), "\n")
 m = avg.loc["MaxOCR"]
 others = avg.drop("MaxOCR")
 nxt = others["all"].idxmin()
@@ -51,4 +54,4 @@ print(t[CONDS].to_string())
 print("\nClean: best other font and MaxOCR's lead over the Arial / Times New Roman / Calibri average:")
 print(t[["clean_best", "clean_vs_everyday"]].to_string())
 print("\nBehind:", [(k, c, b, round(v, 2), round(mx, 2)) for k, c, b, v, mx in behind])
-print(f"Engine agreement: all four engines at least as good as the best other font in {agree} of 27 cells")
+print(f"Engine agreement: all four engines at least as good as the best other font in {agree} of {3 * len(CONDS)} cells")

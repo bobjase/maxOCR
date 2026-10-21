@@ -227,16 +227,20 @@ def _dot_matrix(g, rng, dpi_y=72, dpi_x=120):
 
 
 def _phone(g, rng):
-    """Phone photo of a curled receipt: strong perspective, a page curl, shadow and uneven light, defocus and hand
-    shake, camera noise and JPEG."""
+    """Phone photo of a curled receipt, then what a phone OCR app does before reading (James, 2026-10-21: real apps
+    such as Google Lens or Microsoft Lens find the page, flatten it and even out the light). Capture: strong perspective,
+    a page curl, shadow and uneven light, defocus and hand shake, camera noise and JPEG. App: the page corners are found
+    with a small error and the perspective undone, the curl flattened to within a third of its depth, and the light
+    evened out by dividing by the blurred background."""
     g = np.pad(g, 40, constant_values=255)
     h, w = g.shape
     src = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
     j = lambda a: rng.uniform(-a, a)
     dst = src + np.float32([[j(0.02 * w), j(0.12 * h)], [j(0.02 * w), j(0.12 * h)], [j(0.02 * w), j(0.12 * h)], [j(0.02 * w), j(0.12 * h)]])
     g = cv2.warpPerspective(g, cv2.getPerspectiveTransform(src, dst), (w, h), borderValue=255)
-    xx = np.arange(w, dtype=np.float32); amp = rng.uniform(2, 5) * PX
-    mapy = (np.arange(h, dtype=np.float32)[:, None] + amp * np.sin(xx / w * np.pi * rng.uniform(1, 2.5))[None, :]).astype(np.float32)
+    xx = np.arange(w, dtype=np.float32); amp = rng.uniform(2, 5) * PX; freq = rng.uniform(1, 2.5)
+    curl = amp * np.sin(xx / w * np.pi * freq)
+    mapy = (np.arange(h, dtype=np.float32)[:, None] + curl[None, :]).astype(np.float32)
     g = cv2.remap(g, np.tile(xx, (h, 1)), mapy, cv2.INTER_LINEAR, borderValue=255)
     light = 1 - rng.uniform(0.1, 0.3) * np.linspace(0, 1, w)[None, :] ** rng.uniform(0.5, 2)
     g = 255 - (255 - g) * rng.uniform(0.75, 1.0)
@@ -245,7 +249,14 @@ def _phone(g, rng):
     k = int(rng.integers(2, 5)); kern = np.zeros((k, k), np.float32); kern[k // 2, :] = 1 / k
     g = cv2.filter2D(g, -1, kern) + rng.normal(0, 7, g.shape)
     ok, enc = cv2.imencode(".jpg", np.clip(g, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 60])
-    return cv2.imdecode(enc, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+    g = cv2.imdecode(enc, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+    # the app: flatten the curl (to within a third), undo the perspective from slightly misplaced corners, even the light
+    mapy = (np.arange(h, dtype=np.float32)[:, None] - 0.67 * curl[None, :]).astype(np.float32)
+    g = cv2.remap(g, np.tile(xx, (h, 1)), mapy, cv2.INTER_LINEAR, borderValue=255)
+    found = dst + np.float32([[j(0.005 * w), j(0.03 * h)] for _ in range(4)])
+    g = cv2.warpPerspective(g, cv2.getPerspectiveTransform(found, src), (w, h), borderValue=255)
+    bg = cv2.morphologyEx(g, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+    return np.clip(g / np.maximum(bg, 1) * 255, 0, 255)
 
 
 def _dot_matrix_lq(g, rng, passes=2):
