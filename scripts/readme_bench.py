@@ -208,11 +208,13 @@ def _thermal(g, rng):
     return 238 - 220 * big + rng.normal(0, 6, g.shape)
 
 
-def _dot_matrix(g, rng):
-    """9-pin dot-matrix printer: each letter rebuilt from round dots on the head's grid (1/72 inch down, 1/120 across),
-    a worn ribbon (faint, uneven dots)."""
+def _dot_matrix(g, rng, dpi_y=72, dpi_x=120):
+    """Dot-matrix printer in graphics mode: each letter rebuilt from round dots on the head's grid, a worn ribbon (faint,
+    uneven dots). Default 9-pin (1/72 inch down, 1/120 across); 24-pin printers (Epson LQ class), the ones a TrueType
+    font actually reaches through a Windows driver, print 180 x 180 dpi (James, 2026-10-21: "9 pin typically uses
+    built-in printer fonts")."""
     h, w = g.shape
-    py, px = DPI / 72, DPI / 120
+    py, px = DPI / dpi_y, DPI / dpi_x
     out = np.full(g.shape, 255.0, np.float32)
     r = 0.47 * py
     wear = rng.uniform(0.55, 0.9)
@@ -246,7 +248,31 @@ def _phone(g, rng):
     return cv2.imdecode(enc, cv2.IMREAD_GRAYSCALE).astype(np.float32)
 
 
-EXTRA = {"thermal": _thermal, "dot-matrix": _dot_matrix, "phone photo": _phone}
+def _dot_matrix_lq(g, rng, passes=2):
+    """24-pin dot-matrix in letter-quality graphics mode (Epson LQ class; Kimi review, 2026-10-21): dots addressed on a
+    1/360-inch grid across and 1/180 inch down, round pin dots 0.2 mm across so neighbours overlap; a second pass with
+    the paper moved half a row (1/360 inch) fills between rows (360 x 360, the printer's finest mode); the ribbon's ink
+    varies slowly along the line and the whole line is lightened by wear."""
+    h, w = g.shape
+    px, py = DPI / 360, DPI / 180
+    r = 0.5 * (0.2 / 25.4) * DPI                                  # pin 0.2 mm across
+    ink = (g < 128)
+    out = np.zeros(g.shape, np.float32)
+    density = 0.55 + 0.35 * (0.5 + 0.5 * np.sin(np.linspace(0, rng.uniform(1, 3), w) * np.pi + rng.uniform(0, 6)))
+    density *= rng.uniform(0.75, 1.0)                              # ribbon wear, whole line
+    for p in range(passes):
+        for yc in np.arange(py / 2 + p * py / 2, h, py):
+            for xc in np.arange(px / 2, w, px):
+                yi, xi = min(int(yc), h - 1), min(int(xc), w - 1)
+                if ink[yi, xi]:
+                    cv2.circle(out, (int(round(xc * 4)), int(round(yc * 4))), int(round(r * 4)),
+                               float(density[xi] * rng.uniform(0.8, 1.0)), -1, lineType=cv2.LINE_AA, shift=2)
+    return 255 - 255 * np.clip(cv2.GaussianBlur(out, (0, 0), 0.5), 0, 1)
+
+
+EXTRA = {"thermal": _thermal, "dot-matrix": _dot_matrix, "phone photo": _phone,
+         "dot-matrix lq": _dot_matrix_lq,
+         "dot-matrix 24": lambda g, rng: _dot_matrix(g, rng, 180, 180)}
 
 
 def main():

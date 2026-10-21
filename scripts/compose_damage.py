@@ -6,7 +6,7 @@ conds = [("clean", "Clean", "crisp print"), ("blurry", "Blurry", "out-of-focus s
          ("smudged", "Smudged", "a finger dragged through wet ink"), ("damaged", "Damaged", "blur, ink spread, tilt, noise, uneven light and JPEG together, mild"),
          ("heavy", "Heavy", "blur, ink spread, tilt, noise, uneven light and JPEG together, severe"),
          ("thermal", "Thermal", "receipt printer: coarse dots, faded and uneven heat"),
-         ("dot-matrix", "Dot-matrix", "letters built from pin dots, worn ribbon"),
+         ("dot-matrix", "Dot-matrix", "24-pin, letter quality: overlapping pin dots, uneven ribbon"),
          ("phone_photo", "Phone photo", "curled receipt: angle, curl, shadow, blur")]
 S = 0.75
 B = ImageFont.truetype("C:/Windows/Fonts/segoeuib.ttf", 26)

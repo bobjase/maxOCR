@@ -104,7 +104,7 @@ def main():
         for png in sorted(glob.glob(os.path.join(a.pages, "*", "*.png"))):
             font = os.path.basename(os.path.dirname(png)).replace("_", " ")
             kind, cond = os.path.basename(png)[:-4].split("_", 1)
-            cond = cond.replace("-", " ") if cond not in ("low-res", "dot-matrix") else cond
+            cond = {"ink-bleed": "ink bleed", "phone-photo": "phone photo", "dot-matrix-lq": "dot-matrix lq"}.get(cond, cond)
             if (font, kind, cond) in done:
                 continue
             if a.engine == "google" and calls >= a.max_calls:

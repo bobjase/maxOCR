@@ -96,8 +96,8 @@ The nine print conditions:
 | Heavy | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, severe |
 
 Three more real-world conditions are tested separately (see [Commercial readers and real-world
-capture](#commercial-readers-and-real-world-capture)): a thermal receipt printer, a dot-matrix printer and a phone
-photo of a curled receipt.
+capture](#commercial-readers-and-real-world-capture)): a thermal receipt printer, a 24-pin dot-matrix printer and a
+phone photo of a curled receipt.
 
 Here is each condition, including those three, applied to its own name. The left column is actual size, the 8 pt text as scanned at 300 dpi,
 exactly what the engines receive. The right column is the same damage enlarged 3× so you can see it. Both are
@@ -149,29 +149,31 @@ every good font (under 0.1% errors for the best ones).
 
 ## Commercial readers and real-world capture
 
-Two more tests, added after an outside review asked about cloud OCR and harsher real-world printing:
+Added after an outside review asked about cloud OCR, modern transformer OCR and harsher real-world printing.
 
 **Three more print conditions**, read by the same four engines (300 lines each, all three kinds of text averaged):
-a thermal receipt printer (203-dpi head, faded and uneven heat, dead heating elements), a 9-pin dot-matrix printer
-(letters rebuilt from round dots, worn ribbon) and a phone photo of a curled receipt (strong perspective, page curl,
-shadow, blur, camera noise):
+a thermal receipt printer (203-dpi head, faded and uneven heat, dead heating elements), a 24-pin dot-matrix printer in
+letter-quality mode (360 x 180 dpi grid, overlapping 0.2 mm pin dots, a second pass half a row down, ribbon ink
+varying along the line) and a phone photo of a curled receipt (strong perspective, page curl, shadow, blur, camera
+noise):
 
 ![Real-world conditions: character error by font](docs/table_extra.svg)
 
-MaxOCR is first on thermal receipts and phone photos; averaged with dot-matrix, Courier Prime is first and
-MaxOCR ties for second with Verdana.
+MaxOCR is first in all three. (A first version simulated a 9-pin printer at 72 dpi, where MaxOCR came tenth; 9-pin
+printers print text in their own built-in fonts, so a TrueType font only reaches paper on 24-pin printers.)
 
-Dot-matrix print is MaxOCR's weak spot: when letters are rebuilt from dots, its finer details break up and plainer
-fonts such as Verdana hold together better.
+**Three more engines**, on all twelve conditions (the nine above plus these three): Google Cloud Vision (document text
+detection) and Windows' built-in OCR, reading whole pages of 100 lines per kind of text and condition, and TrOCR
+(Microsoft's transformer line reader, printed-text model, 300 lines each):
 
-**Two commercial engines**, Google Cloud Vision (document text detection) and Windows' built-in OCR, on all twelve
-conditions (the nine above plus these three; 100 lines per kind of text and condition, read as whole pages):
+![More engines: character error by font](docs/table_commercial.svg)
 
-![Commercial engines: character error by font](docs/table_commercial.svg)
-
-MaxOCR is first with both. With Google, Consolas and Courier Prime are slightly ahead on paragraphs alone (2.5% and
-2.6% against 3.2%). Full results: [docs/benchmark_extra.csv](docs/benchmark_extra.csv),
-[docs/benchmark_google.csv](docs/benchmark_google.csv), [docs/benchmark_windows.csv](docs/benchmark_windows.csv).
+MaxOCR is first with all three: 26% fewer errors than the next font with Google, 14% with Windows, 6% with TrOCR
+(Courier Prime second each time). TrOCR's printed model writes only capitals, so it is scored ignoring case; that hides
+the capital/small-letter confusions (O/o, W/w) MaxOCR is designed against, so its lead there is understated. On
+paragraphs alone Google reads Courier Prime slightly better (2.05% against 2.14%, a tie as shown). Full results:
+[docs/benchmark_extra.csv](docs/benchmark_extra.csv), [docs/benchmark_google.csv](docs/benchmark_google.csv),
+[docs/benchmark_windows.csv](docs/benchmark_windows.csv), [docs/benchmark_trocr.csv](docs/benchmark_trocr.csv).
 
 ## Hebrew
 

@@ -791,3 +791,69 @@ Verdana,paragraphs,noisy,0.18
 Verdana,paragraphs,phone photo,10.79
 Verdana,paragraphs,smudged,0.06
 Verdana,paragraphs,thermal,0.18
+Arial,codes,dot-matrix lq,5.41
+Arial,numbers,dot-matrix lq,0.0
+Arial,paragraphs,dot-matrix lq,0.12
+Bookman Old Style,codes,dot-matrix lq,2.93
+Bookman Old Style,numbers,dot-matrix lq,0.0
+Bookman Old Style,paragraphs,dot-matrix lq,0.06
+Calibri,codes,dot-matrix lq,3.83
+Calibri,numbers,dot-matrix lq,0.0
+Calibri,paragraphs,dot-matrix lq,0.12
+Consolas,codes,dot-matrix lq,6.65
+Consolas,numbers,dot-matrix lq,0.0
+Consolas,paragraphs,dot-matrix lq,0.24
+Courier New,codes,dot-matrix lq,4.06
+Courier New,numbers,dot-matrix lq,0.0
+Courier New,paragraphs,dot-matrix lq,0.18
+Courier Prime,codes,dot-matrix lq,4.4
+Courier Prime,numbers,dot-matrix lq,0.0
+Courier Prime,paragraphs,dot-matrix lq,0.3
+DejaVu Sans,codes,dot-matrix lq,6.43
+DejaVu Sans,numbers,dot-matrix lq,0.0
+DejaVu Sans,paragraphs,dot-matrix lq,0.18
+Georgia,codes,dot-matrix lq,4.51
+Georgia,numbers,dot-matrix lq,0.0
+Georgia,paragraphs,dot-matrix lq,0.12
+Helvetica,codes,dot-matrix lq,5.52
+Helvetica,numbers,dot-matrix lq,0.0
+Helvetica,paragraphs,dot-matrix lq,0.12
+Helvetica Neue,codes,dot-matrix lq,5.86
+Helvetica Neue,numbers,dot-matrix lq,0.0
+Helvetica Neue,paragraphs,dot-matrix lq,0.06
+Inter,codes,dot-matrix lq,5.52
+Inter,numbers,dot-matrix lq,0.0
+Inter,paragraphs,dot-matrix lq,0.06
+MaxOCR,codes,dot-matrix lq,3.83
+MaxOCR,numbers,dot-matrix lq,0.0
+MaxOCR,paragraphs,dot-matrix lq,0.12
+Noto Sans,codes,dot-matrix lq,4.17
+Noto Sans,numbers,dot-matrix lq,0.0
+Noto Sans,paragraphs,dot-matrix lq,0.12
+OCR-A Extended,codes,dot-matrix lq,7.89
+OCR-A Extended,numbers,dot-matrix lq,0.45
+OCR-A Extended,paragraphs,dot-matrix lq,0.85
+Open Sans,codes,dot-matrix lq,6.2
+Open Sans,numbers,dot-matrix lq,0.0
+Open Sans,paragraphs,dot-matrix lq,0.18
+Roboto,codes,dot-matrix lq,4.85
+Roboto,numbers,dot-matrix lq,0.0
+Roboto,paragraphs,dot-matrix lq,0.18
+Segoe UI,codes,dot-matrix lq,3.83
+Segoe UI,numbers,dot-matrix lq,0.0
+Segoe UI,paragraphs,dot-matrix lq,0.12
+Sitka Text,codes,dot-matrix lq,4.62
+Sitka Text,numbers,dot-matrix lq,0.0
+Sitka Text,paragraphs,dot-matrix lq,0.12
+Source Code Pro,codes,dot-matrix lq,3.95
+Source Code Pro,numbers,dot-matrix lq,0.0
+Source Code Pro,paragraphs,dot-matrix lq,0.06
+Times New Roman,codes,dot-matrix lq,3.49
+Times New Roman,numbers,dot-matrix lq,0.0
+Times New Roman,paragraphs,dot-matrix lq,0.18
+Ubuntu Mono,codes,dot-matrix lq,5.07
+Ubuntu Mono,numbers,dot-matrix lq,0.0
+Ubuntu Mono,paragraphs,dot-matrix lq,0.12
+Verdana,codes,dot-matrix lq,5.3
+Verdana,numbers,dot-matrix lq,0.0
+Verdana,paragraphs,dot-matrix lq,0.3

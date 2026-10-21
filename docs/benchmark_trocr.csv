@@ -1,0 +1,793 @@
+font,text,condition,trocr
+MaxOCR,paragraphs,clean,0.73
+MaxOCR,codes,clean,4.55
+MaxOCR,numbers,clean,0.35
+MaxOCR,paragraphs,blurry,0.85
+MaxOCR,codes,blurry,5.21
+MaxOCR,numbers,blurry,0.54
+MaxOCR,paragraphs,noisy,0.81
+MaxOCR,codes,noisy,4.84
+MaxOCR,numbers,noisy,0.81
+MaxOCR,paragraphs,low-res,0.94
+MaxOCR,codes,low-res,8.57
+MaxOCR,numbers,low-res,0.73
+MaxOCR,paragraphs,jpeg,0.73
+MaxOCR,codes,jpeg,4.66
+MaxOCR,numbers,jpeg,0.5
+MaxOCR,paragraphs,ink bleed,0.7
+MaxOCR,codes,ink bleed,5.28
+MaxOCR,numbers,ink bleed,0.58
+MaxOCR,paragraphs,smudged,0.81
+MaxOCR,codes,smudged,5.06
+MaxOCR,numbers,smudged,0.54
+MaxOCR,paragraphs,damaged,1.41
+MaxOCR,codes,damaged,8.17
+MaxOCR,numbers,damaged,0.96
+MaxOCR,paragraphs,heavy,20.58
+MaxOCR,codes,heavy,31.12
+MaxOCR,numbers,heavy,13.54
+MaxOCR,paragraphs,thermal,1.17
+MaxOCR,codes,thermal,6.54
+MaxOCR,numbers,thermal,0.58
+MaxOCR,paragraphs,dot-matrix lq,0.77
+MaxOCR,codes,dot-matrix lq,4.55
+MaxOCR,numbers,dot-matrix lq,0.58
+MaxOCR,paragraphs,phone photo,14.82
+MaxOCR,codes,phone photo,23.61
+MaxOCR,numbers,phone photo,4.37
+Arial,paragraphs,clean,0.94
+Arial,codes,clean,6.58
+Arial,numbers,clean,1.27
+Arial,paragraphs,blurry,3.01
+Arial,codes,blurry,9.61
+Arial,numbers,blurry,1.0
+Arial,paragraphs,noisy,1.18
+Arial,codes,noisy,6.84
+Arial,numbers,noisy,1.8
+Arial,paragraphs,low-res,3.74
+Arial,codes,low-res,12.45
+Arial,numbers,low-res,1.5
+Arial,paragraphs,jpeg,0.9
+Arial,codes,jpeg,6.58
+Arial,numbers,jpeg,1.23
+Arial,paragraphs,ink bleed,2.78
+Arial,codes,ink bleed,9.76
+Arial,numbers,ink bleed,0.73
+Arial,paragraphs,smudged,1.22
+Arial,codes,smudged,7.21
+Arial,numbers,smudged,1.04
+Arial,paragraphs,damaged,3.23
+Arial,codes,damaged,10.16
+Arial,numbers,damaged,1.61
+Arial,paragraphs,heavy,33.01
+Arial,codes,heavy,48.82
+Arial,numbers,heavy,29.98
+Arial,paragraphs,thermal,2.28
+Arial,codes,thermal,9.24
+Arial,numbers,thermal,1.11
+Arial,paragraphs,dot-matrix lq,1.62
+Arial,codes,dot-matrix lq,6.87
+Arial,numbers,dot-matrix lq,0.92
+Arial,paragraphs,phone photo,22.74
+Arial,codes,phone photo,35.44
+Arial,numbers,phone photo,16.22
+Times New Roman,paragraphs,clean,1.17
+Times New Roman,codes,clean,8.13
+Times New Roman,numbers,clean,1.53
+Times New Roman,paragraphs,blurry,3.23
+Times New Roman,codes,blurry,10.75
+Times New Roman,numbers,blurry,1.23
+Times New Roman,paragraphs,noisy,1.66
+Times New Roman,codes,noisy,8.72
+Times New Roman,numbers,noisy,2.34
+Times New Roman,paragraphs,low-res,8.26
+Times New Roman,codes,low-res,22.69
+Times New Roman,numbers,low-res,2.65
+Times New Roman,paragraphs,jpeg,1.35
+Times New Roman,codes,jpeg,7.87
+Times New Roman,numbers,jpeg,1.5
+Times New Roman,paragraphs,ink bleed,2.03
+Times New Roman,codes,ink bleed,10.46
+Times New Roman,numbers,ink bleed,0.96
+Times New Roman,paragraphs,smudged,2.13
+Times New Roman,codes,smudged,9.53
+Times New Roman,numbers,smudged,1.34
+Times New Roman,paragraphs,damaged,5.53
+Times New Roman,codes,damaged,15.63
+Times New Roman,numbers,damaged,3.99
+Times New Roman,paragraphs,heavy,37.05
+Times New Roman,codes,heavy,48.78
+Times New Roman,numbers,heavy,25.96
+Times New Roman,paragraphs,thermal,5.23
+Times New Roman,codes,thermal,14.34
+Times New Roman,numbers,thermal,1.88
+Times New Roman,paragraphs,dot-matrix lq,1.67
+Times New Roman,codes,dot-matrix lq,9.24
+Times New Roman,numbers,dot-matrix lq,1.23
+Times New Roman,paragraphs,phone photo,28.81
+Times New Roman,codes,phone photo,39.32
+Times New Roman,numbers,phone photo,17.98
+Calibri,paragraphs,clean,0.77
+Calibri,codes,clean,5.47
+Calibri,numbers,clean,1.19
+Calibri,paragraphs,blurry,1.37
+Calibri,codes,blurry,8.31
+Calibri,numbers,blurry,1.07
+Calibri,paragraphs,noisy,1.15
+Calibri,codes,noisy,6.36
+Calibri,numbers,noisy,2.03
+Calibri,paragraphs,low-res,2.43
+Calibri,codes,low-res,11.6
+Calibri,numbers,low-res,1.23
+Calibri,paragraphs,jpeg,0.79
+Calibri,codes,jpeg,6.1
+Calibri,numbers,jpeg,1.19
+Calibri,paragraphs,ink bleed,2.26
+Calibri,codes,ink bleed,8.91
+Calibri,numbers,ink bleed,0.77
+Calibri,paragraphs,smudged,1.24
+Calibri,codes,smudged,7.28
+Calibri,numbers,smudged,1.15
+Calibri,paragraphs,damaged,2.26
+Calibri,codes,damaged,8.68
+Calibri,numbers,damaged,1.96
+Calibri,paragraphs,heavy,27.46
+Calibri,codes,heavy,46.08
+Calibri,numbers,heavy,22.43
+Calibri,paragraphs,thermal,1.41
+Calibri,codes,thermal,8.61
+Calibri,numbers,thermal,1.65
+Calibri,paragraphs,dot-matrix lq,0.88
+Calibri,codes,dot-matrix lq,6.58
+Calibri,numbers,dot-matrix lq,0.96
+Calibri,paragraphs,phone photo,18.36
+Calibri,codes,phone photo,33.63
+Calibri,numbers,phone photo,11.2
+Segoe UI,paragraphs,clean,0.71
+Segoe UI,codes,clean,5.8
+Segoe UI,numbers,clean,1.46
+Segoe UI,paragraphs,blurry,2.52
+Segoe UI,codes,blurry,8.31
+Segoe UI,numbers,blurry,0.96
+Segoe UI,paragraphs,noisy,1.43
+Segoe UI,codes,noisy,6.39
+Segoe UI,numbers,noisy,1.84
+Segoe UI,paragraphs,low-res,2.69
+Segoe UI,codes,low-res,12.38
+Segoe UI,numbers,low-res,1.8
+Segoe UI,paragraphs,jpeg,0.77
+Segoe UI,codes,jpeg,5.91
+Segoe UI,numbers,jpeg,1.5
+Segoe UI,paragraphs,ink bleed,2.07
+Segoe UI,codes,ink bleed,8.61
+Segoe UI,numbers,ink bleed,0.81
+Segoe UI,paragraphs,smudged,1.35
+Segoe UI,codes,smudged,7.72
+Segoe UI,numbers,smudged,1.38
+Segoe UI,paragraphs,damaged,3.5
+Segoe UI,codes,damaged,9.79
+Segoe UI,numbers,damaged,2.22
+Segoe UI,paragraphs,heavy,28.32
+Segoe UI,codes,heavy,44.35
+Segoe UI,numbers,heavy,23.7
+Segoe UI,paragraphs,thermal,1.84
+Segoe UI,codes,thermal,8.2
+Segoe UI,numbers,thermal,1.88
+Segoe UI,paragraphs,dot-matrix lq,1.13
+Segoe UI,codes,dot-matrix lq,6.98
+Segoe UI,numbers,dot-matrix lq,0.92
+Segoe UI,paragraphs,phone photo,24.17
+Segoe UI,codes,phone photo,37.07
+Segoe UI,numbers,phone photo,15.91
+Verdana,paragraphs,clean,0.83
+Verdana,codes,clean,5.1
+Verdana,numbers,clean,0.96
+Verdana,paragraphs,blurry,1.22
+Verdana,codes,blurry,6.87
+Verdana,numbers,blurry,0.69
+Verdana,paragraphs,noisy,0.92
+Verdana,codes,noisy,5.76
+Verdana,numbers,noisy,1.57
+Verdana,paragraphs,low-res,2.39
+Verdana,codes,low-res,9.79
+Verdana,numbers,low-res,1.04
+Verdana,paragraphs,jpeg,0.81
+Verdana,codes,jpeg,5.47
+Verdana,numbers,jpeg,0.88
+Verdana,paragraphs,ink bleed,2.01
+Verdana,codes,ink bleed,7.83
+Verdana,numbers,ink bleed,0.61
+Verdana,paragraphs,smudged,1.0
+Verdana,codes,smudged,6.28
+Verdana,numbers,smudged,0.77
+Verdana,paragraphs,damaged,2.2
+Verdana,codes,damaged,8.57
+Verdana,numbers,damaged,1.19
+Verdana,paragraphs,heavy,23.57
+Verdana,codes,heavy,36.36
+Verdana,numbers,heavy,19.02
+Verdana,paragraphs,thermal,1.13
+Verdana,codes,thermal,7.39
+Verdana,numbers,thermal,1.53
+Verdana,paragraphs,dot-matrix lq,1.6
+Verdana,codes,dot-matrix lq,5.99
+Verdana,numbers,dot-matrix lq,0.69
+Verdana,paragraphs,phone photo,15.57
+Verdana,codes,phone photo,28.71
+Verdana,numbers,phone photo,11.54
+Georgia,paragraphs,clean,0.9
+Georgia,codes,clean,8.31
+Georgia,numbers,clean,1.23
+Georgia,paragraphs,blurry,1.28
+Georgia,codes,blurry,9.76
+Georgia,numbers,blurry,1.0
+Georgia,paragraphs,noisy,1.03
+Georgia,codes,noisy,8.76
+Georgia,numbers,noisy,2.03
+Georgia,paragraphs,low-res,5.57
+Georgia,codes,low-res,22.95
+Georgia,numbers,low-res,1.53
+Georgia,paragraphs,jpeg,0.87
+Georgia,codes,jpeg,8.39
+Georgia,numbers,jpeg,1.23
+Georgia,paragraphs,ink bleed,2.05
+Georgia,codes,ink bleed,11.79
+Georgia,numbers,ink bleed,0.84
+Georgia,paragraphs,smudged,1.82
+Georgia,codes,smudged,9.68
+Georgia,numbers,smudged,1.23
+Georgia,paragraphs,damaged,5.13
+Georgia,codes,damaged,15.26
+Georgia,numbers,damaged,5.79
+Georgia,paragraphs,heavy,34.21
+Georgia,codes,heavy,52.81
+Georgia,numbers,heavy,30.64
+Georgia,paragraphs,thermal,2.52
+Georgia,codes,thermal,13.12
+Georgia,numbers,thermal,1.5
+Georgia,paragraphs,dot-matrix lq,1.24
+Georgia,codes,dot-matrix lq,8.54
+Georgia,numbers,dot-matrix lq,1.0
+Georgia,paragraphs,phone photo,22.17
+Georgia,codes,phone photo,39.54
+Georgia,numbers,phone photo,19.63
+Consolas,paragraphs,clean,0.85
+Consolas,codes,clean,5.25
+Consolas,numbers,clean,0.58
+Consolas,paragraphs,blurry,1.49
+Consolas,codes,blurry,8.65
+Consolas,numbers,blurry,0.81
+Consolas,paragraphs,noisy,0.94
+Consolas,codes,noisy,5.58
+Consolas,numbers,noisy,0.61
+Consolas,paragraphs,low-res,1.52
+Consolas,codes,low-res,10.98
+Consolas,numbers,low-res,0.88
+Consolas,paragraphs,jpeg,0.88
+Consolas,codes,jpeg,5.73
+Consolas,numbers,jpeg,0.58
+Consolas,paragraphs,ink bleed,1.34
+Consolas,codes,ink bleed,7.87
+Consolas,numbers,ink bleed,0.77
+Consolas,paragraphs,smudged,1.02
+Consolas,codes,smudged,6.91
+Consolas,numbers,smudged,0.58
+Consolas,paragraphs,damaged,1.71
+Consolas,codes,damaged,7.76
+Consolas,numbers,damaged,0.81
+Consolas,paragraphs,heavy,18.6
+Consolas,codes,heavy,39.14
+Consolas,numbers,heavy,19.63
+Consolas,paragraphs,thermal,1.3
+Consolas,codes,thermal,7.1
+Consolas,numbers,thermal,1.27
+Consolas,paragraphs,dot-matrix lq,0.98
+Consolas,codes,dot-matrix lq,6.36
+Consolas,numbers,dot-matrix lq,0.38
+Consolas,paragraphs,phone photo,12.94
+Consolas,codes,phone photo,27.01
+Consolas,numbers,phone photo,12.0
+Courier New,paragraphs,clean,0.87
+Courier New,codes,clean,5.8
+Courier New,numbers,clean,0.27
+Courier New,paragraphs,blurry,1.03
+Courier New,codes,blurry,6.32
+Courier New,numbers,blurry,0.38
+Courier New,paragraphs,noisy,1.15
+Courier New,codes,noisy,6.69
+Courier New,numbers,noisy,0.84
+Courier New,paragraphs,low-res,1.22
+Courier New,codes,low-res,8.57
+Courier New,numbers,low-res,0.38
+Courier New,paragraphs,jpeg,0.92
+Courier New,codes,jpeg,5.95
+Courier New,numbers,jpeg,0.27
+Courier New,paragraphs,ink bleed,0.81
+Courier New,codes,ink bleed,6.39
+Courier New,numbers,ink bleed,0.31
+Courier New,paragraphs,smudged,1.03
+Courier New,codes,smudged,5.73
+Courier New,numbers,smudged,0.27
+Courier New,paragraphs,damaged,6.56
+Courier New,codes,damaged,12.27
+Courier New,numbers,damaged,7.09
+Courier New,paragraphs,heavy,24.75
+Courier New,codes,heavy,39.69
+Courier New,numbers,heavy,30.41
+Courier New,paragraphs,thermal,1.67
+Courier New,codes,thermal,8.54
+Courier New,numbers,thermal,0.42
+Courier New,paragraphs,dot-matrix lq,0.94
+Courier New,codes,dot-matrix lq,6.21
+Courier New,numbers,dot-matrix lq,0.35
+Courier New,paragraphs,phone photo,25.9
+Courier New,codes,phone photo,41.09
+Courier New,numbers,phone photo,25.5
+Bookman Old Style,paragraphs,clean,0.85
+Bookman Old Style,codes,clean,6.87
+Bookman Old Style,numbers,clean,1.0
+Bookman Old Style,paragraphs,blurry,1.34
+Bookman Old Style,codes,blurry,8.91
+Bookman Old Style,numbers,blurry,0.73
+Bookman Old Style,paragraphs,noisy,1.0
+Bookman Old Style,codes,noisy,7.65
+Bookman Old Style,numbers,noisy,1.57
+Bookman Old Style,paragraphs,low-res,3.37
+Bookman Old Style,codes,low-res,14.34
+Bookman Old Style,numbers,low-res,0.96
+Bookman Old Style,paragraphs,jpeg,0.85
+Bookman Old Style,codes,jpeg,7.24
+Bookman Old Style,numbers,jpeg,1.0
+Bookman Old Style,paragraphs,ink bleed,1.52
+Bookman Old Style,codes,ink bleed,9.2
+Bookman Old Style,numbers,ink bleed,0.65
+Bookman Old Style,paragraphs,smudged,1.39
+Bookman Old Style,codes,smudged,8.13
+Bookman Old Style,numbers,smudged,0.84
+Bookman Old Style,paragraphs,damaged,3.89
+Bookman Old Style,codes,damaged,12.71
+Bookman Old Style,numbers,damaged,3.14
+Bookman Old Style,paragraphs,heavy,29.28
+Bookman Old Style,codes,heavy,44.09
+Bookman Old Style,numbers,heavy,23.2
+Bookman Old Style,paragraphs,thermal,1.84
+Bookman Old Style,codes,thermal,10.01
+Bookman Old Style,numbers,thermal,1.07
+Bookman Old Style,paragraphs,dot-matrix lq,1.09
+Bookman Old Style,codes,dot-matrix lq,7.24
+Bookman Old Style,numbers,dot-matrix lq,0.73
+Bookman Old Style,paragraphs,phone photo,20.26
+Bookman Old Style,codes,phone photo,33.15
+Bookman Old Style,numbers,phone photo,15.38
+Sitka Text,paragraphs,clean,0.85
+Sitka Text,codes,clean,6.73
+Sitka Text,numbers,clean,0.96
+Sitka Text,paragraphs,blurry,0.96
+Sitka Text,codes,blurry,6.91
+Sitka Text,numbers,blurry,0.84
+Sitka Text,paragraphs,noisy,1.07
+Sitka Text,codes,noisy,6.65
+Sitka Text,numbers,noisy,1.46
+Sitka Text,paragraphs,low-res,1.52
+Sitka Text,codes,low-res,11.68
+Sitka Text,numbers,low-res,1.11
+Sitka Text,paragraphs,jpeg,0.85
+Sitka Text,codes,jpeg,6.17
+Sitka Text,numbers,jpeg,1.07
+Sitka Text,paragraphs,ink bleed,1.62
+Sitka Text,codes,ink bleed,8.31
+Sitka Text,numbers,ink bleed,0.61
+Sitka Text,paragraphs,smudged,1.26
+Sitka Text,codes,smudged,7.28
+Sitka Text,numbers,smudged,0.84
+Sitka Text,paragraphs,damaged,2.2
+Sitka Text,codes,damaged,10.53
+Sitka Text,numbers,damaged,2.3
+Sitka Text,paragraphs,heavy,22.96
+Sitka Text,codes,heavy,40.13
+Sitka Text,numbers,heavy,22.12
+Sitka Text,paragraphs,thermal,1.66
+Sitka Text,codes,thermal,9.16
+Sitka Text,numbers,thermal,1.11
+Sitka Text,paragraphs,dot-matrix lq,0.96
+Sitka Text,codes,dot-matrix lq,6.47
+Sitka Text,numbers,dot-matrix lq,0.81
+Sitka Text,paragraphs,phone photo,13.3
+Sitka Text,codes,phone photo,27.64
+Sitka Text,numbers,phone photo,12.0
+OCR-A Extended,paragraphs,clean,2.48
+OCR-A Extended,codes,clean,11.68
+OCR-A Extended,numbers,clean,3.22
+OCR-A Extended,paragraphs,blurry,2.56
+OCR-A Extended,codes,blurry,14.63
+OCR-A Extended,numbers,blurry,1.3
+OCR-A Extended,paragraphs,noisy,2.86
+OCR-A Extended,codes,noisy,11.68
+OCR-A Extended,numbers,noisy,2.91
+OCR-A Extended,paragraphs,low-res,4.5
+OCR-A Extended,codes,low-res,19.07
+OCR-A Extended,numbers,low-res,12.46
+OCR-A Extended,paragraphs,jpeg,2.33
+OCR-A Extended,codes,jpeg,11.75
+OCR-A Extended,numbers,jpeg,3.6
+OCR-A Extended,paragraphs,ink bleed,4.25
+OCR-A Extended,codes,ink bleed,14.89
+OCR-A Extended,numbers,ink bleed,13.27
+OCR-A Extended,paragraphs,smudged,2.69
+OCR-A Extended,codes,smudged,13.23
+OCR-A Extended,numbers,smudged,5.02
+OCR-A Extended,paragraphs,damaged,3.23
+OCR-A Extended,codes,damaged,13.19
+OCR-A Extended,numbers,damaged,4.95
+OCR-A Extended,paragraphs,heavy,20.61
+OCR-A Extended,codes,heavy,38.1
+OCR-A Extended,numbers,heavy,26.53
+OCR-A Extended,paragraphs,thermal,2.97
+OCR-A Extended,codes,thermal,14.23
+OCR-A Extended,numbers,thermal,12.42
+OCR-A Extended,paragraphs,dot-matrix lq,3.14
+OCR-A Extended,codes,dot-matrix lq,12.34
+OCR-A Extended,numbers,dot-matrix lq,3.11
+OCR-A Extended,paragraphs,phone photo,15.48
+OCR-A Extended,codes,phone photo,34.81
+OCR-A Extended,numbers,phone photo,21.89
+Courier Prime,paragraphs,clean,0.83
+Courier Prime,codes,clean,5.28
+Courier Prime,numbers,clean,0.27
+Courier Prime,paragraphs,blurry,0.83
+Courier Prime,codes,blurry,5.73
+Courier Prime,numbers,blurry,0.31
+Courier Prime,paragraphs,noisy,1.02
+Courier Prime,codes,noisy,5.21
+Courier Prime,numbers,noisy,0.5
+Courier Prime,paragraphs,low-res,1.58
+Courier Prime,codes,low-res,9.76
+Courier Prime,numbers,low-res,0.81
+Courier Prime,paragraphs,jpeg,0.79
+Courier Prime,codes,jpeg,5.17
+Courier Prime,numbers,jpeg,0.31
+Courier Prime,paragraphs,ink bleed,1.35
+Courier Prime,codes,ink bleed,6.76
+Courier Prime,numbers,ink bleed,0.23
+Courier Prime,paragraphs,smudged,0.98
+Courier Prime,codes,smudged,5.58
+Courier Prime,numbers,smudged,0.31
+Courier Prime,paragraphs,damaged,1.75
+Courier Prime,codes,damaged,7.02
+Courier Prime,numbers,damaged,0.84
+Courier Prime,paragraphs,heavy,17.72
+Courier Prime,codes,heavy,36.1
+Courier Prime,numbers,heavy,16.76
+Courier Prime,paragraphs,thermal,1.11
+Courier Prime,codes,thermal,7.32
+Courier Prime,numbers,thermal,0.42
+Courier Prime,paragraphs,dot-matrix lq,0.83
+Courier Prime,codes,dot-matrix lq,5.65
+Courier Prime,numbers,dot-matrix lq,0.31
+Courier Prime,paragraphs,phone photo,9.69
+Courier Prime,codes,phone photo,21.8
+Courier Prime,numbers,phone photo,10.93
+Roboto,paragraphs,clean,0.77
+Roboto,codes,clean,5.54
+Roboto,numbers,clean,1.53
+Roboto,paragraphs,blurry,2.97
+Roboto,codes,blurry,7.76
+Roboto,numbers,blurry,1.0
+Roboto,paragraphs,noisy,1.35
+Roboto,codes,noisy,5.84
+Roboto,numbers,noisy,2.03
+Roboto,paragraphs,low-res,2.9
+Roboto,codes,low-res,11.05
+Roboto,numbers,low-res,1.57
+Roboto,paragraphs,jpeg,0.85
+Roboto,codes,jpeg,5.84
+Roboto,numbers,jpeg,1.46
+Roboto,paragraphs,ink bleed,2.58
+Roboto,codes,ink bleed,8.13
+Roboto,numbers,ink bleed,0.92
+Roboto,paragraphs,smudged,1.34
+Roboto,codes,smudged,6.95
+Roboto,numbers,smudged,1.3
+Roboto,paragraphs,damaged,2.92
+Roboto,codes,damaged,8.83
+Roboto,numbers,damaged,2.42
+Roboto,paragraphs,heavy,31.22
+Roboto,codes,heavy,45.08
+Roboto,numbers,heavy,25.35
+Roboto,paragraphs,thermal,1.88
+Roboto,codes,thermal,8.28
+Roboto,numbers,thermal,2.03
+Roboto,paragraphs,dot-matrix lq,1.64
+Roboto,codes,dot-matrix lq,6.39
+Roboto,numbers,dot-matrix lq,1.07
+Roboto,paragraphs,phone photo,20.67
+Roboto,codes,phone photo,32.67
+Roboto,numbers,phone photo,13.92
+Open Sans,paragraphs,clean,0.87
+Open Sans,codes,clean,5.84
+Open Sans,numbers,clean,1.61
+Open Sans,paragraphs,blurry,1.9
+Open Sans,codes,blurry,8.17
+Open Sans,numbers,blurry,1.15
+Open Sans,paragraphs,noisy,1.18
+Open Sans,codes,noisy,6.21
+Open Sans,numbers,noisy,2.26
+Open Sans,paragraphs,low-res,2.39
+Open Sans,codes,low-res,12.08
+Open Sans,numbers,low-res,1.69
+Open Sans,paragraphs,jpeg,0.87
+Open Sans,codes,jpeg,6.13
+Open Sans,numbers,jpeg,1.65
+Open Sans,paragraphs,ink bleed,2.46
+Open Sans,codes,ink bleed,8.65
+Open Sans,numbers,ink bleed,1.04
+Open Sans,paragraphs,smudged,1.39
+Open Sans,codes,smudged,6.36
+Open Sans,numbers,smudged,1.42
+Open Sans,paragraphs,damaged,2.61
+Open Sans,codes,damaged,9.39
+Open Sans,numbers,damaged,2.65
+Open Sans,paragraphs,heavy,27.18
+Open Sans,codes,heavy,43.53
+Open Sans,numbers,heavy,23.24
+Open Sans,paragraphs,thermal,1.97
+Open Sans,codes,thermal,8.91
+Open Sans,numbers,thermal,2.11
+Open Sans,paragraphs,dot-matrix lq,1.32
+Open Sans,codes,dot-matrix lq,6.95
+Open Sans,numbers,dot-matrix lq,1.15
+Open Sans,paragraphs,phone photo,21.87
+Open Sans,codes,phone photo,36.4
+Open Sans,numbers,phone photo,15.8
+Noto Sans,paragraphs,clean,0.83
+Noto Sans,codes,clean,5.54
+Noto Sans,numbers,clean,1.65
+Noto Sans,paragraphs,blurry,1.71
+Noto Sans,codes,blurry,8.02
+Noto Sans,numbers,blurry,1.04
+Noto Sans,paragraphs,noisy,1.05
+Noto Sans,codes,noisy,6.28
+Noto Sans,numbers,noisy,2.22
+Noto Sans,paragraphs,low-res,2.37
+Noto Sans,codes,low-res,10.5
+Noto Sans,numbers,low-res,1.53
+Noto Sans,paragraphs,jpeg,0.79
+Noto Sans,codes,jpeg,5.84
+Noto Sans,numbers,jpeg,1.69
+Noto Sans,paragraphs,ink bleed,2.18
+Noto Sans,codes,ink bleed,8.31
+Noto Sans,numbers,ink bleed,1.07
+Noto Sans,paragraphs,smudged,1.2
+Noto Sans,codes,smudged,6.73
+Noto Sans,numbers,smudged,1.34
+Noto Sans,paragraphs,damaged,3.16
+Noto Sans,codes,damaged,8.8
+Noto Sans,numbers,damaged,2.45
+Noto Sans,paragraphs,heavy,25.0
+Noto Sans,codes,heavy,43.05
+Noto Sans,numbers,heavy,22.2
+Noto Sans,paragraphs,thermal,1.35
+Noto Sans,codes,thermal,7.98
+Noto Sans,numbers,thermal,2.11
+Noto Sans,paragraphs,dot-matrix lq,1.18
+Noto Sans,codes,dot-matrix lq,6.25
+Noto Sans,numbers,dot-matrix lq,1.04
+Noto Sans,paragraphs,phone photo,18.88
+Noto Sans,codes,phone photo,33.67
+Noto Sans,numbers,phone photo,14.34
+DejaVu Sans,paragraphs,clean,0.81
+DejaVu Sans,codes,clean,6.06
+DejaVu Sans,numbers,clean,0.81
+DejaVu Sans,paragraphs,blurry,2.31
+DejaVu Sans,codes,blurry,8.39
+DejaVu Sans,numbers,blurry,0.73
+DejaVu Sans,paragraphs,noisy,1.18
+DejaVu Sans,codes,noisy,6.28
+DejaVu Sans,numbers,noisy,1.53
+DejaVu Sans,paragraphs,low-res,2.76
+DejaVu Sans,codes,low-res,10.09
+DejaVu Sans,numbers,low-res,1.38
+DejaVu Sans,paragraphs,jpeg,0.83
+DejaVu Sans,codes,jpeg,5.99
+DejaVu Sans,numbers,jpeg,0.92
+DejaVu Sans,paragraphs,ink bleed,2.67
+DejaVu Sans,codes,ink bleed,7.8
+DejaVu Sans,numbers,ink bleed,0.58
+DejaVu Sans,paragraphs,smudged,1.18
+DejaVu Sans,codes,smudged,6.91
+DejaVu Sans,numbers,smudged,0.81
+DejaVu Sans,paragraphs,damaged,3.14
+DejaVu Sans,codes,damaged,8.5
+DejaVu Sans,numbers,damaged,1.19
+DejaVu Sans,paragraphs,heavy,26.44
+DejaVu Sans,codes,heavy,39.58
+DejaVu Sans,numbers,heavy,19.25
+DejaVu Sans,paragraphs,thermal,1.73
+DejaVu Sans,codes,thermal,8.13
+DejaVu Sans,numbers,thermal,1.42
+DejaVu Sans,paragraphs,dot-matrix lq,1.41
+DejaVu Sans,codes,dot-matrix lq,6.43
+DejaVu Sans,numbers,dot-matrix lq,0.69
+DejaVu Sans,paragraphs,phone photo,17.42
+DejaVu Sans,codes,phone photo,29.67
+DejaVu Sans,numbers,phone photo,10.31
+Inter,paragraphs,clean,0.92
+Inter,codes,clean,5.88
+Inter,numbers,clean,1.07
+Inter,paragraphs,blurry,2.13
+Inter,codes,blurry,7.87
+Inter,numbers,blurry,0.88
+Inter,paragraphs,noisy,1.34
+Inter,codes,noisy,6.69
+Inter,numbers,noisy,1.65
+Inter,paragraphs,low-res,2.58
+Inter,codes,low-res,10.42
+Inter,numbers,low-res,1.76
+Inter,paragraphs,jpeg,0.9
+Inter,codes,jpeg,5.91
+Inter,numbers,jpeg,1.04
+Inter,paragraphs,ink bleed,2.11
+Inter,codes,ink bleed,7.65
+Inter,numbers,ink bleed,0.61
+Inter,paragraphs,smudged,1.37
+Inter,codes,smudged,7.72
+Inter,numbers,smudged,1.11
+Inter,paragraphs,damaged,2.46
+Inter,codes,damaged,8.09
+Inter,numbers,damaged,1.42
+Inter,paragraphs,heavy,28.4
+Inter,codes,heavy,42.9
+Inter,numbers,heavy,25.23
+Inter,paragraphs,thermal,1.81
+Inter,codes,thermal,8.13
+Inter,numbers,thermal,1.69
+Inter,paragraphs,dot-matrix lq,1.41
+Inter,codes,dot-matrix lq,6.69
+Inter,numbers,dot-matrix lq,0.81
+Inter,paragraphs,phone photo,19.86
+Inter,codes,phone photo,33.33
+Inter,numbers,phone photo,15.18
+Ubuntu Mono,paragraphs,clean,0.79
+Ubuntu Mono,codes,clean,6.02
+Ubuntu Mono,numbers,clean,0.5
+Ubuntu Mono,paragraphs,blurry,2.61
+Ubuntu Mono,codes,blurry,10.2
+Ubuntu Mono,numbers,blurry,5.56
+Ubuntu Mono,paragraphs,noisy,1.03
+Ubuntu Mono,codes,noisy,6.21
+Ubuntu Mono,numbers,noisy,1.11
+Ubuntu Mono,paragraphs,low-res,1.99
+Ubuntu Mono,codes,low-res,11.31
+Ubuntu Mono,numbers,low-res,2.03
+Ubuntu Mono,paragraphs,jpeg,0.85
+Ubuntu Mono,codes,jpeg,5.88
+Ubuntu Mono,numbers,jpeg,0.54
+Ubuntu Mono,paragraphs,ink bleed,2.44
+Ubuntu Mono,codes,ink bleed,8.28
+Ubuntu Mono,numbers,ink bleed,8.09
+Ubuntu Mono,paragraphs,smudged,1.0
+Ubuntu Mono,codes,smudged,6.5
+Ubuntu Mono,numbers,smudged,0.84
+Ubuntu Mono,paragraphs,damaged,2.37
+Ubuntu Mono,codes,damaged,10.46
+Ubuntu Mono,numbers,damaged,4.72
+Ubuntu Mono,paragraphs,heavy,23.83
+Ubuntu Mono,codes,heavy,43.02
+Ubuntu Mono,numbers,heavy,26.38
+Ubuntu Mono,paragraphs,thermal,1.67
+Ubuntu Mono,codes,thermal,8.76
+Ubuntu Mono,numbers,thermal,1.42
+Ubuntu Mono,paragraphs,dot-matrix lq,1.43
+Ubuntu Mono,codes,dot-matrix lq,6.47
+Ubuntu Mono,numbers,dot-matrix lq,1.88
+Ubuntu Mono,paragraphs,phone photo,19.32
+Ubuntu Mono,codes,phone photo,34.85
+Ubuntu Mono,numbers,phone photo,23.93
+Source Code Pro,paragraphs,clean,0.7
+Source Code Pro,codes,clean,4.95
+Source Code Pro,numbers,clean,0.42
+Source Code Pro,paragraphs,blurry,1.49
+Source Code Pro,codes,blurry,7.13
+Source Code Pro,numbers,blurry,3.91
+Source Code Pro,paragraphs,noisy,0.98
+Source Code Pro,codes,noisy,5.4
+Source Code Pro,numbers,noisy,0.92
+Source Code Pro,paragraphs,low-res,1.67
+Source Code Pro,codes,low-res,9.24
+Source Code Pro,numbers,low-res,0.73
+Source Code Pro,paragraphs,jpeg,0.66
+Source Code Pro,codes,jpeg,4.84
+Source Code Pro,numbers,jpeg,0.42
+Source Code Pro,paragraphs,ink bleed,2.05
+Source Code Pro,codes,ink bleed,7.28
+Source Code Pro,numbers,ink bleed,9.47
+Source Code Pro,paragraphs,smudged,0.9
+Source Code Pro,codes,smudged,5.69
+Source Code Pro,numbers,smudged,0.54
+Source Code Pro,paragraphs,damaged,2.07
+Source Code Pro,codes,damaged,8.02
+Source Code Pro,numbers,damaged,3.14
+Source Code Pro,paragraphs,heavy,20.46
+Source Code Pro,codes,heavy,35.07
+Source Code Pro,numbers,heavy,23.12
+Source Code Pro,paragraphs,thermal,1.47
+Source Code Pro,codes,thermal,6.32
+Source Code Pro,numbers,thermal,0.77
+Source Code Pro,paragraphs,dot-matrix lq,0.83
+Source Code Pro,codes,dot-matrix lq,5.21
+Source Code Pro,numbers,dot-matrix lq,0.92
+Source Code Pro,paragraphs,phone photo,16.98
+Source Code Pro,codes,phone photo,28.82
+Source Code Pro,numbers,phone photo,20.44
+Helvetica,paragraphs,clean,0.92
+Helvetica,codes,clean,6.69
+Helvetica,numbers,clean,1.23
+Helvetica,paragraphs,blurry,3.86
+Helvetica,codes,blurry,10.05
+Helvetica,numbers,blurry,1.07
+Helvetica,paragraphs,noisy,1.45
+Helvetica,codes,noisy,7.65
+Helvetica,numbers,noisy,1.65
+Helvetica,paragraphs,low-res,5.38
+Helvetica,codes,low-res,15.26
+Helvetica,numbers,low-res,1.99
+Helvetica,paragraphs,jpeg,0.92
+Helvetica,codes,jpeg,7.17
+Helvetica,numbers,jpeg,1.11
+Helvetica,paragraphs,ink bleed,2.93
+Helvetica,codes,ink bleed,10.98
+Helvetica,numbers,ink bleed,0.81
+Helvetica,paragraphs,smudged,1.3
+Helvetica,codes,smudged,8.13
+Helvetica,numbers,smudged,1.04
+Helvetica,paragraphs,damaged,3.72
+Helvetica,codes,damaged,10.9
+Helvetica,numbers,damaged,2.34
+Helvetica,paragraphs,heavy,35.28
+Helvetica,codes,heavy,48.85
+Helvetica,numbers,heavy,30.44
+Helvetica,paragraphs,thermal,2.33
+Helvetica,codes,thermal,9.35
+Helvetica,numbers,thermal,1.27
+Helvetica,paragraphs,dot-matrix lq,1.69
+Helvetica,codes,dot-matrix lq,7.76
+Helvetica,numbers,dot-matrix lq,0.77
+Helvetica,paragraphs,phone photo,23.04
+Helvetica,codes,phone photo,36.29
+Helvetica,numbers,phone photo,15.68
+Helvetica Neue,paragraphs,clean,0.98
+Helvetica Neue,codes,clean,5.88
+Helvetica Neue,numbers,clean,1.07
+Helvetica Neue,paragraphs,blurry,3.63
+Helvetica Neue,codes,blurry,10.01
+Helvetica Neue,numbers,blurry,0.96
+Helvetica Neue,paragraphs,noisy,1.34
+Helvetica Neue,codes,noisy,6.73
+Helvetica Neue,numbers,noisy,1.61
+Helvetica Neue,paragraphs,low-res,4.18
+Helvetica Neue,codes,low-res,14.26
+Helvetica Neue,numbers,low-res,2.49
+Helvetica Neue,paragraphs,jpeg,0.88
+Helvetica Neue,codes,jpeg,6.02
+Helvetica Neue,numbers,jpeg,1.04
+Helvetica Neue,paragraphs,ink bleed,2.76
+Helvetica Neue,codes,ink bleed,9.94
+Helvetica Neue,numbers,ink bleed,0.77
+Helvetica Neue,paragraphs,smudged,1.11
+Helvetica Neue,codes,smudged,7.39
+Helvetica Neue,numbers,smudged,0.84
+Helvetica Neue,paragraphs,damaged,4.02
+Helvetica Neue,codes,damaged,10.27
+Helvetica Neue,numbers,damaged,2.19
+Helvetica Neue,paragraphs,heavy,32.63
+Helvetica Neue,codes,heavy,49.19
+Helvetica Neue,numbers,heavy,27.8
+Helvetica Neue,paragraphs,thermal,2.43
+Helvetica Neue,codes,thermal,9.39
+Helvetica Neue,numbers,thermal,1.23
+Helvetica Neue,paragraphs,dot-matrix lq,1.96
+Helvetica Neue,codes,dot-matrix lq,6.98
+Helvetica Neue,numbers,dot-matrix lq,0.77
+Helvetica Neue,paragraphs,phone photo,21.35
+Helvetica Neue,codes,phone photo,36.59
+Helvetica Neue,numbers,phone photo,16.3

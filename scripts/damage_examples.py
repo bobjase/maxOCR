@@ -35,7 +35,7 @@ def show(cond: str, text: str, size: float, K: int = K) -> np.ndarray:
     rng = np.random.default_rng(7)
     if cond in EXTRA:                                   # made at the test resolution, then enlarged smoothly
         g = np.pad(render(FONT, text, size, 300), 6, constant_values=255).astype(np.float32)
-        g = EXTRA[cond](g, rng)
+        g = EXTRA["dot-matrix lq" if cond == "dot-matrix" else cond](g, rng)   # the README's dot-matrix is 24-pin letter quality
         return np.clip(up(g), 0, 255).astype(np.uint8)
     if cond in ("damaged", "heavy", "jpeg"):
         if cond == "jpeg":

@@ -23,6 +23,7 @@ def main():
     ap.add_argument("--n", type=int, default=100)
     ap.add_argument("--out", default="out/pages")
     ap.add_argument("--fonts", help="comma-separated subset")
+    ap.add_argument("--conds", help="comma-separated conditions (default: the nine plus thermal, dot-matrix, phone photo)")
     a = ap.parse_args()
     from maxocr.fonts import matched_size
     sets = texts(300)
@@ -30,7 +31,7 @@ def main():
     for name, path in fonts.items():
         size = matched_size(path, 8.0)
         d = os.path.join(a.out, name.replace(" ", "_")); os.makedirs(d, exist_ok=True)
-        for cond in list(CONDITIONS) + list(EXTRA):
+        for cond in (a.conds.split(",") if a.conds else list(CONDITIONS) + ["thermal", "dot-matrix", "phone photo"]):
             for kind in ("paragraphs", "codes", "numbers"):
                 f = os.path.join(d, f"{kind}_{cond.replace(' ', '-')}.png")
                 if os.path.exists(f):

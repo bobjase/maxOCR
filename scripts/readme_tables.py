@@ -140,16 +140,17 @@ print("not best:", notbest)
 from pathlib import Path
 if Path("out/report/readme_bench_extra.csv").exists():
     x = pd.read_csv("out/report/readme_bench_extra.csv")
-    p = x.pivot_table(index="font", columns="condition", values="mean")[["thermal", "dot-matrix", "phone photo"]]
+    p = x.pivot_table(index="font", columns="condition", values="mean")[["thermal", "dot-matrix lq", "phone photo"]]   # 24-pin LQ
     p["avg"] = p.mean(1); p = p.sort_values("avg")
     table_svg("docs/table_extra.svg", ["Thermal", "Dot-matrix", "Phone photo", "Average"],
               [(f, list(r.values)) for f, r in p.iterrows()], NOTE, cw=115)
-eng = [e for e in ("google", "windows") if Path(f"out/report/page_{e}.csv").exists()]
+eng = [e for e in ("google", "windows", "trocr") if Path(f"out/report/{'trocr_bench' if e == 'trocr' else 'page_' + e}.csv").exists()]
 if eng:
     cols = {}
     for e in eng:
-        d = pd.read_csv(f"out/report/page_{e}.csv")
+        d = pd.read_csv(f"out/report/{'trocr_bench' if e == 'trocr' else 'page_' + e}.csv")
+        d = d[d.condition != "dot-matrix"]          # the 9-pin simulation was replaced by 24-pin letter quality
         cols[e] = d.groupby("font")[e].mean()
     p = pd.DataFrame(cols); p["avg"] = p.mean(1); p = p.sort_values("avg")
-    table_svg("docs/table_commercial.svg", [{"google": "Google Vision", "windows": "Windows OCR"}[e] for e in eng] + ["Average"],
+    table_svg("docs/table_commercial.svg", [{"google": "Google Vision", "windows": "Windows OCR", "trocr": "TrOCR"}[e] for e in eng] + ["Average"],
               [(f, list(r.values)) for f, r in p.iterrows()], NOTE, cw=125)
