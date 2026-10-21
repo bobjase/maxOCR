@@ -6,7 +6,7 @@ but every character is shaped and spaced so that OCR engines confuse it with as 
 
 ![MaxOCR character set](docs/specimen.png)
 
-**Version 0.99.18.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
+**Version 0.99.19.** 95 characters: A–Z, a–z, 0–9, space and all 32 ASCII punctuation marks, plus the Hebrew
 alphabet (27 letters) and the Russian Cyrillic alphabet (66 letters).
 
 ## Which file to use
@@ -122,23 +122,23 @@ number means that font made fewer errors than MaxOCR.
 
 | Text | Clean | Blurry | Noisy | Low-res | JPEG | Ink bleed | Smudged | Damaged | Heavy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Paragraphs | 37% | 23% | 19% | 16% | 45% | 10% | 13% | 18% | −1% |
-| Codes | 19% | 30% | 8% | 15% | 19% | 29% | 21% | 11% | 4% |
+| Paragraphs | 33% | 14% | 22% | 16% | 45% | 11% | tie | 14% | −2% |
+| Codes | 20% | 31% | 8% | 15% | 18% | 29% | 21% | 11% | 4% |
 | Numbers | tie | tie | 16% | −9% | tie | tie | tie | 17% | 30% |
 
 Tie: equal to one decimal. Clean, blurry, JPEG, ink-bleed and smudged numbers are read almost perfectly by
 every good font (under 0.1% errors for the best ones).
 
-- **Clean print.** MaxOCR makes 37% fewer errors than the best other font on paragraphs (Georgia) and 19% fewer on
+- **Clean print.** MaxOCR makes 33% fewer errors than the best other font on paragraphs (Georgia) and 20% fewer on
   codes (Bookman Old Style); numbers in clean print are read perfectly in most fonts. Against the everyday fonts it's
-  42–55% fewer than the average of Arial, Times New Roman and Calibri.
+  42–52% fewer than the average of Arial, Times New Roman and Calibri.
 - **Codes.** MaxOCR leads in all nine conditions.
 - **Where another font is ahead.**
-  - Paragraphs under heavy damage: Courier Prime makes 1% fewer errors (28.4% against 28.7%). Monospaced fonts give
+  - Paragraphs under heavy damage: Courier Prime makes 2% fewer errors (28.4% against 29.1%). Monospaced fonts give
     narrow letters such as l, t and the comma a full-width slot, so they stay apart when heavy damage blurs the line.
   - Numbers at low resolution: Calibri (3.5% against 3.8%).
-- **Ties.** The near-perfect numbers cells.
-- **Engine agreement.** In 15 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
+- **Ties.** Smudged paragraphs with Courier Prime (0.7% each) and the near-perfect numbers cells.
+- **Engine agreement.** In 12 of the 27 cells, all four engines agree that MaxOCR does at least as well as the best
   other font (ties included).
 - **Helvetica and Helvetica Neue**, the classic Apple fonts, make slightly more errors than Arial.
 - **OCR-A Extended**, the font designed for 1960s optical readers, does worst overall with today's engines.
@@ -275,7 +275,8 @@ the test's noise. MaxOCR's advantage is with conventional OCR engines and damage
    other capitals), the D from Manuale, the G from Enriqueta (strokes thickened to match), the Y from Cardo, the P from Mate, the Q from Radley and
    the 1 from Aleo (all SIL Open Font License). Most helped only a little on their own and were kept in groups. The I
    (Source Code Pro) and T (Faustina) were then chosen for looks among the near-equal candidates, and h, b and d
-   were given the k's top serif and the h the n's feet, so the letters match.
+   were given the k's top serif and the h the n's feet, so the letters match. The s and d were redrawn with real curves (the s keeps Carlito's
+   tips, the d gets the a's tail).
 
 `DECISIONS.md` records every step, measurement and choice.
 

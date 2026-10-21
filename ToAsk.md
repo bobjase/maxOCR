@@ -63,3 +63,7 @@ Judgement calls made while James was away (glyph sweep, started 2026-10-16). New
     so I only compared against them and never copied their letters. Hebrew now mixes letters from six fonts, but they
     are close in style; the צ (Frank Ruhl Libre) is still the odd one out, and replacing it with David Libre's
     tested worse.
+17. **Other swapped letters are straight-segment outlines too.** The sweep's fitting step turned every swapped letter
+    into chains of short straight lines (the s and d are now fixed). Still affected: n, h, H-free capitals G, S, T, D,
+    Y, P, Q, I, 1, 3, e and the Hebrew/Cyrillic letters. At text size this mostly shows as slightly flat curves; each
+    can be rebuilt with real curves the way the s and d were.
