@@ -95,7 +95,11 @@ The nine print conditions:
 | Damaged | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, mild |
 | Heavy | Blur, ink spread, tilt, perspective, uneven light, noise and JPEG together, severe |
 
-Here is each condition applied to its own name. The left column is actual size, the 8 pt text as scanned at 300 dpi,
+Three more real-world conditions are tested separately (see [Commercial readers and real-world
+capture](#commercial-readers-and-real-world-capture)): a thermal receipt printer, a dot-matrix printer and a phone
+photo of a curled receipt.
+
+Here is each condition, including those three, applied to its own name. The left column is actual size, the 8 pt text as scanned at 300 dpi,
 exactly what the engines receive. The right column is the same damage enlarged 3× so you can see it. Both are
 shown in grey; the engines get them after a final black-and-white step, as in most OCR pipelines.
 

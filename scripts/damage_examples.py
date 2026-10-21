@@ -17,12 +17,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from maxocr.degrade import degrade, make_instance  # noqa: E402
 from maxocr.fonts import matched_size  # noqa: E402
 from maxocr.render import render  # noqa: E402
-from readme_bench import smear  # noqa: E402
+from readme_bench import EXTRA, smear  # noqa: E402
 
 K = 4                       # display scale vs the test's 200 dpi
 FONT = "out/fonts/MaxOCR.ttf"
 WORDS = {"clean": "Clean", "blurry": "Blurry", "noisy": "Noisy", "low-res": "Low-res", "jpeg": "JPEG",
-         "ink bleed": "Ink bleed", "smudged": "Smudged", "damaged": "Damaged", "heavy": "Heavy"}
+         "ink bleed": "Ink bleed", "smudged": "Smudged", "damaged": "Damaged", "heavy": "Heavy",
+         "thermal": "Thermal", "dot-matrix": "Dot-matrix", "phone photo": "Phone photo"}
 
 
 def show(cond: str, text: str, size: float, K: int = K) -> np.ndarray:
@@ -32,6 +33,10 @@ def show(cond: str, text: str, size: float, K: int = K) -> np.ndarray:
         return img if K == 1 else cv2.resize(img, (img.shape[1] * K, img.shape[0] * K), interpolation=interp)
 
     rng = np.random.default_rng(7)
+    if cond in EXTRA:                                   # made at the test resolution, then enlarged smoothly
+        g = np.pad(render(FONT, text, size, 300), 6, constant_values=255).astype(np.float32)
+        g = EXTRA[cond](g, rng)
+        return np.clip(up(g), 0, 255).astype(np.uint8)
     if cond in ("damaged", "heavy", "jpeg"):
         if cond == "jpeg":
             g = np.pad(render(FONT, text, size, 300), 6, constant_values=255)
