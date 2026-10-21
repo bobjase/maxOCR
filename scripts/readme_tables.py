@@ -83,11 +83,11 @@ def ranks(col: list[float]) -> list[int]:
             for v in col]
 
 
-def table_svg(path: str, cols: list[str], rows: list[tuple[str, list[float]]], note: str):
+def table_svg(path: str, cols: list[str], rows: list[tuple[str, list[float]]], note: str, cw: int = 84):
     """A table: best (lowest) value in each column on a green background, second best light blue, the MaxOCR row
     tinted, numbers right-aligned."""
     rank = [ranks([r[1][j] for r in rows]) for j in range(len(cols))]
-    m, fw, cw, rh, hh = 16, 170, 84, 30, 40
+    m, fw, rh, hh = 16, 170, 30, 40
     W, H = max(m + fw + cw * len(cols) + m, 7 * len(note) + 2 * m), m + hh + rh * len(rows) + 44   # room for the note
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', style_block(),
            f'<rect width="{W}" height="{H}" rx="6" fill="var(--bg)"/>',
@@ -135,3 +135,21 @@ for kind in ("paragraphs", "codes", "numbers"):
 d.to_csv("docs/benchmark_results.csv", index=False)
 print(avg.round(2).to_string())
 print("not best:", notbest)
+
+# real-world conditions and commercial engines (2026-10-21), when their results exist
+from pathlib import Path
+if Path("out/report/readme_bench_extra.csv").exists():
+    x = pd.read_csv("out/report/readme_bench_extra.csv")
+    p = x.pivot_table(index="font", columns="condition", values="mean")[["thermal", "dot-matrix", "phone photo"]]
+    p["avg"] = p.mean(1); p = p.sort_values("avg")
+    table_svg("docs/table_extra.svg", ["Thermal", "Dot-matrix", "Phone photo", "Average"],
+              [(f, list(r.values)) for f, r in p.iterrows()], NOTE, cw=115)
+eng = [e for e in ("google", "windows") if Path(f"out/report/page_{e}.csv").exists()]
+if eng:
+    cols = {}
+    for e in eng:
+        d = pd.read_csv(f"out/report/page_{e}.csv")
+        cols[e] = d.groupby("font")[e].mean()
+    p = pd.DataFrame(cols); p["avg"] = p.mean(1); p = p.sort_values("avg")
+    table_svg("docs/table_commercial.svg", [{"google": "Google Vision", "windows": "Windows OCR"}[e] for e in eng] + ["Average"],
+              [(f, list(r.values)) for f, r in p.iterrows()], NOTE, cw=125)

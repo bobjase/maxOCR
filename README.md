@@ -154,13 +154,12 @@ Two more tests, added after an outside review asked about cloud OCR and harsher 
 **Three more print conditions**, read by the same four engines (300 lines each, all three kinds of text averaged):
 a thermal receipt printer (203-dpi head, faded and uneven heat, dead heating elements), a 9-pin dot-matrix printer
 (letters rebuilt from round dots, worn ribbon) and a phone photo of a curled receipt (strong perspective, page curl,
-shadow, blur, camera noise). Character error %, lower is better:
+shadow, blur, camera noise):
 
-| Condition | MaxOCR | Best other font | MaxOCR's rank |
-|---|---:|---|---:|
-| Thermal | 5.3 | Courier Prime 5.4 | 1 of 22 |
-| Dot-matrix | 26.8 | Verdana 19.2 | 10 of 22 |
-| Phone photo | 24.3 | Courier Prime 25.7 | 1 of 22 |
+![Real-world conditions: character error by font](docs/table_extra.svg)
+
+MaxOCR is first on thermal receipts and phone photos; averaged with dot-matrix, Courier Prime is first and
+MaxOCR ties for second with Verdana.
 
 Dot-matrix print is MaxOCR's weak spot: when letters are rebuilt from dots, its finer details break up and plainer
 fonts such as Verdana hold together better.
@@ -168,10 +167,7 @@ fonts such as Verdana hold together better.
 **Two commercial engines**, Google Cloud Vision (document text detection) and Windows' built-in OCR, on all twelve
 conditions (the nine above plus these three; 100 lines per kind of text and condition, read as whole pages):
 
-| Engine | Paragraphs | Codes | Numbers | All | Best other font | MaxOCR fewer errors |
-|---|---:|---:|---:|---:|---|---:|
-| Google Cloud Vision | 3.2 | 9.0 | 1.2 | **4.5** | Noto Sans 6.1 | 27% |
-| Windows OCR | 20.1 | 24.1 | 9.8 | **18.0** | Courier Prime 21.1 | 15% |
+![Commercial engines: character error by font](docs/table_commercial.svg)
 
 MaxOCR is first with both. With Google, Consolas and Courier Prime are slightly ahead on paragraphs alone (2.5% and
 2.6% against 3.2%). Full results: [docs/benchmark_extra.csv](docs/benchmark_extra.csv),
