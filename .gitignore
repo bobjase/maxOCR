@@ -4,3 +4,7 @@ __pycache__/
 *.pyc
 out/
 scratch/
+
+# API keys (never commit)
+.google-key
+*.key
