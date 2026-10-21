@@ -65,7 +65,7 @@ The fonts used as sources, with their copyright notices (all SIL Open Font Licen
 - **Manuale**: Copyright 2019 The Manuale Project Authors (https://github.com/Omnibus-Type/Manuale)
 - **Martel**: Copyright (c) 2015 Dan Reynolds.
 - **Mate**: Copyright 2011 The Mate Project Authors (https://github.com/etunni/mate) with Reserved Font Name "Mate"
-- **MaxOCR Cand**: Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net).
+- **Iosevka** (the first versions of MaxOCR were built on it): Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net).
 - **Merriweather**: Copyright 2024 The Merriweather Project Authors (https://github.com/EbenSorkin/Merriweather4) with Reserved Font Name "Merriweather".
 - **Miriam Libre**: Copyright 2023 The Miriam Libre Project Authors (https://github.com/simoncozens/Miriam-Libre/)
 - **Neuton**: Copyright 2010 The Neuton Project Authors (http://www.21326.info/), with Reserved Font Name "Neuton".
