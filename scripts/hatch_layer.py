@@ -3,8 +3,12 @@ we make it gray using the toner saver font style?"): an ordinary outline, no col
 hatch lines so it prints as a light grey band in any app. The band has to be taller than Check's hairline to hold the
 hatching (about 3 px at 8 pt and 300 dpi); hatch lines about one 600-dpi printer dot wide at 8 pt, about 20% coverage.
 
-    python scripts/hatch_layer.py fonts/MaxOCR.ttf out/fonts/MaxOCR-Hatch.ttf
+    python scripts/hatch_layer.py fonts/MaxOCR.ttf out/fonts/MaxOCR-Hatch.ttf [--line 15 --pitch 75 --name "MaxOCR Hatch"]
+
+Lighter options (James, 2026-10-22: on the scan the hatching left specks after black-and-white conversion and Tesseract
+dropped 10-pt number lines; "make 3 options for lighter hatches"): thinner lines (--line), sparser lines (--pitch).
 """
+import argparse
 import os
 import sys
 
@@ -18,7 +22,7 @@ from glyph_edit import glyph_path, rect, write  # noqa: E402
 GAP, BAND, LINE, PITCH = 60, 90, 15, 75     # font units
 
 
-def hatch(x0, x1, top):
+def hatch(x0, x1, top, LINE=LINE, PITCH=PITCH):
     """Diagonal hatch lines clipped to the band [x0, x1] x [top - BAND, top]."""
     lines = pathops.Path()
     pen = lines.getPen()
@@ -32,8 +36,12 @@ def hatch(x0, x1, top):
 
 
 def main():
-    src, dst = sys.argv[1], sys.argv[2]
-    f = TTFont(src)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("src"); ap.add_argument("dst")
+    ap.add_argument("--line", type=float, default=LINE); ap.add_argument("--pitch", type=float, default=PITCH)
+    ap.add_argument("--name", default="MaxOCR Hatch")
+    a = ap.parse_args()
+    f = TTFont(a.src)
     gs = f.getGlyphSet(); cm = f.getBestCmap()
     digits = [cm[ord(d)] for d in "0123456789"]
     rev = {v: k for k, v in cm.items()}
@@ -43,7 +51,7 @@ def main():
         p = glyph_path(f, chr(rev[base])) if n == base else None
         if p is None:                    # .code copies: draw their own outline
             p = pathops.Path(); gs[n].draw(p.getPen())
-        p = pathops.op(p, hatch(x0, x1, y0 - GAP), pathops.PathOp.UNION)
+        p = pathops.op(p, hatch(x0, x1, y0 - GAP, a.line, a.pitch), pathops.PathOp.UNION)
         if n == base:
             write(f, chr(rev[base]), p)
         else:
@@ -52,12 +60,12 @@ def main():
             tt = TTGlyphPen(None); p.draw(Cu2QuPen(tt, max_err=0.5, reverse_direction=True))
             g = tt.glyph(); g.recalcBounds(f["glyf"]); f["glyf"][n] = g
             f["hmtx"][n] = (f["hmtx"][n][0], g.xMin)
-    for nid, val in ((1, "MaxOCR Hatch"), (4, "MaxOCR Hatch Regular"), (6, "MaxOCR-Hatch-Regular")):
+    for nid, val in ((1, a.name), (4, a.name + " Regular"), (6, a.name.replace(" ", "-") + "-Regular")):
         for r in list(f["name"].names):
             if r.nameID == nid:
                 f["name"].setName(val, nid, r.platformID, r.platEncID, r.langID)
-    f.save(dst)
-    print(dst)
+    f.save(a.dst)
+    print(a.dst, "line", a.line, "pitch", a.pitch)
 
 
 if __name__ == "__main__":
