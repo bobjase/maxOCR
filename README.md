@@ -19,6 +19,7 @@ The fonts are in the [fonts](fonts) folder.
 | [`MaxOCR-Text.ttf`](fonts/MaxOCR-Text.ttf) | The same letters with plain spacing everywhere (no extra space between letters and digits). |
 | [`MaxOCR-Small.ttf`](fonts/MaxOCR-Small.ttf) | Print smaller than about 7 pt (wider letter spacing; cuts errors by about 12% at 6 pt). |
 | [`MaxOCR-Machine.ttf`](fonts/MaxOCR-Machine.ttf) | Machine-only work where looks do not matter: capitals, digits and space only. |
+| [`MaxOCR-Hatch.ttf`](fonts/MaxOCR-Hatch.ttf) | MaxOCR with a faint grey hatched line under every digit, so a checker can catch OCR reading a digit as a letter (0 as O, 5 as S, 1 as l). Only worth it if you run the checker: it costs about 1.6% more OCR error. See [Digit marks](#digit-marks-maxocr-hatch). |
 
 ## How it compares
 
@@ -236,6 +237,25 @@ The same text printed on an office laser printer and scanned at 600 dpi (one pri
 
 Character error %, lower is better (version 0.98). On real paper MaxOCR made the fewest errors overall and on codes,
 about 40% fewer than the next font. The sample is small, so treat small differences as ties.
+
+## Digit marks (MaxOCR Hatch)
+
+The most common OCR mistakes on codes are a digit read as a look-alike letter: 0 as O, 5 as S, 1 as l. MaxOCR Hatch
+puts a faint underline under every digit and nothing under letters. The underline is made of fine diagonal hatch
+lines, like a toner-saving font, so it prints as light grey on any printer and needs no colour support. (A colour-font
+version with a true 15% grey layer did not print at all on a black-and-white laser printer.)
+
+![MaxOCR Hatch printed and scanned](docs/hatch.png)
+
+After OCR, a checker reads the grey scan: wherever the engine says "letter" but the paper has a mark, or the other way
+round, the line is flagged for a second look. On the first print-and-scan (an earlier, darker hatch, single-sided
+print), the checker found the mark under 812 of 818 digits and flagged 34 of 69 misread codes, with 3 false alarms in
+251 correct lines. It cannot catch one digit read as another digit, so it adds nothing for plain numbers.
+
+The marks are not free. Over the twelve damage conditions and four engines, MaxOCR Hatch made 5.63% character error
+against 5.54% for plain MaxOCR (about 1.6% more), worst on phone photos and damaged print. Use it only where the
+checker will run. The checker is experimental: [`scripts/check_scan_score.py`](scripts/check_scan_score.py) reads the
+marks; the font is built by [`scripts/hatch_layer.py`](scripts/hatch_layer.py).
 
 ## Letters that run together
 

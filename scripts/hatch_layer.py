@@ -19,7 +19,7 @@ from fontTools.ttLib import TTFont
 sys.path.insert(0, os.path.dirname(__file__))
 from glyph_edit import glyph_path, rect, write  # noqa: E402
 
-GAP, BAND, LINE, PITCH = 60, 90, 15, 75     # font units
+GAP, BAND, LINE, PITCH = 60, 90, 10, 75     # font units (line 10: option C from the 2026-10-23 scan; 15 was option B)
 
 
 def hatch(x0, x1, top, LINE=LINE, PITCH=PITCH):
@@ -64,6 +64,10 @@ def main():
         for r in list(f["name"].names):
             if r.nameID == nid:
                 f["name"].setName(val, nid, r.platformID, r.platEncID, r.langID)
+    ps = a.name.replace(" ", "-") + "-Regular"
+    for r in list(f["name"].names):          # unique ID: otherwise Windows treats it as the same font as MaxOCR
+        if r.nameID == 3:
+            f["name"].setName(str(r).rsplit(";", 1)[0] + ";" + ps, 3, r.platformID, r.platEncID, r.langID)
     f.save(a.dst)
     print(a.dst, "line", a.line, "pitch", a.pitch)
 
