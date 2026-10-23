@@ -292,8 +292,10 @@ def main():
     ap.add_argument("--out", default="readme_bench.csv")
     ap.add_argument("--fonts", help="comma-separated subset of the font names")
     ap.add_argument("--conds", help="comma-separated conditions (default: the nine README conditions; also thermal, dot-matrix, phone photo)")
+    ap.add_argument("--add", nargs="*", default=[], help="NAME=PATH fonts measured besides the list (e.g. MaxOCR Hatch)")
     a = ap.parse_args()
     fonts = {k: v for k, v in FONTS.items() if not a.fonts or k in a.fonts.split(",")}
+    fonts.update(x.split("=", 1) for x in a.add)
     sets = texts(a.n)
     from maxocr.engines.easyocr_rec import EasyOCRRec
     from maxocr.engines.parseq import Parseq
