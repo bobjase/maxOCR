@@ -8,7 +8,9 @@ grey scan; a reading whose digits and letters disagree with the marks is flagged
 with the printed font, stretched to the line's ink, as an engine's character boxes would give them.
 
     python scripts/check_scan_score.py   -> out/report/check_scan.csv
+    python scripts/check_scan_score.py --crops out/print_test/hatch_crops --fonts out/check_page/MaxOCR-Hatch{v}.ttf         --out out/report/hatch_scan            (James, 2026-10-23: the four hatch options B C D E)
 """
+import argparse
 import json
 import os
 import sys
@@ -72,6 +74,11 @@ def cls(ch):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--crops", default="out/print_test/check_crops")
+    ap.add_argument("--fonts", help="font path with {v} for the version (default: A Check, B Hatch)")
+    ap.add_argument("--out", default="out/report/check_scan")
+    a = ap.parse_args()
     import readme_bench as rb
     import rung0
     from text_eval import char_err, read_tesseract_dict
@@ -80,9 +87,10 @@ def main():
     from maxocr.engines.parseq import Parseq
     eng = dict(alphabet=GENERAL_ALPHABET, casefold=False)
     paddle, easy, pq = rung0.PaddleRec(**eng), EasyOCRRec(**{**eng, "alphabet": GENERAL_ALPHABET + " "}), Parseq(**eng)
-    index = json.load(open("out/print_test/check_crops/index.json"))
+    index = json.load(open(f"{a.crops}/index.json"))
+    fonts = {v: a.fonts.format(v=v) for v in sorted({it["version"] for it in index})} if a.fonts else FONTS
     rows, readings = [], []
-    for v in ("A", "B"):
+    for v in fonts:
         for kind in ("codes", "numbers"):
             for size in (8, 10):
                 items = [it for it in index if (it["version"], it["kind"], it["size"]) == (v, kind, size)]
@@ -93,7 +101,7 @@ def main():
                 bws = [rb.otsu(np.pad(s, 6, constant_values=255)) for s in small]
                 preds = {"paddle": [paddle.text(im) for im in bws], "easyocr": rb.in_batches(easy.texts, bws),
                          "parseq": rb.read_by_words(pq, bws), "tesseract": read_tesseract_dict(bws, fold=False)}
-                m = [marks(g, FONTS[v], t) for g, t in zip(greys, lines)]
+                m = [marks(g, fonts[v], t) for g, t in zip(greys, lines)]
                 tot = sum(x is not None for mm in m for x in mm)
                 ok = sum(x == cls(c) for mm, t in zip(m, lines) for x, c in zip(mm, t.replace(" ", "")))
                 wrong = caught = right = false_alarm = 0
@@ -116,8 +124,8 @@ def main():
                        "marks right %": round(100 * ok / max(1, tot), 1),
                        "misreads": wrong, "caught": caught, "right": right, "false alarms": false_alarm}
                 rows.append(row); print(json.dumps(row), flush=True)
-    pd.DataFrame(rows).to_csv("out/report/check_scan.csv", index=False)
-    with open("out/report/check_scan_readings.jsonl", "w") as f:
+    pd.DataFrame(rows).to_csv(f"{a.out}.csv", index=False)
+    with open(f"{a.out}_readings.jsonl", "w") as f:
         for r in readings:
             f.write(json.dumps(r) + "\n")
 

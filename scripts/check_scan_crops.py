@@ -4,7 +4,9 @@ order; pages 1-2 are version A (colour layer), 3-4 version B (hatched); each ver
 40 numbers at 8 pt, header, 40 codes at 10 pt, header, 40 numbers at 10 pt.
 
     python scripts/check_scan_crops.py    -> out/print_test/check_crops/*.png, index.json
+    python scripts/check_scan_crops.py --pages B=a.png,b.png C=... --out out/print_test/hatch_crops
 """
+import argparse
 import json
 import os
 
@@ -41,15 +43,21 @@ def lines(im):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--pages", nargs="*", help="VERSION=page1.png,page2.png (default: the check test, A and B)")
+    ap.add_argument("--out", default=OUT)
+    a = ap.parse_args()
+    out = a.out
+    pages = {v: ps.split(",") for v, ps in (x.split("=") for x in a.pages)} if a.pages else         {"A": [f"out/print_test/check_scan_p{p}.png" for p in (1, 2)], "B": [f"out/print_test/check_scan_p{p}.png" for p in (3, 4)]}
     truth = json.load(open("out/check_page/truth.json"))
     seq = [None] + [("codes", 8, t) for t in truth["codes"]] + [None] + [("numbers", 8, t) for t in truth["numbers"]] + \
           [None] + [("codes", 10, t) for t in truth["codes"]] + [None] + [("numbers", 10, t) for t in truth["numbers"]]
-    os.makedirs(OUT, exist_ok=True)
+    os.makedirs(out, exist_ok=True)
     index = []
-    for version, pages in (("A", (1, 2)), ("B", (3, 4))):
+    for version, files in pages.items():
         found = []
-        for p in pages:
-            im = np.array(Image.open(f"out/print_test/check_scan_p{p}.png")).astype(np.float32)
+        for p in files:
+            im = np.array(Image.open(p)).astype(np.float32)
             found += [(im, *f) for f in lines(im)]
         print(version, len(found), "lines found,", len(seq), "expected")
         if len(found) != len(seq):
@@ -59,10 +67,10 @@ def main():
                 continue
             kind, size, text = item
             crop = im[max(0, a - 20):b + 30, max(0, x0 - 20):x1 + 20]
-            f = f"{OUT}/{version}_{k:03d}.png"
+            f = f"{out}/{version}_{k:03d}.png"
             Image.fromarray(np.clip(crop, 0, 255).astype(np.uint8)).save(f)
             index.append({"file": f, "version": version, "kind": kind, "size": size, "truth": text})
-    json.dump(index, open(f"{OUT}/index.json", "w"), indent=0)
+    json.dump(index, open(f"{out}/index.json", "w"), indent=0)
     print(len(index), "crops")
 
 
